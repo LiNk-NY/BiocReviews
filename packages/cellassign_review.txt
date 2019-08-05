@@ -2,7 +2,7 @@
 
 ## DESCRIPTION
 
-* Looks good
+* Looks good, please keep the `Description` field limited to 80 width.
 * Include a `BugReports` field pointing to the GitHub issues page.
 
 ## NAMESPACE
@@ -12,25 +12,45 @@ conventional 'class.method' format?
 
 ## vignettes
 
-* Looks clean and concise. 
+* Looks clean and concise.
 * It would be good to stick to the 80 column width limit for
 readability and maintainership. This doesn't affect the ouput
 but makes it easier to go back and modify / read.
 * Please show how the `tf` object was created
 * Ensure that your installation instructions use `BiocManager::install`
 
-## data 
+## data
 
-* `example_rho` seems like it could fit within the rowData of the object you're
-providing
-* It would be better to generate the data from the examples and generate
-a unified object for representation such as `SummarizedExperiment`
-
+* `example_rho` seems like it could fit within the rowData of the
+`SingleCellExperiment`
+* It may be better to generate the data from code in the examples than
+to provide a separate data file (`exaxmple_sce` and `example_cellassign_fit`)
+* Provide a unified object for representation such as `SummarizedExperiment` or
+`SingleCellExperiment` as a result of `cellassign`
+* Is the `holik` data necessary for the package? It would be better to focus
+on the method implementation and provide a small example of how the method
+would run
 
 ## R
 
 * The `cellassign` function should return a class of the same name
 * You should create accessor functions instead of using `$` to access the list
-
-### Examples
+* Consider returning results as a `SingleCellExperiment` only or at least
+separating functions by their return type so that they are "pure". It's not
+recommended to have mixed return values / classes within a function
+* Ideally you'd have an 'endomorphic' operation where the input class matches
+the output class
+* Avoid `glue` and its dependencies by using `sprintf()`
+* Formatting code to fit within 80 column widths makes it easier to maintain
+and read
+* Use `message` instead of `print`
+* Fix typo in `R/utils.R#83` which says `ExpressionSet` instead of
+`SummarizedExperiment`
+* Avoid the verbose output of `tensorflow::install_tensorflow()` (and the long
+loading time) by removing it from the `.onLoad` and asking users to run it
+separately when running `cellassign` by possibly using a wrapper function so
+that the user can set `verbose = TRUE` / `FALSE`
+* You may also want to run `tensorflow::install_tensorflow()` immediately
+before it is required and have a package option where something like
+`verboseInstall = FALSE`
 
