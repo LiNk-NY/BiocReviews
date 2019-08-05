@@ -1,0 +1,5 @@
+# HiCcompare2 #801
+
+HiCcompare is already a Bioconductor package.
+
+## DESCRIPTION

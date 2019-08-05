@@ -1,0 +1,40 @@
+# loci2path #467
+
+Formatting of code and DESCRIPTION should make it readable. Please make sure
+you are not going over 80 columns.
+
+## DESCRIPTION
+
+* Please include `URL` and `BugReports` fields and their respective links
+* Review the need to include `GenomicRanges`, `BiocParallel` and `GenomeInfoDb`
+in the `Depends` field. Are you building on top of these packages or just
+using the functions and classes? The former would require you to list them
+in the `Depends` field.
+* Please use the release version of `roxygen2` unless the devel is required.
+
+## NAMESPACE
+
+* Explicitly export functions in your package, do not use a pattern for
+exporting functions, use the `roxygen` `@export` and related tags
+
+## R
+
+* Please use the `<-` assignment operator to avoid confusion with `=` in
+argument assignment. 
+* Please use accessor functions for your `eqtlSet` and other relevant classes,
+avoid the use of `@` in code for slot extraction.
+* Avoid the use of `1:nrow(x)` sequence generation, use the more robust
+`seq_len` or `seq_along`
+* Please include a file argument for functions that save to a file such as
+`draw.wordcloud`
+* Use a consistent naming convention. For Bioconductor S4 classes, `camelCase`
+is preferred.
+* Some of these functions can actually be methods so to have shorter
+function names, i.e., `query.egset.list` -> `setMethod("query", "eqtlSet")`
+* A list structure might not be the best representation for your object.
+Consider using an S4 object outputs for functions such as `query.egset.list`
+* Why do you need `invisible(NULL)` in the show methods?
+
+
+
+

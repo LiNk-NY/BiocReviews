@@ -1,0 +1,44 @@
+# scBFA #1054
+
+## DESCRIPTION
+
+* You may want to depend on either `SummarizedExperiment` or
+`SingleCellExperiment` for the access functions like `mcols`, `colData`, etc.
+
+## NAMESPACE
+
+* Looks neat
+
+## vignettes
+
+* You don't need to use an `envir` argument for loading the `data`. This might
+confuse users. Keep it in the `.GlobalEnv`.
+
+Minor:
+* Use the standard R code chunk for installation instructions and use
+`eval=FALSE`
+
+## R
+
+* Avoid using semicolons (`;`)
+* You can avoid repetitive code by using the `[[<-` instead of `$` to replace
+values programatically (see `R/BFA.R`)
+* Avoid using `print` and use `message` instead
+* Document all methods available for input to the `scbfa` function as the
+`method` argument and `diagnose` function (`disperType`), you may also want to
+create a vector of methods available and use `match.arg` in the body of the
+function to match the first one by default
+* Use `is`  or `is.*` derivatives to check class membership instead of
+`class(x) == "xx"`. You can also create a helper function to extract the
+data matrix from these classes (and a check and error message for unsupported
+classes)
+* Data documentation looks good (`R/data.R`)
+* Why not return a standard Bioconductor object from `scNoiseSim`?
+
+Minor:
+* No need to evaluate `TRUE` twice: `if (modelEnv$updateCellcoef == TRUE)`.
+Simply use `if (modelEnv$updateCellcoef)`
+* Consistently use `<-` as assignment operator (optional)
+* Use `identical` for scalar matching of strings, e.g.,
+`identical(diagnose_feature, "dispersion")`
+

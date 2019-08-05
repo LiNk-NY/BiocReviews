@@ -1,0 +1,104 @@
+# RNAmodR #1106
+
+Overall, good work on the packages. There is a lot of code in the package that
+implements checks for type or non-NULL. It would be good to have a device to
+avoid such repeated checks. Perhaps using a particular data structure where
+such `list` inputs are not used.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* A `settings` function seems a bit vague as to what it does. It would be
+helpful for users to have a more descriptive name, if possible.
+* Also, see `AnnotationHub` for a similar generic.
+
+## vignettes
+
+* It seems like the early part of the creation vignette goes more into the
+developer rather than the user side of the package. You should indicate that
+the vignette is for developers only.
+* Please use examples that would be mainly used by the end user.
+* Main vignette looks good and thorough.
+
+## R/
+
+* Signature arguments in `setGeneric` are not required as they match the formal
+arguments unless you are using lazy evaluation.
+* Did you contact the 'Gviz' maintainer about using
+a non-hardcoded DNA alphabet?
+* You shouldn't need to run `valid*` functions in the `show` method, this
+should be done at class creation.
+* Be more specific with error messages rather than 'Something went wrong.' If
+it is an internal error, you can tag it with '<internal>'.
+* Use default arguments such as `input = list()` instead of assigning after a
+check for `missing()`.
+* It may be useful to create a helper function to test `input[["x.measure"]]`
+for non-zero, NA, and blanks instead of using a series of `if` and `else` calls,
+especially when you run this check on several occasions.
+* You may benefit from using a map to check arguments for `.norm_plot_args` and
+others. This map will indicate (as separate columns) the error message, assert
+function, and name in `input` to check for all those that exist.
+* Avoid nesting `lapply`, where possible.
+* There's a lot of code in the package and I wasn't able to review all of it.
+
+Minor:
+* Avoid name clashing objects with function names, e.g., `list <- ...`
+* No need to wrap character/logical/numeric scalars with the `c()` function.
+* Use `Map` to avoid `SIMPLIFY = FALSE` argument in `mapply`.
+* No need to check `if(X == TRUE)`, simply do `if (X)`. The inverse also applies,
+i.e., `if (!X)` is preferred over `if(X == FALSE)`
+
+---
+
+### FOLLOW UP
+
+> A settings function seems a bit vague as to what it does. It would be
+helpful for users to have a more descriptive name, if possible.
+Also, see AnnotationHub for a similar generic.
+
+>> I had a look at the generics from the AnnotationHub package, but none of
+those seem to be reusable for purpose of tracking settings for a detection
+strategy. Which generic did you have in mind?
+To describe the purpose of the settings function more clearly, I added a
+separate man page.
+
+Sorry it's not a generic but a way of keeping track of options in the package.
+Please see `.AH_hub_options` variable in the `R/AnnotationHubOption.R` file.
+
+>> I included clear statement for the intended audience at the beginning of
+the creation vignette. I hope I can leave the creation vignette in the
+package. The intention is just to have a comprehensive description of how to
+extend from the classes.
+
+Yes, you can keep it in the package. It will be useful for developers.
+
+> Signature arguments in setGeneric are not required as they match the formal
+arguments unless you are using lazy evaluation.
+
+>> I used this for me to keep track of, what I consider required non optional
+input. This should make it a bit easier down the line, if someone wants to
+reuse the functionality. Is that ok?
+
+Yes, this should be okay but I'm not sure of the implications of this. Perhaps,
+Martin (@mtmorgan) or Hervé (@hpages) has some insight on this.
+
+> I agree, but input[["x.measure"]] is only used in this on location. I
+simplified it a bit.
+In general the input checks are run just once upon creation of an object.
+
+Yes, but these input checks can be re-used when creating different objects.
+
+> You may benefit from using a map to check arguments for .norm_plot_args and
+others. This map will indicate (as separate columns) the error message, assert
+function, and name in input to check for all those that exist.
+
+>> Could you clarify this point? I am not sure that I grasp the concept completely
+
+You can create a map with a row like:
+`'AUC', 'is_a_bool', 'must be a single logical value'`
+for all the types in your checks to reduce the amount of code needed to run
+all the checks. You can then run a function for each of the rows. This is an
+optional way to reduce the repetition in the code.

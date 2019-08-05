@@ -1,0 +1,49 @@
+# ccfindR #675
+
+## DESCRIPTION
+
+* You should only include `Authors@R`. The `Author` and `Maintainer`
+fields are not needed.
+* No need to include a `Packaged` field.
+* Title shouldn't include `R package`. That is understood.
+
+## NAMESPACE
+
+* Looks good.
+
+## R
+
+* Avoid using `1:n` sequence generation, use the more robust `seq_len` or
+`seq_along`. 
+* Avoid using `sapply` in code
+* Separate the plot functionality from the `filter_genes` function
+* Remove any default arguments that are files from the `read_10x` and
+`write_10x` function definitions.
+* Fix typo in `cell_map` documentation
+* No need to convert logical to numerical index in most cases,
+i.e., `which(ranks(object) == rank)` can just be `ranks(object) == rank`
+* Show method repeats class name twice.
+* Avoid unnecessary calculations as much as possible:
+`h <- t(x); apply(h, 1, f(x) {which(x == max(x))})`
+instead do: `apply(x, 2, which.max)`.
+
+Minor:
+* No need to use `;`. You can include the code on another line and make
+it more readable.
+* Use logical evaluation once. For example:
+`if (bayes) { do(this) } else { do(that) }`
+* `if (x != 0)` is the same as `if (x)`
+
+## vignettes
+
+* remove extra files (.pdf, .R, etc.)
+* `eval` is `TRUE` by default
+
+## inst/extdata
+
+* You should put your example data files in this folder (e.g., `barcodes.tsv`)
+
+## NEWS
+
+* Update the NEWS file
+

@@ -1,0 +1,61 @@
+# glmSparseNet #849
+
+## DESCRIPTION
+
+* Looks good overall.
+* Why do you need `devtools` and `roxygen` in the `Suggests` field?
+
+## NAMESPACE
+
+* Avoid using `.` dot delimiters in function names such as
+`build.string.network` unless you're creating S3 methods. The Bioconductor
+convention is to use `camelCase`
+
+## vignettes/
+
+* It looks like you incorrectly reference `TCGAbiolinks` rather than
+`curatedTCGAData` in the vignettes
+* Your code can use helper functions in `TCGAutils` that allow you to separate
+assays by sample type code (referring to tumors, normals, etc.)
+* "metastatic" samples (code 11) actually refer to 'Solid Tissue Normal', see
+`data(sampleTypes)` in `TCGAutils`
+* You should use functions like `TCGAbarcode`, `splitAssays`,
+`intersectColumns`, `as(X, "MatchedAssayExperiment")` etc.
+* Your vignette code could probably be reduced to a few lines for the first
+part of the vignette (the 'data.show' chunk)
+
+## R/
+
+* Don't create methods for regular classes such as `matrix`. Please create a
+regular function and have checks in place so that it only works for certain
+classes (in this case `matrix`)
+* You don't need to create a generic if you're only going to set a method for
+a single class (see `degree.sparsebn`)
+* See bullet under `NAMESPACE` with regards to the dots `.` in functions
+* Ensure that your code is readable by limiting line widths to less than 80
+columns
+* Consider using the data structure as your first argument for functions like
+`degree.generic` and similar. You may also want to have a default function for
+the `fun` argument
+* Consider using `BiocParallel` for parallel computations
+* Avoid using `seq(1, X)` use `seq_len(X)` for robustness
+* Remove any code that is commented out or provide a working version of it.
+* Consider including a script that generated the dataset documented in `data.R`
+* You shouldn't have to create so many methods for the different class
+combinations, just create one regular function and have a filtering step
+that will account for the different inputs.
+* Look into a replacement for `biocmaRt`. I'm not sure what package is
+recommended here.
+* You should only create methods for classes that you create and not external
+classes (e.g., `SummarizedExperiment` and `MultiAssayExperiment`)
+* If you need a function to work for a particular class, check class membership
+as part of the function
+* Consider using `switch` for `calc.penalty` options rather than a series of
+calls
+
+## README.md
+
+* Replace all `source` and `biocLite` calls with `BiocManager`. See the devel
+landing pages of any package on the Bioconductor website for examples or
+check the Bioc-devel mailing list.
+

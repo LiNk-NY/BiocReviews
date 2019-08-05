@@ -1,0 +1,59 @@
+# RcisTarget #502
+
+## DESCRIPTION
+
+* Please add a `Depends` field `R >= (3.4.1)`
+* Include a `BugReports` URL pointing to the issues
+location on GitHub
+* Include `LazyLoad: yes` field and value 
+
+## NAMESPACE
+
+* Use `roxygen2` directives to import functions from
+`data.table`
+* The above can be done by adding `@import` and a `NULL`
+after the roxygen block
+* Avoid manual generation of the `NAMESPACE` 
+
+## R
+
+Major:
+* `RcisTarget` your main function, should use existing
+infrastructure rather than make use of `data.table`
+* Perhaps you can pick an existing class and extend it?
+* Consider using `BiocParallel` for functions that require
+parallelization
+* Please keep the support of `GSEABase` enabled despite the
+warnings those should clear up. If not, I can contact the
+person working on that package
+
+Grammar:
+* Avoid using `sapply` as it is not robust to input changes.
+* Use `vapply` instead where possible.
+* Avoid growing a vector, use the allocate and fill method. 
+* Example: `in000 <- NULL` then `in000 <- sapply(...)` in this
+case you can just use the `lapply`/`vapply` functions and not
+worry about allocating memory which is done internally.
+* It might be better to create a method with signature "ANY"
+and direct that to `.getSignificantGenes` so that you can
+just call `callNextMethod` for all methods after extracting
+the desired `geneSet` from that particular class
+* Use `requireNamespace` to test for package availability
+rather than `installed.packages`
+* It seems like `fakeDatabase` should be an internal function
+and not exported, or saved as a script
+* Do not call empty `stop` functions, provide a useful error
+message
+* Avoid `0:length(x)` use the more robust `seq_along` or
+`seq_len`
+
+Minor: 
+* Logical to Numeric index switching not necessary most of
+the time (e.g., `which(nes >= nesThreshold)` can be
+simplified to `nes >= nesThreshold`. 
+
+## vignettes
+
+* Keep vignette lines under 80 column widths
+* Looks good
+

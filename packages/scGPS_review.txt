@@ -1,0 +1,57 @@
+# scGPS #1042
+
+* Overall, the maintainer has put a lot of work into the package but there
+is much room for improvement in terms of following standard coding practices
+as outlined on the Bioconductor website. Please make use of those resources.
+
+## DESCRIPTION
+
+* Fix the formating to fit the 80 column width
+
+## NAMESPACE
+
+* Remove the export pattern from the NAMESPACE
+* Use consistent function naming schemes either snake_case or camelCase, try
+to avoid using both
+* Functions like `NewscGPS` appear confusing based on the name alone
+* Every function does not need to include a `_scGPS` suffix
+
+## vignettes
+
+* Please fix the installation instructions, they should only require
+`devtools::install` and a `library(scGPS)` call. `devtools::document` should
+only be used to update the documentation pages and `devtools::load_all()` is
+not the right way to load the package
+* It may be better to include figures in the `inst/resources` folder, for
+example
+* Keep R code and git code in separate chunks
+* Do not include unevaluated code in the vignette. This code can become stale
+quickly without constant evaluation
+* Add a `sessionInfo` chunk to the vignette
+
+## R
+
+* Follow the guidelines on the Bioconductor website:
+https://www.bioconductor.org/developers/package-guidelines/#rcode
+* Avoid the copy and append method, i.e., `X <- vector(); X[i] <- y`:
+https://www.bioconductor.org/developers/how-to/efficient-code/
+* Use `message` instead of `print` within functions
+* Pass inputs such as `scaling` to the `stats::prcomp` function rather than
+using a condition `scaling == TRUE` (See minor point below)
+* Remove any commented code `CIDR` or provide a working alternative
+* Use `SummarizedExperiment` inputs where possible especially for expression
+matrix arguments
+* Where possible, reference by name values not index. For example,
+`mtcars[["mpg"]]` is preferred over `mtcars[[1]]`
+* Avoid printing too many messages, use a `verbose` argument in your functions
+* What is the reasoning for `add_import` rather than using `NULL`?
+
+Minor:
+* Evaluate `if` conditions without redundancy `if (LDA_run)` is preferred over
+`if (LDA_run == TRUE)` and `!is.matrix(x)` over `is.matrix(x) == FALSE`
+
+## data
+
+* Use a more descriptive names than `sample1`, `sample2`, and `GeneList` if
+possible
+

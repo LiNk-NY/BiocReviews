@@ -1,0 +1,47 @@
+# decompTumor2Sig #816
+
+Please respond to Martin's @mtmorgan comments about specifying the language
+in the vignette chunks for evaluation.
+
+## DESCRIPTION
+
+* It looks good. Consider using `Authors@R` instead of both the `Author` and
+`Maintainer` field.
+* Provide a `BugReports` URL field.
+
+## NAMESPACE
+
+* It looks good. It seems like `load*` may not be the best prefix to use for
+such functions. It usually implies that you are putting something in the
+`.GlobalEnv`.
+* Many of your exports have long names. Make these shorter if possible.
+
+## R 
+
+* You may want to use `roxygen` for documentation being that you are readily
+able to document your function in the same file.
+* Use the native class checking mechanisms such as `is.numeric` instead of
+`class(x) != "numeric"` or `is(X, "class")` for S4 classes.
+* Use robust sequence creation `seq_len(N)` instead of `1:N`
+(see also: seq_along).
+* Provide a user-facing API for extracting data from `MutationFeatureData`
+objects via accessor functions rather than using `getElement`.
+* Avoid using `@` to access slots. There should be helper accessor functions
+for extracting these data.
+* Create a helper function for testing objects to be `data.frame`, `matrix`,
+or `numeric`.
+* Avoid the use of `sapply`
+
+Minor:
+* No need to test TRUE twice. `if (getElement(...) == TRUE)` can just be
+`if (getElement(...))` unless the result of `getElement` is impure then use
+`isTRUE`. 
+* Use `vapply` to get an atomic vector from a `list` instead of
+`unlist(lapply(...))`
+
+## vignettes
+
+* Use `BiocManager::install()` in the vignette instead of `biocLite`
+* Make your code runnable by including `{r}` in the first code chunk delimiter.
+* It is not recommended that you include a GitHub package dependency
+(`pmsignature`)

@@ -1,0 +1,72 @@
+# netboost #1075
+
+Overall, it looks good. Please use an appropriate Bioconductor class to provide
+a level of interoperability with other packages (possibly
+`TreeSummarizedExperiment` still in development). More generally, you should
+include more argument checks in your functions for all inputs and avoid using
+`NULL` values where there are no checks for NULL such as `is.null`.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* It isn't entirely necessary to prepend your functions with `nb_*` but it
+will be considered a style choice
+
+## vignettes
+
+* Please adhere to the 80 column width suggestion for readability
+* Use `example('nameOfFunction')` to run examples rather than `nb_example`
+* If the example is complicated, it should be included in the vignette
+rather than the `example` section in the documentation
+* There's no need to 'save' the pdf file in the vignette examples, instruct
+users to run the plotting function and inspect. You will avoid using `pdfviewer`
+
+Minor:
+* Typo - replace 'than' with 'then' in Introduction
+* Use an asterisk (*) to list the arguments in the 'Loading an example
+dataset' section
+
+## R
+
+* Avoid using `library` in package code
+* Provide more details on comments like `mind: parallel!` in the documentation
+* Be consistent with argument cases, either all `camelCase` or `snake_case`.
+A mix of the two may confuse users.
+* Remove duplicated return value entries 'dendros'
+* Include input checks for `datan` and other arguments. Make sure you are
+checking for `data.frame` class or other relevant classes
+* Use `ncol` if you need to get the number of columns in `datan` for the
+`max_singleton` argument
+* Provide a `verbose` argument to be able to suppress messages in functions
+* Is there a reason for using `system2("gzip", ...)` rather than
+`R.utils::gzip`?
+* Use `message` instead of `print`, `cat`, `printFlush`
+* Consider using `tempdir()` and `tempfile()` to save intermediate files
+rather than the `netboostTmpPath` schema
+* Deliver matrix in `nb_mcupgma` as integer so that `tree_seach` can check for
+integer values. You are in control of the output type of your functions.
+* Separate plotting, analysis, and method functions (principal of pure /
+predictable functions), i.e., remove `plot` arguments from functions. This
+avoids confusion among users
+* Improve formatting for readability. Use four spaces for indentation.
+* Again, avoid saving files for the user
+* Remove verbose package startup messages.
+* It seems like you should be able to obtain paths saved in `.netboostInternal`
+using `system.file` after package has been installed
+* There should be no need to clean up your own created netboost temporary
+directory, if it goes to a specific folder in `tempdir` you can clean it the
+same way.
+
+Minor:
+* Use `[[` extraction rather than `$` due to fuzzy matching
+* Avoid confusion by not reusing function names for other symbols
+(objects / arguments) inside functions such as `filter`, `scale`, etc.
+* Use `identical(dim(filter), c(0L, 0L))` to test for empty matrix
+* Remove frowny faces from the errors / messages :P
+* Use `seq_along` instead of `seq`
+* No need to call `paste` inside a `stop` call
+* Use `list.files(folder)` instead of `Sys.glob(file.path(folder, "*"))`
+

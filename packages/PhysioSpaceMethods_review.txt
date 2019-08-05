@@ -1,0 +1,64 @@
+# PhysioSpaceMethods #830
+
+## DESCRIPTION
+
+* Consider using `Authors@R` to combine `Author:` and `Maintainer:` fields
+* Format to fit 80 width columns
+* Consider listing `Imports:` as one package per line
+
+## NAMESPACE
+
+* `input*` functions seem to be for internal use
+* Avoid long names and mixing `camelCase` with `snake_case` (e.g.,
+`parallelInitializer_SingleMachine`)
+* Avoid using function type tags such as "wrapper" in function names
+
+## vignettes/
+
+* If you use `BiocStyle` you don't have to create your own Table of Contents
+(`toc: true`)
+* Please remove mentions of `devtools` and `GitHub` as means of installing the
+package.
+* Replace said code with `BiocManager`. See any devel package landing page for
+a code example.
+* Use markdown syntax for inserting hyperlinks (e.g.,
+[ topic ]( https://link.to/site ))
+* Include a `library` chunk for loading all the packages for the vignette.
+You can create one that evaluates with `suppressPackageStartupMessages` and
+`echo = FALSE` and another that is aesthetically pleasing.
+* You should be able to use `geoQuery` for downloading GEO data.
+* Use a runnable version of all your code including `sessionInfo`.
+
+## R
+
+* Provide informative and declarative error messages (e.g., Use
+`No genes to compare.` in `calculatePhysioMapCore_foreach`)
+* You may want to default to 1 core for the `NumbrOfCores` argument
+* Use a conservative number of cores (about 1 or 2) as a default not
+`detectCores() - 1`. Allow the user to modify this setting.
+* Avoid saving PDF files for the user by removing the `PDFFullName` argument.
+A user wishing to save the output would do so by calling the `pdf` function
+interactively.
+* Do NOT save objects to the user's `.GlobalEnv` in `inputChecker`.
+* Use helper functions to reduce repetitive code (see `R/SpaceMaker.R`)
+
+Minor:
+* Set a function based on the value of `ParallelMethod` (e.g., `FUN <-
+switch(ParallelMethod, parCapply = calculatePhysioMapCore_parCapply, foreach =
+...)`)
+* Use `is.na` to test `NA` rather than `identical`
+* Avoid using multiple interrobang in warnings and error messages.
+
+
+## Package root (**/**)
+
+### README.md
+
+* Update the README to use `BiocManager` to install the package
+* Ensure formatting is within 80 column width
+* No need to include a 'manual' download section
+
+## tests
+
+* Include more tests to increase the robustness of your package
+

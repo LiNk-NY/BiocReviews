@@ -1,0 +1,82 @@
+# ADAM #908
+
+* ADAM seems to have two aims, analysis and shiny representation. Please
+separate functionality into two different packages.
+
+## DESCRIPTION
+
+* Future note: If you have many dependencies for one package, list the package
+in the `Depends` field
+
+## NAMESPACE
+
+* You have two groups of functions that are exported. Separate these into two
+packages.
+
+## vignettes/
+
+* Avoid using `eval=FALSE` chunk options. Provide a small dataset to demonstrate
+your package functionality
+* Include a `sessionInfo` at the end of the vignette
+
+## R/
+
+* Avoid using numeric indices for data extraction, use names for robustness.
+* Provide support for Bioconductor classes such as `SummarizedExperiment`
+for the `ExpressionData` argument.
+* Use argument defaults for exported functions, this makes it easier for the
+user to use your functions.
+* Use `rbind.data.frame` method to get a `data.frame` back when binding
+from samples rather than coercing to `data.frame` after binding.
+* The series of checks could be part of the validity checks for a class in
+the package (`checkComparisonID`, `checkExpressionData`, etc.)
+* Please correct spelling errors `datra.frame`, `at list 3 columns`, etc.
+* Avoid using `1:ncol(x)` sequence generation, use the more robust `seq_len(x)`
+* Avoid `ifelse` statements when you can just take the sum of the conditional
+statement. For example,
+`if(sum(ifelse(ExpressionColumns==TRUE,1,0))!=(ncol(DataFile)-1))` can be
+`if (sum(ExpressionColumns) != (ncol(DataFile)-1))`
+* Use `vapply` when reducing a list to a logical vector (R/checks.R:Line41)
+* Consider using a table (`data.frame`) to map `db` packages to `genus
+species` names. You may also want to consider using `BiocManager::available`
+for package lookup instead of said `data.frame` map.
+* Avoid the use of short and undescriptive variable names in all functions,
+for example, use `SpeciesID` instead of `y` and `ExpressionData` instead of `k`.
+* There should be no need to hard-code 'org.*.db' packages as these can be
+looked up and loaded.
+* Again, the sum of a logical vector is equal to the number of `TRUE` values in
+the logical vector, avoid `ifelse` for this purpose.
+* The `gc()` in R will take care of any stray datasets left behind, you don't
+need to run `rm(objectNAME)` AFAIK
+* Avoid installing packages for the user. Remove `BiocManager::install` in
+line `R/checks.R:Line-304`. If the package is not available for the user
+(checked with `requireNamespace`) then produce an error and inform the user to
+install the package.
+* Avoid using `sapply`, see Bioconductor package guidelines:
+http://www.bioconductor.org/developers/package-guidelines/
+* Use `ECGPreprocess` as your constructor function. Rename it to `ECGMainData`,
+run your checks on the arguments and then call `new` at the end.
+* Unexported functions have the convention of a `.` (dot) in front of the name.
+* Create accessor and setter functions for your class, for example,
+`expressionData(ECGMainData)` `expressionData(ECGMainData) <- newData`
+
+Minor
+* `c(1)` is the same as `1`
+
+## tests/
+
+* Add more tests to increase package robustness
+
+## data/
+
+* I don't think `AvailableDBSpecies` is required as we have a lookup function
+in `BiocManager::available`.
+* Consider using one set of datasets for either humans or 'Aedes aegypti' for
+your examples, not both. This will reduce the storage required for your package.
+
+## R CMD check results
+
+```
+Undefined global functions or variables:
+  GOID Ontology Term mappedkeys
+```

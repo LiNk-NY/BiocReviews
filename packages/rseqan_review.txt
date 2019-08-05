@@ -1,0 +1,25 @@
+# RSeqAn #652
+
+A header files package for R from SeqAn. 
+
+* Please make sure that it is compatible in all supported platforms.
+
+## DESCRIPTION
+
+* No need for the `Date` field.
+* You can optionally combine `Author` and `Maintainer` fields with the
+`Authors@R` field.
+* I don't think you need a `RoxygenNote` field.
+
+## vignettes
+
+* Looks good.
+
+## NAMESPACE
+
+* I don't think you need a `NAMESPACE` file
+
+## / pkg folder
+
+* You can get rid of the `*.Rproj` file as there is no R code to the package.
+

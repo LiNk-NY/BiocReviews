@@ -1,0 +1,73 @@
+# artMS #848
+
+## DESCRIPTION
+
+* Please put all `db` packages in the `Suggests` field. These are optional
+and not required to run the code in the package.
+
+## NAMESPACE
+
+* Remove 'artMS_' before your exported functions. It makes them unnecessarily
+long. Bioconductor convention for names is 'camelCase' rather than 'snake_case'.
+
+## R
+
+* Make sure you are using the right tests. For example, when checking empty
+arguments, you want to use `is.missing` for `any` of the files rather than
+are `all` the files 'NULL' (`is.null`). 
+* The `output_dir` could be the current working directory by default
+(i.e., `"."`).
+* Use class function tests like `is.numeric`, `is.logical`, etc. rather than
+grepping the class name. 
+* Use `match.arg` to show all the options in the argument and use the first by
+default: `match.arg(c("a", "b", "c"), c("a", "b", "c"))`
+* The `analysisQuantifications` function does too much. Your functions should
+be modular. Impute data separately from the analysis and use that data as
+input to the analysis function.
+* Avoid saving 'PDF' or other files for the user. Provide only plotting, data
+processing functions.
+* The plotting function should be separate from the analysis one. This means
+returning an object from the analysis function that could be fed the plotting
+one.
+* Use internal error messages instead of "dude, check the source code"
+* Use "species" rather than `specie` for argument names.
+* Create internal helper functions for repetitive code such as `grepl("_H1N1
+... ` etc. It makes your code easier to maintain and less prone to errors.
+* Remove superfluous exclamation points, interjections, and language
+(e.g., "Oh no!!" and "Abort mission!").
+* You could have used a `data.frame` map for the 'mapUniprot2entrezGeneName'
+function. Is the function necessary?
+* Make installation of `db` packages optional by using
+`if (!requireNamespace("dbpackage")) stop(...)`
+* Remove emoji and whimsical messages (e.g., 'Have a nice day! :)').
+* Provide a `verbose = FALSE` argument in your functions. 
+* Avoid using `cat` for diagnositic messages, use `message` and `warning`
+functions.
+instead. See: http://bioconductor.org/developers/how-to/coding-style/
+* Why do you need so many global variables? 
+* Code can be reduced when only single values change given a condition (e.g.,
+`pvals <- if (select_pvalues == "adjpvalue") "adj.pvalue" else "pvalue"` then
+use `results_msstats[, c(..., pvals, ...)]`)
+* Avoid using all caps for errors, warnings, and messages in general.
+* Being that this package has a lot of functionality, have you considered
+separating functions into a group of packages?
+* Shiny functionality should be in another package. 
+
+## vignettes/
+
+* Ensure that your formatting does not exeed 80 column widths. This is good
+for reability and maintenance.
+* Avoid using `BiocInstaller` for installing Bioconductor packages. Use
+`BiocManager` in your code. 
+* Include a `sessionInfo` chunk
+* Consider having a quick start vignette and a full functionality vignette
+included in your package.
+
+## tests/
+
+* Please include more tests, at least for your main function.
+
+Minor: 
+* Avoid using function names as variables in your code (e.g., `c`)
+* `if (length(x) > 0)` is equivalent to `if (length(x))`
+

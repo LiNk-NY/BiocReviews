@@ -1,0 +1,9 @@
+# binomialRF #1158
+
+## DESCRIPTION
+
+## NAMESPACE
+
+## vignettes
+
+## R

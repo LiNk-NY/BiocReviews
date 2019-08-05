@@ -1,0 +1,77 @@
+# NoRCE #1131
+
+## DESCRIPTION
+
+* Please move any packages that are relevant to the vignette from `Depends:`
+to `Suggests:`.
+* Include a `BugReports:` field
+* Keep the format of the file tidy by keeping lines within 80 column widths
+
+## NAMESPACE
+
+* Are `readbed` and `readGMT` functions necessary? Some of these have been
+written by other packages. See:
+http://bioconductor.org/developers/how-to/commonMethodsAndClasses/
+* You don't need to import from `TxDb.*` and `org.*.db` packages.
+
+## vignettes
+
+* Avoid using `eval=FALSE` in code chunks. This creates stale code quickly.
+Pseudocode is not acceptable see line #256
+* Keep the vignette formatted to 80 column width. It makes it easier to review
+and edit
+* Installation instructions should assume package is available via Bioconductor
+* Move code comments outside of code chunks and into the Markdown prose
+(especially long comments)
+* Do not add `PNG` files when you can evaluate code and have a plot output
+
+## R
+
+* Create a table to map inputs to cells in the `data.frame` in the `annotate.R`
+file. See Martin's example here:
+https://stackoverflow.com/questions/39217432/r-improving-nested-ifelse-statements-multiple-patterns
+* Avoid using `assign()`, the `go` object is being assigned to itself.
+* Do not use `1:dim(x)[1]` sequence generation. Use the more robust
+`seq_len(nrow(x))`
+* Avoid providing 'dontrun' examples to your users. It will only create
+frustration when such examples do not work because of a change in the code
+base.
+* Follow Bioconductor best practices and run `BiocCheck` on the package to see
+recommendations with regards to `sapply`, `1:length(n)`, etc. Stay within the
+80 column width recommendations. This makes for neater code.
+* Consider renaming the `hg` argument to something more descriptive and less
+specific such as 'genome'.
+* Provide a vector of assembly options as an argument in `goEnrichment`and
+related functions. This will let the user see what assemblies are available.
+* See previous point and apply it to `pAdjust` methods in `goEnrichment`
+* Create a function that will check whether the particular assembly is
+available on the user's system otherwise return an error with a message saying
+that the user should install the particular package needed for that assembly.
+* I suggest you check out `cRegulome` package for the `miRCancer.db` and
+see if that works for the purposes of `corrbased*` functions.
+* Support either one or two `SummarizedExperiment` inputs in the `calculateCorr`
+function
+* Some functions do not provide type checks such as `geneGOEnricher`. They
+should be checking that the inputs conform to a specific data type (e.g.,
+"character" for Genes)
+* Avoid interacting with the `.GlobalEnv` within the function scope.
+* Create an package-specific environment for objects like "mart", "go", etc.
+* Do not modify user-level options (see `R/getNearest.R#L1`)
+* Avoid repetitive code in the `assembly` function
+* There's a lot of unnecessary work here mapping genome symbols to `org.*`
+package in `keggPathwayDB` where other packages have done this already (see
+`EnrichmentBrowser`).
+* Remove `.onLoad` message
+
+## data
+
+* Make use of `GO.db` package (thanks @lgeistlinger) and remove data from
+`data/` folder or justify why the data you provided is different and
+necessary. If the latter, consider providing an experiment data package
+separately.
+
+Minor:
+* Use `nrow` or `ncol` for `dim()[1]` and `dim()[2]`, respectively.
+* Use `file.path(x[1], x[2])` instead of
+`paste0(x[1], "/", x[2], sep = "", collapse = "")`
+

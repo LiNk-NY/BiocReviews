@@ -1,0 +1,43 @@
+# DelayedDataFrame #861
+
+## DESCRIPTION
+
+* Looks good. 
+* You don't need the `LazyData` field in there
+* Last sentence could be:
+> The listData slot stays untouched until a realization call (e.g., DataFrame
+constructor OR 'as.list') is invoked.
+
+## NAMESPACE
+
+* Does `extractROWS` need to be an exported method?
+
+## vignettes/
+
+* It looks good. It is brief and describes how to get started with
+`DelayedDataFrame`
+
+## R/
+
+* Perhaps you can use something like a `cbind.DelayedDataFrame` in the
+constructor function (L:68) so that you don't have to ensure that your output
+will be `DelayedDataFrame` (L:74)
+* `check.names` works when _not_ doing the `cbind` in the contructor. To make it
+work with `DelayedDataFrame` inputs, use `make.names` after `cbind`ing.
+* The `setAs,DataFrame,DelayedDataFrame` function can be reduced to one line by
+using `length(from)`:
+```
+ldf <- length(from)
+lazyIndex <- .LazyIndex(vector("list", as.numeric(as.logical(ldf))),
+    index=rep(1L, ldf))
+```
+* You're using the copy-replace method in DelayedDataFrame-method.R-L:64. It
+might not make much of a difference in newer version of R but you should use
+the allocate-fill method.
+* Can you use `replaceSlots` in `.cbind_DDF` rather than initialize? I think
+this is preferred. Thoughts @hpages?
+
+
+Minor:
+* `if (length(listData) > 0)` is equivalent to `if (length(listData))` and
+`if (!ncol(from))` is the same as `if (ncol(from) == 0)`

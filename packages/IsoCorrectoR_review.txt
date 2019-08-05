@@ -1,0 +1,31 @@
+# IsoCorrectoR #800
+
+# / Pkg root
+
+* The `CHANGELOG` file does not belong in the package and should be removed.
+
+# DESCRIPTION
+
+* It doesn't appear to be using any Bioconductor software.
+
+# NAMESPACE
+
+* It looks good. You are only exporting a few functions.
+
+# R
+
+* Overall there seems to be a lack of structure to handle the data that you're
+working with.
+* There is no use of existing Bioconductor data structures.
+* There is a lot of code that uses nested `for` loops with initialized `list`
+objects
+* The GUI can be a separate package
+* No need to use nested if statements, use a lookup table
+* Avoid the use of `0:n` sequence creation
+* Functions should be more modular so to avoid maintaining one huge function. 
+* Avoid or provide an option for verbose messages with dates.
+
+
+As it stands now, I would recommend this package to be submitted to CRAN.
+
+

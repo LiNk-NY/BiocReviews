@@ -1,0 +1,62 @@
+# DominoEffect #642
+
+* Please keep in mind that lines greater than 80 column width are harder
+to read and maintain.
+* It appears that the interoperability efforts for this package 
+reduce the class structure and transform the contained data to conform
+to the already written code.
+* It would be good to see full interoperability with these classes by
+providing direct use of class methods by not having to "import_*" from
+the class.
+
+## DESCRIPTION
+
+* Looks good overall. 
+* You could do without the `Packaged` field.
+* Please format lines to less than 80 column width.
+
+## NAMESPACE
+
+* Please remove the `exportPattern` line. It's best practice to explicitly
+export functions.
+* No class imports present.
+
+## R
+
+* Please make use of native R functions such as `sort` in
+`R/calculate_boundary.R`
+* Have a section of code at the top of the function that is checking for
+argument requirements, for example `length(flanking_region) == 2L`.
+* Write helper functions to reduce repetitive code.
+* Where possible, use established Biocondcutor classes as function outputs.
+This helps your package 
+* Allow the possible input of Bioconductor classes such as `GPos` for
+snp_data and `GRanges` or `GRangesList` for mutation datasets. 
+* Remove the use of the `globalVariables` in all code.
+* Do not write to the user's file by default. Keep the file system clean
+unless the user explicitly decides to save a file.
+* Please remove the default datasets as arguments
+(`TestData`, `DominoData`, etc.).
+* Requiring that datasets contain the same exact names as indicated in your
+code makes the function less flexible to other datasets that have slight
+variations. 
+* Where possible use character names instead of interger indices in subsets
+such as `mutation_dataset[,"Original_aa"]` instead of `mutation_dataset[, 3]`.
+If you add functio arguments like `Original_aa` you could just use
+`mutation_dataset[, Original_aa]` in the code regardless of the actual column
+name that indicates original amino acids. If you expect all datasets to have
+this name than it would make sense to keep the current way of coding this,
+although this is hardly ever the case.
+* Add more tests, especially for the main `DominoEffect` function.
+
+Minor: 
+* `if(length(snp_data) > 0)` is equivalent to `if(length(snp_data)`
+
+
+## vignettes
+
+* Looks good. Please update the formatting for readability.
+
+## man
+
+* Looks good.

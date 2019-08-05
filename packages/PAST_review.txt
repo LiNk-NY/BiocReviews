@@ -1,0 +1,41 @@
+# PAST #1032
+
+Currently, `PAST` would be a good CRAN package as it does not take
+advantage of the Bioconductor infrastructure.
+
+## DESCRIPTION
+
+* Looks good, thanks for separating out the `shiny` dependencies.
+* Please provide a more substantial `Description` field and
+organize package dependencies so that there is one package per line
+or respecting the 80 column width limit.
+* There appears to be no Bioconductor dependencies
+
+## NAMESPACE
+
+* Function names can be more descriptive, i.e., `analyze_pathways` is too
+vague
+* `merge_data` can mean anything as well
+
+## vignettes
+
+
+* Keep text within the 80 column width limit for readability and tidiness
+* It's a bit short. Please detail the methods in the vignette..
+
+## R
+
+* Provide more descriptive dataset names, 'genes' can represent anything
+* `rugplots_data` should really be created and obtained from the examples
+* The API makes no use of Bioconductor infrastructure such as `GPos`/`GRanges`
+* Functions assume that there are naming conventions in such files which is
+not always the case
+* Avoid using `print`
+* Use `stop` to exit the function with an error instead of `print`
+* Use the more robust `seq_len` or `seq_along` to create a sequence rather than
+`seq`
+* Avoid nesting `ifelse` statements, create a `data.frame` of conditions and
+resulting values instead (`R/parse_SNP.R`)
+* Do not save plots or create folders for users without their explicit
+authorization
+

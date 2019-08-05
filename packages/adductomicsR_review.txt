@@ -1,0 +1,62 @@
+# adductomicsR #920
+
+## DESCRIPTION
+
+* Looks good.
+* No need to use `LazyData` or `LazyLoad` here. It only applies to data in the
+`data/` folder.
+* All your imports don't need to have a minimum version requirement but you
+can leave it like this.
+* Add a `BugReports` field for filing GitHub issues.
+
+## NAMESPACE
+
+* Looks good !
+
+## vignettes/
+
+* You don't need to mention the version of R required as this will change with
+Bioconductor release and devel versions. The current submission will go into
+Bioc-devel
+* Enclose code within text with backticks '``'
+* `eval=TRUE` is the chunk default, there's no need to repeat it
+* Consider formatting the code in the code chunks for legibility
+(e.g., in 'Quantify adducts')
+
+## R/
+
+* Check if you can use related and established Bioconductor classes to represent
+your data
+* Class names usually start with a capital letter.
+* Create class accessor functions to avoid the use of `@`.
+* Format code for readability (see `c` function)
+* `nCores` argument(s) should be conservative by default rather than using all
+available cores
+* `flush.console()` not really needed
+* Avoid changing user options, change them back to what they were on exiting
+the function
+* Use `message` instead of `cat` for showing status messages
+* Refrain from saving plots on the user's behalf, users should save plots
+themselves in the appropriate format from the graphics device. At the very
+least, a `NULL` output dir should not save any files rather than in the
+current directory
+* It's not clear how you're using the `dotProdSimClust` function inside
+`minDotProdSpec` and returning the output of the inner function as the return
+value of the outer function (see `R/dotProdSpectra.R`)
+* There are a lot of hard-coded values in `IsotopicDistributionMod` perhaps
+these values can go in a table?
+* Use `&&` for robustly testing single conditions on either side of `&&`,
+`&` returns a logical vector where possible
+* Check curly braces in `specSimPepId`, it seems like there is an extra closing
+brace
+
+Minor:
+* `if (!ncol(x))` is equivalent to `if (ncol(x) == 0)`
+* No need to test for `TRUE` as `hclustRt == TRUE` just use `if (hclustRt)`,
+in the case that the output is not certain to be logical, use `isTRUE()`
+* Use the inverse of logicals instead of testing for a `FALSE` value (e.g.,
+use `!duplicated(targTable$peptide)` R/adductQuant.R:L119)
+* Try `seq_along` instead of `seq_len(length(x))`
+* No need to include `x` in `elements = list(x, ...)` since it is already in
+the signature
+

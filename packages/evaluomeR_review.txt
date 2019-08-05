@@ -1,0 +1,61 @@
+# evaluomeR #1005
+
+* Overall, the package looks like a script turned into software.
+* There are errant variables set inside functions repeatedly and there
+is little attention to formatting.
+
+## DESCRIPTION
+
+* Consider combining `Author` and `Maintainer` fields into `Authors@R`
+* Add a `BugReports` field
+* Add additional `biocViews` items to better discoverability
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* It looks thorough and well done.
+* Please respect the 80 column width so that it is easier to read and possibly
+maintain.
+
+## inst/extdata
+
+* Remove data in `extdata`. The folder should be used to store raw files if you
+have functions that require to read raw data as an example.
+* See `loadSample` bullet point in R section below.
+
+## R/
+
+* Use a more descriptive name instead of `correlations`
+* Avoid the use of semi-colons. You can use `utils::globalVariables` for such
+variables
+* Avoid saving graphics for the user. Let users save graphics using the format
+of their choosing. Remove `png` function and `path` and `label` arguments.
+* Use `match.arg` in `loadSample` and provide all possible options as arguments.
+For example, use `loadSample <- function(descriptor = c("ont-metrics", ...))`.
+* Why not use `RData` or `rda` data and use `data(...)` to load example
+datasets?
+* If possible, avoid using 'orphaned' packages because they are not maintained
+and may include poorly written code (`fpc`).
+* No need to create `getAssay`, this is done by the `assay` function
+for `SummarizedExperiment` objects
+* `makeSummarizedExperimentFromDataFrame` can possibly replace what `createSE`
+does
+* Again, `createSEList` can be taken care of by converting your list of matrices
+with `SimpleList` and then passing them along to the `SummarizedExperiment`
+constructor function. Avoid loops when functionality is already available to
+work with lists.
+* Avoid **setting** seeds inside a function
+* Avoid modifying user's `par` settings, use `on.exit` to re-establish them
+before your function
+* You shouldn't have to use `get` and `assign` functions in normal code
+* Create a local package environment with variables that you to access across
+functions. This will avoid the use of `env` argument for most plotting functions
+* There isn't much difference in terms of programming between 'stability' and
+'quality' functions. Perhaps you can combine these functions into one and
+add an arugment for either `quality` or `stability`?
+
+Minor:
+* No need to `paste` error message before the stop function in R/helpers:L#79

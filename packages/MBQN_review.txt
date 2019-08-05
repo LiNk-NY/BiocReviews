@@ -1,0 +1,109 @@
+# MBQN #1064
+
+* Please use a Bioconductor data structure that works with your matrix
+representation. Bioconductor prefers packages that are interoperable so we
+require that all packages re-use existing Bioconductor data classes where
+possible.
+
+## DESCRIPTION
+
+* Looks good. Try to keep it within the 80 column width limit for readability.
+* Provide a `BugReports` URL pointing to the GitHub issues page.
+
+## NAMESPACE
+
+* Try to be consistent with the use of `camelCase` and `snake_case`
+* Note that it is not entirely necessary to prefix all your functions with
+`mbqn` but acceptable
+* What is the reason for using `filesstrings::file.move`? Why not use `rename`?
+
+## vignettes
+
+* Stay within the 80 column width for readability. Reviewers will appreciate it.
+* Note that `preprocessCore` and `rpx` should be obtained from CRAN and
+Bioconductor repositories rather than referencing the GitHub version.
+* Why export an `mbqnExample` rather than providing an example in the `mbqn*`
+functions? Why do you need an external file rather than something saved in
+`extdata`
+* Documentation should be reviewed using `help(package = "MBQN")`.
+`??MBQN` uses fuzzy matching.
+
+## R
+
+* Use a more specific name for contained data
+* Use temporary files to save data in `get_pxdfile` and other functions
+instead of the working directory
+* Use `message` instead of `print`
+* Use `rename` instead of `file.move` and remove dependency
+* `loadFile` is a generic name and it should be more specific
+* You should use an appropriate Bioconductor class such as
+`SummarizedExperiment` to store the return value of `loadFile`
+* Consider using `BiocFileCache` for downloading and storing PRIDE data
+* Use the more robust `seq_along` instead of `seq(1, x)`
+* Do not save figures without the user's explicit consent. Avoid the `filename`
+argument and just plot to the graphics device. Not all users want a `pdf` of
+figures.
+* `ifelse` calls in the `mbqnBoxplot` options can be replaced with
+`x <- if(is.null(x)) value`, you can also create a helper function to avoid
+repetitive code
+* 'Demo' and 'example' functions are not needed when you have robust examples.
+You should provide these demos in the example pages of the documentation
+* You don't need to use double `::` in your own package `MBQN::get_kminmax`
+* Remove `save_fig` and `show_fig` arguments, plotting functions will always
+plot there should be no option to not plot. You may have to separate analysis,
+and plotting functions in `mbqnPlotAll`
+* Delete `set.seed` in `mbqnSimuData` and `mbqnSimuDistortion`. It has no
+place inside functions even if it is a comment.
+
+
+Minor:
+* Use `file.exists` instead of `length(list.files(...))`
+* Make a variable out of the `file.path` call and reuse it
+* Use `all(is.na(r))` to check for NA values across the row instead of the
+series of functions in `R/loadFile.R#63`
+* Avoid using `$` symbols that use fuzzy matching and extract with `[[`
+* Use `nrow` and `ncol` instead of `dim(x)[1]` and  `dim(x)[2]`
+* Make `FUN` in `mbqn` a functional argument rather than matching the function
+internally as is done by convention.
+
+
+## FEEDBACK
+
+> mbqnExample illustrates our package by downloading and using real public data from the PRIDE database.
+The individual functions contain additional example code.
+Please accept our current solution.
+
+This material seems more apt for a workflow rather than a package. Also, when
+including an example as a function, the code gets obfuscated and not clear for
+the user which is actually counter productive. I would recommend that you break
+up the large example function into smaller visible examples and include those
+as `examples` in the package rather than as a function. I would also limit package
+example datasets to small managable sizes rather than large real-world data.
+
+> Hmm. I agree, but to some extend it is also a matter of taste.
+I think for less experienced users, it is easier to use the package if we do not introduce specific bioconductor classes when we just operate on the data matrix. The major purpose of this function is loading data for illustration purpose. Users working with other packages will anyway have the data in special Bioconductor classes.
+We’ll keep it in mind.
+
+We strive to keep packages interoperable by providing representations in the
+usual and appropriate data classes. This includes `SummarizedExperiment` for
+expression and simliar data. You can provide compatibility for both data
+types.
+
+> In the current version, no figures are saved by default any more.
+
+`mbqnExample` still saves figures using a hard coded `save.fig` value set to
+`TRUE`
+
+AND
+
+`mbqnExample` doesn't work after interrupt (`^C`):
+
+```
+> mbqnExample(3)
+File does not exist - start downloading file. This can take a few minutes!
+ Do you want to continue? [y/n]
+y
+Proceed with download...
+Error in unzip(fnm, files = "proteinGroups.txt", exdir = filepath) :
+  object 'filepath' not found
+```

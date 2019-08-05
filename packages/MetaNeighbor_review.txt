@@ -1,0 +1,51 @@
+# MetaNeighbor #542
+
+## DESCRIPTION
+
+* You can just provide the `Author@R` field and remove the `Author`
+field.
+
+## NAMESPACE
+
+* It looks like some functions need to be renamed. 
+
+## R
+
+* `eval_obj` should be an unexported helper function. I don't see a reason for
+using the function outside your package. It should return a logical TRUE/FALSE.
+* Some of these checks are moot since they're already done when the
+`SummarizedExperiment` is created.
+* You should allow for an interface where the user can specify the name of
+their `study_id`, `cell_type` variables. This will allow more flexibility in
+variable names.
+* Using the `metadata` slot for required data leads me to believe that you
+should be looking for a structure that extends `SummarizedExperiment`. Perhaps
+one already exists with a `genesets` or similar slot.
+* Your main function could just be the name of the package `MetaNeighbor`.
+It should not save a file at all. The user can do that if he/she chooses to.
+* You can provide your `mn_data` as a `SummarizedExperiment` rather than a
+simple matrix.
+* Allow the user to select the assay in the `SummarizedExperiment` with
+by including an `i` argument in your function with a default to `1L`.
+So that your data is obtained by `SummarizedExperiment::assay(mn_data, i = i)`
+* Avoid growring a vector. Use the allocate and fill method
+(line 55 in `get_top_hits.R`)
+
+Syntax: 
+* Avoid the use of `1:length(x)` sequence generation. Use the more robust
+`seq_along` or `seq_len`. 
+* `length(which(is.na(x) == FALSE))` could be simplified to `sum(!is.na(x))`
+* Use name values where possible when subsetting
+(e.g., `vector <- dataframe[["variable"]]` instead of `dataframe[[1]]`)
+* Please use camelCase function naming conventions and remove prefixes such
+as `run_`. Keep function names short where possible
+(e.g., `neighbor_voting_LeaveOneExpOut` -> `voteNeighbor` and document
+the leave-one-out method)
+* Avoid overwriting a function symbol such as `c` with an object created
+in your function. Use a different name. 
+
+## vignettes
+
+* We will not accept static vignettes. Please make your code runnable in
+the package vignette
+

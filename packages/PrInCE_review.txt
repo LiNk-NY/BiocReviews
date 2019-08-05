@@ -1,0 +1,56 @@
+# PrInCE #957
+
+## DESCRIPTION
+
+* Update the `BugReports` field to 'https://github.com/fosterlab/PrInCE/issues'
+* Please wrap text to fit 80 column widths.
+* Minor: Depends field should read R (>= 3.6.0)
+* It's not entirely necessary to inclue the package version of every package.
+You can leave it as is for now.
+
+## NAMESPACE
+
+* Looks okay. Try to keep function names short.
+* Some functions could possibly be methods on a class (e.g.,
+`predict_NB_ensemble`, `predict_RF_ensemble`, etc.)
+* Some can be combined such as `make_feature_*` into `make_feature`.
+
+## R/
+
+* Use character names rather than indices to subset `data.frame`s (more robust).
+These can be arguments to a function if the name is not specified.
+* Check for `is.missing` rather than `is.null` when no default value is used
+in `check_gaussians`.
+* Vectorize or loop where possible to avoid long `if` `else` statements
+(e.g., in `check_gaussians` you can use an lapply or vapply to check if any of
+those fields are missing).
+* Perhaps you should keep `clean_profiles` and related operations endomorphic,
+meaning they accept and return `MSnSet`.
+* Consider grouping functions into one file rather than having 1 file for each
+function (for example, AIC related functions; data docs).
+* Avoid using vague argument names such as 'input'
+* Use switch to avoid a series of `if` `else` statements in
+`predict_interactions`
+
+```
+interactFUN <- switch(classfier,
+    NB = predict_NB_ensemble,
+    RF = predict_RF_ensemble,
+    ... etc.)
+```
+
+* It is possible to combine predict_*_ensemble functions into one and have an
+argument for each algorithm (`c("NB", "RF", "SVM")`)
+
+
+Minor:
+* `if (length(best) == 0)` is equivalent to `if (!length(best))`
+* Use `<-` for assignment rather than `=`
+* Use `seq_along(x)` instead of `seq_len(length(x))`
+
+## vignettes/
+
+* Please wrap text to 80 column width
+* It looks thorough in terms of describing functionality but perhaps some
+additional examples would help users.
+

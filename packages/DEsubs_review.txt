@@ -1,0 +1,16 @@
+* Suggestion: Remove repetitive coding via look up table with "method" and "functionName" as
+column names. Then use get() to call the function and reduce coding to a few lines.
+
+* Add a helper function for creating choices and cases and reuse in both
+pathwayAnalysis function and subpathwayTYpes. 
+
+* try not to step on base function names such as "data"
+
+* There's no need to create a copy of the data for the 
+user. Please remove this .buildDirectories function on
+package attach. 
+
+* you can provide a convenience function if the user desires to
+copy data to a particular folder...
+
+

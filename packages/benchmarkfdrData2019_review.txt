@@ -1,0 +1,22 @@
+# benchmarkfdrData2019 #1086
+
+## DESCRIPTION
+
+* Include a `BugReports` link in the `DESCRIPTION`
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* Include Bioconductor installation instructions
+* `BiocManager` should be the default example because it is using `remotes`
+internally
+* Include the alternative way of downloading a resource as `hub[["EH2433"]]`
+but encourage the use of the generated functions
+
+## R/
+
+* Data looks well documented
+

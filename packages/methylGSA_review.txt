@@ -1,0 +1,53 @@
+# methylGSA #758
+
+* `methylGO` does not only provide access to GO resources but also KEGG
+and Reactome databases. Consider renaming the package to reflect its
+utility.
+
+## DESCRIPTION
+
+* Please format `Imports:` field so that the listed packages are clearly
+legible.
+* Update your `Depends:` field to R version >= 3.5.0.
+* Consider using `Authors@R` field to combine `Author` and `Maintainer` fields.
+
+## NAMESPACE
+
+* Looks good.
+
+## R
+
+* Consider combining toy dataset roxygen blocks into a single file
+(e.g., GSlisttoy.R, cpgtoy.R > toydatasets.R)
+* Include how you generated these datasets in a script under `/inst/scripts` or
+`/data-raw`; if datasets are subsets of actual data please include a source.
+* Avoid using `sapply` and use the more robust `vapply`
+* The code for the options in `getGS` is quite similar. Consider using a helper
+function to avoid repetitive code.
+* Use `vapply` instead of `unlist(lapply())` if the `lapply` output is
+consistent.
+* Reference subsetting values using names rather than numbers
+(e.g., `GSEAres[, "variable"]` instead of `GSEAres[, 1]`)
+* Reuse `getAnnot` functionality within `methylgometh` to avoid repetitive
+code.
+
+Minor:
+* `return()` is unnecessary within an `lapply` loop as the last evaluated
+piece of code is returned
+
+## vignettes
+
+* It's good that you added example datasets. The procedure looks straight
+forward.
+* Please include your `sessionInfo` at the end of the vignette.
+
+## tests
+
+* Please add tests to your package to keep the code robust and maintenance
+low.
+
+## inst/NEWS
+
+* Please add a NEWS file for providing updates on user facing,
+internal improvements, and bug fixes.
+

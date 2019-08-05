@@ -1,0 +1,59 @@
+# phemd #897
+
+## DESCRIPTION
+
+* Please use the full `R.version` string `3.5.0`
+* `SingleCellExperiment` or `SummarizedExperiment` not in `Imports`. If you're
+going to support these data classes, you should be importing the necessary
+functions to make interoperability possible.
+* Format the file to not exceed 80 column width
+
+## NAMESPACE
+
+* Class names are capitalized by convention. You may also want to remove
+('obj') suffix from the name.
+* The Bioconductor convention is to use `camelCase` instead of `snake_case`
+
+## vignettes/
+
+* Please use a more descriptive title
+* Consider using `BiocStyle::html_document` for the vignette build
+* Remove any mention of `biocLite` and replace it with `BiocManager::install`
+* Remove any commented code that is not running.
+* Stay within the 80 width column limit so that maintaining your vignette and
+code becomes easier.
+
+## R/
+
+* When working with `data_list` in `get_sample_sizes`, it is better to use
+`vapply(data_list, nrow, integer(1L))` rather than an allocate-and-fill `for`
+loop
+* Remove all instances of semi-colons `;` as they are not necessary.
+* Consider using a vector of options as the default argument for `cell_model`
+and subsequently using `match.arg` to default to the first or the entered
+option.
+* Avoid using a `for` loop for splitting data, just use `split` (see
+`ref_clusters`)
+* Use arrow `<-` for assignment instead of equals sign `=`
+* Use `lapply` and `*apply` family to work with `lists`, it saves from
+`for` loop object management (for example see `indentify_centroids`)
+* Avoid using `eval(substitute(...))` for NSE, in `gaussianff_local`, you can
+just first calculate the arguments for the new `vglmff` class ('constraints',
+'deviance', etc.) and then use those outputs as inputs to the `new` function.
+* Please see the Bioconductor best practices guidelines: 
+http://www.bioconductor.org/developers/package-guidelines/#rcode
+* Avoid using `1:M` etc.
+* Replace `attach` with another verb in `attach_seuratobj` (e.g., `bindSeurat`)
+* Please make accessor and setter functions for your object class for example,
+`seuratInfo(phemdObject)` and `seuratInfo(phemdObject) <- seuratObject`.
+* Avoid using `@` to access slots
+* Provide validity checks for the `phemdObj` class to increase robustness.
+* Import the `isEmpty` generic in `S4Vectors` to create a method for your
+`phemd` class.
+* Plotting functions should not save to the user's file system by default,
+that can be done by the user's invocation of `pdf`, `png` or another desired
+file format.
+* Separate `methods.R` into different files such as `plotting.R` and other
+files so that they are easier to manage.
+* Avoid saving intermediate files without the user's consent (`dm.RData`)
+

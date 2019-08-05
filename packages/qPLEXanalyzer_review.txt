@@ -1,0 +1,41 @@
+# qPLEXanalyzer #735
+
+* Please format code so that it fits within 80 columns.
+* Your repository is at ~40 Mb. Please reduce the repository size (.git) using
+the BFG repo cleaner.
+
+## DESCRIPTION
+
+* Looks good.
+* Please add a `BugReports` field to link to the issues page on GitHub
+* Remove `LazyLoad` field, it's no longer supported and is ignored.
+* Consider using `Authors@R` field instead of the `Author` and `Maintainer`
+fields
+
+## NAMESPACE
+
+* Names look good. You might want to consider renaming `convertToMSnset` to
+something like `dataframeToMSnset`.
+
+## R
+
+* You might want to write a function that will perform all the checks to the
+inputs of `convertToMSnset` and other functions.
+* Avoid the copy and append method in `groupScaling`, use the allocate and fill
+method.
+* Avoid `1:ncol(x)` sequence generation, use the more robust `seq_len` and
+`seq_along`
+* There's no need to use `'%in%'(x, TRUE) & ...`, instead use `x & ...`
+* Consider opening up the `corrPlot` interface to allow users to select colors
+
+Minor:
+
+* `length(x) == 0` is equivalent to `!length(x)`
+
+## vignettes
+
+* Again, format the vignette to max 80 column width. It is easier to read
+and maintain.
+* Consider using `gridExtra` for displaying the figures (p1, p2, etc.)
+* Update or delete commented code if it is not running
+

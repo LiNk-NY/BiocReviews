@@ -1,0 +1,52 @@
+# martini #575
+
+## DESCRIPTION
+
+* Format the file to have a limit of 80 column width.
+* Remove the `Remotes` field. `Rgin` will be available in Bioconductor
+concurrently with your submission.
+
+## NAMESPACE
+
+* Look okay.
+* What is the reason for importing the bracket `[` from `snpStats`?
+
+## R
+
+* Don't use unexported functions in examples. Either you want to consider
+exporting them or not show their functionality directly.
+* Consider using a more formal structure rather than a list for data storage
+and manipulation
+* Consider using `switch` instead of a series of `if`/`else` statements.
+* Avoid creating sequences using `1:n` notation. Use the more robust
+`seq_len(n)` or `seq_along(n)`.
+* Avoid using numeric indices and use more robust character references when
+subsetting.
+
+
+Minor: 
+* Make sure you are writing everything out in the man pages, such as `LD` for
+"linkage disequilibrium".
+* Specify `data.frame` or `DataFrame` in the man pages (ex: param `ld` in
+`R/ld.R`)
+* Use more robust double bracket `[[` extraction rather than the dollar sign
+(`$`).
+* Why not `genes$start_position[genes$start_position < 0] <- 0` instead of
+using `ifelse`?
+* Consider encoding your data in a `data.frame` rather than in a series of
+`if` `else` statements in `encode_gwas`.
+
+## vignettes
+
+* It looks like your simulate phenotype vignette is incomplete.
+
+## man
+
+* Your documentation looks good. You even document unexported functions. :+1:
+* Make sure you are explaining acronyms where needed.
+* Try not to use cryptic argument names (e.g., for `N` use `nperm`; `n`, `p`). 
+
+## tests
+
+* Looks good.
+

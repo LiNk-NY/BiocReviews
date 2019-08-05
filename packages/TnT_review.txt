@@ -1,0 +1,43 @@
+# TnT #487
+
+## TnT/
+
+* `build.sh` should be something that is only on your machine, it should
+not be part of the package
+
+
+## DESCRIPTION & NAMESPACE
+
+* Looks good
+
+## R
+
+* Please relocate examples enclosed in `if (FALSE) {}` to `inst/scripts/`
+* These examples may be added to the vignette
+* Reduce JSCascade and similar functions to just one argument (with "...")
+by taking `list(...)` and subsetting to the first element if it is already
+a list (see https://github.com/Bioconductor/GenomicRanges/blob/master/R/GRangesList-class.R#L56)
+for an example
+* Avoid renaming functions within your code (e.g., `js`, `jc`, etc.), although
+it may be convenient, it's harder to keep track and debug functions
+* Use `methods::is` for testing class membership for S4 classes (e.g.,
+`is(x, "SummarizedExperiment")`)
+* There's no apparent need to nest functions in `.convertToJSChar`
+* Avoid using `sapply` and use the more robust `vapply` instead
+* Avoid assigning variables to function names to avoid name collisions,
+i.e., `t <- new(class)`
+* End show outputs in newline `\n`
+
+Minor: 
+* `if (!length(x))` is equivalent to `if (length(x) == 0L)`
+* `if (length(x))` is equivalent to `if (length(x) > 0L)`
+* Use the semantically better replacement method, `setReplaceMethod`
+* Always provide error messages when calling stop, mark `<internal>` as
+necessary
+* Functions like `.checkBoardSpec` can be validity checks for your class 
+* Color inputs should also be integer, as in base functions
+
+## vignettes
+
+* It looks good
+

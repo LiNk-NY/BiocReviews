@@ -1,0 +1,73 @@
+#### Dependencies 
+Your `DESCRIPTION` file states too many dependencies. It is recommended to
+selectively import from such packages via the `importFrom` directive. 
+
+*Message*: 
+```
+Depends: includes the non-default packages:
+  ggplot2 ReactomePA clusterProfiler reshape2 reshape org.Hs.eg.db
+```
+
+#### Getters and Setters
+Your code shouldn't include any `@` slot accessors. You should create methods
+to access slots in your class so that something like `getter(object)` works.
+You might also want to include setReplaceMethod` so that you can replace
+values in the slots. 
+
+#### Image files
+I saw that you have multiple `*.png` files in the package. Do you need to
+include all of those? Are these used for plotting? 
+```
+>LINC
+./inst/extdata/statslinc_img.png
+./inst/extdata/singlelinc_img.png
+./inst/extdata/protcl_img.png
+./inst/extdata/clust_img.png
+./inst/extdata/stclust_img.png
+./inst/extdata/overview_img.png
+./inst/extdata/interbio_img.png
+./inst/extdata/barplot_img.png
+./inst/extdata/querycluster_img.png
+```
+
+#### Grammar
+There were some operations like `1:size` and `1:nrow(matrix)` that may fail
+when `size = 0`. In order to maintain robust code, please use `seq_len` instead.
+
+#### Vignette
+Although PDF is acceptable, you may want to consider using HTML_document output
+via BiocStyle.
+
+#### Length of Files
+Just for readability and future debugging, it would be more convenient to have
+several R files instead of one big file. They can be organized by class, methods,
+etc. 
+
+#### Function Names
+Some function names need a bit of work. Please be consistent between using ("_")
+underscore or camel case. It is preferred that you use "camelCase" and provide
+descriptive names to functions.
+
+#### Compatibility
+Your package works on expression datasets, does this mean that some of your
+methods should be dispatching on `ExpressionSet` or `SummarizedExperiment`
+classes?
+
+#### Undeclared imported functions, variables, datasets
+See the message from the build: 
+```
+Undefined global functions or variables:
+  ASSIGNMENT CORRELATION ENSG_BIO ENSG_PC ENTREZ_BIO EXPRESSION
+  NO_SUBJECT PC SAMPLES SUBJECT_1 SUBJECT_2 SUBJECT_3 SUBJECT_4
+  SUBJECT_5 TERMS VALUE VARIANCE colors lincRNA protein_coding pvalue
+  splot_1 splot_10 splot_2 splot_3 splot_4 splot_5 splot_6 splot_7
+  splot_8 splot_9 str tail values warnim02 write.table x y
+Consider adding
+  importFrom("grDevices", "colors")
+  importFrom("utils", "str", "tail", "write.table")
+```
+
+Please document any datasets that are used in the vignettes and
+available to users. Otherwise, save the data as `R/sysdata.rda` if not meant
+to be exported.
+

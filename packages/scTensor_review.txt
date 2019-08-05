@@ -1,0 +1,49 @@
+# scTensor #884
+
+## DESCRIPTION
+
+* Consider combining `Author` and `Maintainer` fields into `Authors@R`
+* Mind the 80 column width formatting guidelines
+
+## NAMESPACE
+
+* Remove optional `db` packages from `import` directives. Only include these
+in the `Suggests` field of the `DESCRIPTION` file.
+* It appears that you don't need to use `cell*` prefix for all of your exported
+functions. Please remove the prefixes.
+
+## vignettes/
+
+* Please ensure that your vignette and code are within 80 character-width. This
+improves readability and maintenance.
+* Please remove any commented code and include only running code.
+
+Minor: 
+* You can avoid showing the `suppressPackageStartupMessages` by loading the
+package in a separate chunk and doing `echo = FALSE` in the chunk options.
+Then you can use another chunk to show `library("LRBaseDbi")` with `eval =
+FALSE` to get a clean looking code chunk.
+
+## R/
+
+* Remove all library calls from `AllGenerics.R`. Include the extra packages in
+the `Suggests` field. Check first if they are available in the user's library
+with `requireNamespace` otherwise error out and tell the user to install those
+packages. 
+* For the series of algorithms, you can create an internal map or use `switch`
+to relate keywords to algorithm functions and use that structure to reduce
+the amount of `else if` statements that you have.
+* Default `out.dir` is usually "." or the current working directory
+* Why not use `...` instead of `useobjects` and avoid doing `eval(parse(...))`?
+* Avoid using `sapply`, use the more robust `vapply` or even `lapply`
+* Avoid using `cat` outside of print methods for classes, use `message` instead
+* Use `writeLines` or `capture.output` to create the `Rmd` file instead of
+`sink()`
+* Avoid using nested `for` loops where possible
+* You might want to use a lookup table for `.ensembl` instead of a series
+of `else if` statements.
+* Consider setting argument defaults with the vector of all the options and
+do `match.arg` and take the first by default (see `algorithm` argument).
+* The documentation for `cellCellRanks` says that `mergeas` is `sum` by default
+but this is not reflected in the `usage`.
+

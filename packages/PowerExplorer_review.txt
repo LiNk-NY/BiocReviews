@@ -1,0 +1,59 @@
+# PowerExplorer #615
+
+* Your package does not appear to make use of existing Bioconductor
+functionalities.
+* Please support `SummarizedExperiment` input and classes related
+to proteomics.
+
+## DESCRIPTION
+
+* Consolidate both `Author` and `Maintainer` fields by using the
+`Authors@R` field.
+* Use release `roxygen2`
+
+## NAMESPACE
+
+* Can these long function names be avoided?
+
+## R
+
+* Avoid creating empty vectors and subsequently copying and filling them.
+Use the allocate and fill method. See Bioconductor coding practice guidelines.
+* Avoid nesting `for` loops.
+* Avoid providing arguments for saving datasets within a function
+(`saveRData`, `saveSimulatedData`). At the very least, leave these options
+turned off by default.
+* It will suffice to provide the data within the resulting object.
+* Use helper functions to avoid repeating code.
+* It seems like the package is lacking a formal S4 class with a show method.
+* Consider using `switch` for when you want to assign a variable using multiple
+conditions, i.e.,
+`dataTypeSelect <- switch(dataType, RNAseq = TRUE, Proteomics = FALSE)`
+* Do not include any `savePlot` functionality. The user may save plots via the
+device output by running `pdf`, `png`, etc.
+* Consider separating plot functionalities by having a function for each
+`plotType`.
+* Avoid using `with` in package code. Break complicated code into smaller
+and compute on those smaller pieces.
+* Include a `seed` argument for functions that use random number generators
+(`simCounts`).
+* Avoid using `rm` inside a function, no need for it.
+* Code can be shortened by conditionally assigning character variables and
+function names in `R/simulateData.R`.
+
+Minor:
+* Please use the more robust `[[` method for list access rather than `$`. 
+* Avoid double evaluation in `if`. Example, use `if (saveRData)` instead of
+`if (saveRData == TRUE)`.
+
+## vignettes
+
+* Remove intermediate files in the `vignettes` folder.
+* Please keep text within an 80 column width.
+* No need to include images in the vignette, they should be generated
+by the run.
+
+## data
+
+* Consider shortening the names of the datasets
+

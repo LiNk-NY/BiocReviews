@@ -1,0 +1,52 @@
+# MDTS #600
+
+* Please use make sure that your files do not exceed 80 column widths.
+
+## DESCRIPTION
+
+* You can use the `Authors@R` field to provide author and maintainer in
+a single field.
+* Other than formatting, it looks good.
+
+## NAMESPACE
+
+* It looks like `pData` is an old idiom for `colData`. From the vignette,
+it doesn't look like you want to use `pData` in the same way (as an accessor).
+Please rename the function. 
+
+## R
+
+* Please use arguments that are not abbreviated. For example, use `readLength`
+instead of `rl`. 
+* Avoid growing a vector and the use of `1:n` sequences.
+* Please see the Bioconductor coding practices at
+http://bioconductor.org/developers/how-to/efficient-code/
+* Avoid the use of `sapply`
+* Avoid hard coded names in functions such as `pData$subj_id`. It may work
+with the example data but not all dataset may have this variable. Provide
+an argument with a default value for identifiers ("subj_id") and use double
+bracket `[[id_var]]`.
+* It is generally preferable to import selective functions rather than the
+entire package due to potential name collisions, please use `@importFrom`
+where possible, especially when the number of imported functions is low.
+* Please rename `pData` as the general contract for pData does not accept
+a file path input.
+* Please use `<-` assignment rather than `=`.
+* Avoid conditions where just a variable can be the difference (eg., `map` and
+`GC`).
+
+Minor:
+* Avoid switching from numerical to logical index, e.g., `which(rle_track>0)`
+* All `if` conditions evaluate to logical. No need to test equality with a
+logical, for example `if (hasChr == FALSE)` is really `if (!hasChr)`
+
+## vignettes
+
+* Please avoid using an external dataset such as the one in `JMF47/MDTSdata`.
+* If you plan on including this package with your submission please,
+add it accordingly. 
+* Otherwise, include a small example dataset for use in the vignette.
+* Again, please format the vignette to not exceed 80 column widths.
+* Please use `<-` assignment rather than `=`.
+* Include the `sessionInfo`.
+

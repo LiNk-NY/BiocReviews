@@ -1,0 +1,57 @@
+# multiHiCcompare #801
+
+Overall, the package code and vignettes need more formatting so that lines
+don't go over 80 column width.
+
+## DESCRIPTION
+
+* Looks okay although it could use formatting.
+
+## NAMESPACE
+
+* The Bioconductor usual practice is to use `camelCase` for function names.
+* Avoid using periods in function names unless creating an S3 method.
+
+## R
+
+* Create a set of accessor functions for your `hicexp` data class so to avoid
+using `@` in the code.
+* It is convention to denote class names with capital letters (i.e., `Hicexp`)
+    * Avoid creating sequences with `1:n` expressions, use the more robust
+`seq_len` or `seq_along`
+* Avoid nesting `for` loops whenever possible
+* Combine input checks into a couple of checks (`.loess.as`) with a consistent
+message (e.g., `!ncol(x) %in% c(1, 2) || !is.numeric(x) || any(is.na(x))`, etc.)
+* Separate `plot` functionality from computations (avoid `plot` arguments).
+* Use helper functions to avoid repetitive code (argument checking in
+`fastlo`, etc.)
+* Typically, it is better to avoid `%>%` piping in package code. It's largely
+convenient for end-user code.
+* It would be better to create a general function that would change based on
+the `parallel` argument rather than coding for both conditions
+(e.g., `FUN <- if (parallel) BiocParallel::bplapply else lapply` in `glm.R`)
+* Avoid referencing columns by index position and use names for robustness.
+* Please avoid functions like `reset_par`. You can save user defaults first,
+then restore them after modifying them.
+
+Minor:
+* It would be better to write conditionals such as `if (iterations != 3L)`
+rather than `iterations < 2` and `iterations > 4`.
+
+## data
+
+* Use a more descriptive and informative names for the data objects
+
+## vignettes
+
+* Use `BiocManager` instead of `biocLite` in the vignette.
+* Remove commented sections from the vignette or include them as runnable code.
+* Include `sessionInfo` at the end
+* Be mindful of the formatting. Clean formatting makes a package easier to
+maintain.
+
+## tests
+
+* You don't need to call `library` inside tests.
+* Looks good. More is always better.
+
