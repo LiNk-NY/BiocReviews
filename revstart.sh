@@ -16,10 +16,10 @@ cd $pkgname
 
 biocfile="$HOME/Bioconductor/BiocReviews/packages/${pkgname}_review.txt"
 
-echo $file
-if [ ! -e "$file" ] ; then
-    touch $file
+echo $biocfile
+if [ ! -e "$biocfile" ] ; then
+    touch $biocfile
 fi 
 
-vim -O $file DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R 
+vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R 
 
