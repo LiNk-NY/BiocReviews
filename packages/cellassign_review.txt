@@ -1,0 +1,36 @@
+# cellassign #1178
+
+## DESCRIPTION
+
+* Looks good
+* Include a `BugReports` field pointing to the GitHub issues page.
+
+## NAMESPACE
+
+* It looks like you're exporting an S3 method. Perhaps you should use the
+conventional 'class.method' format?
+
+## vignettes
+
+* Looks clean and concise. 
+* It would be good to stick to the 80 column width limit for
+readability and maintainership. This doesn't affect the ouput
+but makes it easier to go back and modify / read.
+* Please show how the `tf` object was created
+* Ensure that your installation instructions use `BiocManager::install`
+
+## data 
+
+* `example_rho` seems like it could fit within the rowData of the object you're
+providing
+* It would be better to generate the data from the examples and generate
+a unified object for representation such as `SummarizedExperiment`
+
+
+## R
+
+* The `cellassign` function should return a class of the same name
+* You should create accessor functions instead of using `$` to access the list
+
+### Examples
+
