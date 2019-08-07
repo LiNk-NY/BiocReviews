@@ -9,9 +9,14 @@
 
 * Remove the `exportPattern` directive and be intentional with your exports
 
-## Comments
+## Comments before further review
 
-* Please make sure you are interfacing with Bioconductor data structures
-* Follow the Bioconductor package guidelines:
+* Please make sure you are interfacing with established Bioconductor data
+structures, otherwise the package seems to fall out of scope of the project
+* The code should follow the Bioconductor package guidelines:
 http://bioconductor.org/developers/package-guidelines
+* Given that Affy microarrays have been replaced by newer high-throughput
+sequencing tech, what are the advantages of using `Sscore2` versus `Sscore`?
+* Consider renaming the package (or contributing to the original package) so
+that the package does not appear to be a continuation of `Sscore`.
 
