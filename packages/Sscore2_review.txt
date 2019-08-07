@@ -1,0 +1,17 @@
+# Sscore2 #1190
+
+## DESCRIPTION
+
+* Packages should be in `Imports` and not `Depends`
+* Remove dependencies that are not being used (`dplR`)
+
+## NAMESPACE
+
+* Remove the `exportPattern` directive and be intentional with your exports
+
+## Comments
+
+* Please make sure you are interfacing with Bioconductor data structures
+* Follow the Bioconductor package guidelines:
+http://bioconductor.org/developers/package-guidelines
+
