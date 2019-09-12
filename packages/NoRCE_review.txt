@@ -75,3 +75,22 @@ Minor:
 * Use `file.path(x[1], x[2])` instead of
 `paste0(x[1], "/", x[2], sep = "", collapse = "")`
 
+## response ##
+
+Hi @guldenolgun,
+I don't see how readbed would help users. There are functions already available that take a data.frame and produce a GRanges object (GenomicRanges::makeGRangesFromDataFrame) as well as functions that import BED files.
+
+Sorry, my line numbers were different at the time of the review.
+I went back and looked at the line numbers with issues: 216, 236, 247 and all code chunks that include 'code' with the eval=FALSE flag.
+Update your code chunks to minimize the number of code chunks with eval=FALSE.
+Save your users the frustration when coming upon code that purportedly works only to find out
+that it is stale. Please avoid that in your package.
+
+Concerning cRegulome I was referring to the miRCancer.db database file in the package and was wondering if you could make use of it.
+
+The assembly function will not be accepted as it stands because it requires users to download all those packages. The code is pretty much the same for all except for some calls to the useMart function. This can be generated programmatically and without the need to install all packages.
+
+I was referring to the specific implementation found in the EnrichmentBrowser which does all the mapping of internally, see .org2pkg specifically.
+
+Best,
+Marcel

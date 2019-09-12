@@ -1,0 +1,15 @@
+# methcp #1204
+
+## DESCRIPTION
+
+* Consider using `Authors@R` instead of `Author` and `Maintainer`
+* Include a `BugReports` field pointing to the GitHub/issues URL
+* Consider reformatting the `Imports` and `Suggests` fields to increase
+readbility (one package per line)
+* Add a `Depends` field with R version `>= 3.6.0`
+
+## NAMESPACE
+
+## vignettes
+
+## R
