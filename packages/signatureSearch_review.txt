@@ -1,0 +1,10 @@
+# signatureSearch
+
+## DESCRIPTION
+
+## NAMESPACE
+
+## vignettes
+
+## R
+

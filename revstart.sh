@@ -4,17 +4,21 @@
 
 pkgname=$1
 
+BIOC="$HOME/Bioconductor"
+
+PKGLOC=$BIOC/$pkgname
+
 if [ -z "${pkgname// }" ]; then
     echo "Enter a package folder name"
     exit 1
-elif [ ! -d $pkgname ]; then
+elif [ ! -d $PKGLOC ]; then
     echo "Directory does not exist"
     exit 1
 fi
 
-cd $pkgname
+cd $PKGLOC
 
-biocfile="$HOME/Bioconductor/BiocReviews/packages/${pkgname}_review.txt"
+biocfile="$BIOC/BiocReviews/packages/${pkgname}_review.txt"
 
 echo $biocfile
 if [ ! -e "$biocfile" ] ; then

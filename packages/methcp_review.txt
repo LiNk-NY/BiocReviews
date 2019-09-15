@@ -10,6 +10,43 @@ readbility (one package per line)
 
 ## NAMESPACE
 
+* Looks good. Try to avoid generic names like `methcpFromStat`
+
 ## vignettes
 
+* The first example shows users how to loop over files. Consider creating
+a helper function to load files and return a `bsseq` object.
+* Make sure that it is clear to the users what they are doing when loading
+and processing multiple files
+* A lot of code like this in the vignette is off-putting
+* Avoid using `1:n` sequence generation, use `seq_len(n)` or `seq_along`
+* `methcpFromStat` looks clunky and not very convenient for the user, consider
+using a different type of input (`GPos`?)
+
 ## R
+
+* Remove extra "ERROR:" tags within the `stop` function. `stop` returns an
+error.
+* What's the reason for capturing the output in `calcLociStat`? Are you trying
+to not show the warnings? If so, you can use `suppressWarnings` and related
+functions.
+* You could create an intermediate class to represent the stats required
+for the MethCP object. It can contain a `GRangesList`
+* Be sure to describe all params or indicate further information in details
+(e.g., documenting the `meta` argument)
+* Usually constructor functions are plain functions and not methods to a
+particular generic. You should create one function that will handle different
+types of input and return the same class `MethCP` (think funnel).
+* There is no need to create a generic for functions such as `segmentMethCP`.
+As the name implies it's an operation for segmenting a specific class. Create
+generics if you have multiple classes that have a similar and meaningful
+operation (e.g., `segment`) or if you expect other developers to use the
+generic.
+* Avoid using `@` for slot access. Create a dedicated accessor function instead
+such as `segments()` and `test()`.
+* "Stopped" messages should end in errors not in warnings and it would be
+better to return nothing in `segmentMethCP`
+* I've noticed that you're extensively using `as.numeric` throughout the code
+is this due to the objects that don't have a reasonable type?
+
+
