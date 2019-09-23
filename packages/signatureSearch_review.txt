@@ -1,10 +1,94 @@
 # signatureSearch
 
+* Do other packages provide an interface to the LINCS data and have you
+considered using them (see `slinky`)?
+
 ## DESCRIPTION
+
+* Looks good.
+* Consider having `org.Hs.eg.db` in the `Suggests` field
+* `Date` and `Packaged` fields are superfluous
 
 ## NAMESPACE
 
+* It looks like you're exporting a number S3 methods. What is the justification
+for using S3 over S4?
+* Try to use a consistent case for all exported functions either `snake_case`
+or `camelCase`
+
 ## vignettes
 
+* The vignette looks pretty dense with text. Perhaps you want to reduce the
+amount of reading and provide a slim version of your paper here?
+* You can point your users to the full paper if they would like to read it.
+* Could you have saved the HDF5 files as SummarizedExperiments so that you don't
+have to write a function for it? (see `HDF5Array::saveHDF5SummarizedExperiment`)
+
 ## R
+
+* It seems that there is an implementation issue with the class as you are
+required to create all the methods again.  I would look for an easier and
+smoother alternative that inherits from the `data.frame` class at least.
+* `query` slot should be a `list` class instead of `ANY`. This will avoid
+unexpected behavior. You could also create a union class if you want to
+support more than one class. Ideally, you'd have some query type of class to
+provide in the `qSig` slot.
+* Avoid using `dontrun` flags in the examples. Provide minimal examples that
+are easy to run and not computationally intense
+* Avoid using loops in `comp_fea_res`. Create a list of tibbles and bind them
+after an `lapply` operation or use `group_by` and a function to run for each
+group. `rbind(df, tb2)` is not recommended.
+* Avoid using `eSet` class. Please use the next gen, `SummarizedExperiment`
+class.
+* Don't create methods for classes that are not your own as you're 'polluting'
+the other class's interface. Create a funnel type of function to handle
+different classes from the input and return the appropriate output for
+`connectivity_score_raw` etc.
+* Avoid the use of `@` to access class slots. Use dedicated accessor functions
+* For functions with a lot of `message` calls, use a `verbose` argument for
+turning the messages on/off
+* Use `utils::globalVariables()` to address `NOTES`
+* Only use `%>%` and tidyverse / `data.table` if absolutely necessary in order
+to avoid unnecessary dependencies
+* Data in `extdata` should not be accessed by `gess_res_vis`. Keep data that
+you'd like to use in a function in the `data` folder and invoke using `data`.
+Data in `extdata` is usually used for examples for a function that reads in
+a particular format
+* Plotting functions should have open interfaces allowing your users to
+customize to their liking.
+
+
+### Minor
+* Use `c("geneRatio", "count")` as the argument in the internal function
+* Document errors for internal function as `stop("<internal> ... ")
+* Avoid the use of `=` assignment operator (for style)
+* Avoid double logical evaluation (i.e., `if (rerun == TRUE)` and use
+`if (rerun)`
+
+# signatureSearchData
+
+* The package should expose the data and not really provide extensive software
+functionality.
+* For functions such as `gctx2h5`, they should go in a software package rather
+than the experiment data package.
+* Why download data via FTP? The point of the experiment data package is to
+use `AnnotationHub` resources
+* Many of these functions seem like utility functions and belong in an alternate
+package (a utils package of some sort). Analysis functions belong in the main
+package
+* There should be no classes exported in the package
+* Functions such as `load_sqlite` more often than not belong in the software
+package as unexported utility functions
+
+## vignettes
+
+* In general, it looks like there is a lot of manual work involved in
+presenting these data objects to the user (e.g., `affyid_annot` chunk)
+* The package should have a function to load the data object from HDF5
+and present the user with a `SummarizedExperiment`. Users should not have to
+run `readHDF5chunk` themselves.
+
+
+
+
 

@@ -2,12 +2,18 @@
 
 # 1 - a package folder for building and checking
 
+pkgname=$1
+
+BIOC="$HOME/Bioconductor"
+
 shopt -s expand_aliases
 
 source ~/.bash_aliases
 
-buildr $1 
-checkr $1_*
+cd $BIOC
+
+buildr $pkgname
+checkr ${pkgname}_*
 
 if [ $? -ne 0 ]; then
     echo "Check failed, fix issues and try again"
