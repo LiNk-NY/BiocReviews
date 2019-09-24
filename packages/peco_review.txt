@@ -1,0 +1,49 @@
+# peco #1248
+
+Overall, the package seems to use `list`s often as function outputs. It is
+better to have 'endomorphic' operations that take a `SingleCellExperiment` as
+input and return one with results whenever possible.
+
+## DESCRIPTION
+
+* The `Date` field is not really needed.
+* Looks good
+
+## NAMESPACE
+
+* Avoid tagging functions with `generic`. The 'generic' property should be
+reflected in the implementation
+
+## vignettes
+
+* Please respect the 80 column width limit, it makes it easier to maintain
+and easier to review
+* Avoid using `get` with `data`. Simply use `data(sce_sub)`
+* Consider using a more informative dataset name
+* Use `apply(x, 1L, ...)` instead of
+`do.call(rbind, lapply(seq_len(nrow(x)), ...))`
+* Avoid converting logical to numeric index. Often the logical index is enough:
+`which(coldata$chip_id != "NA18511")` can be `coldata$chip_id != "NA18511"` and
+you can add `!` in the front to get the opposite (instead of `==`)
+
+Minor:
+* Simplify code by using `1:5` instead of `c(1:5)`
+
+## R
+
+* Please use a standard 1 or 2 cores as default for functions that use
+`doParallel`
+* Prioritize vectorized operations and try to avoid nested `for`/`lapply` loops
+* Avoid using `sapply` and use `vapply` instead
+* Use 'character' indices (e.g., `x["coef"]` vs `x[2]`) for subsetting data
+whenever possible to avoid mistakes when data changes
+
+### data.R
+
+* Use descriptive names
+
+Minor:
+* Consider using `seq_along` instead of `seq_len(length(...))`
+* No need to double evaluate to `TRUE` in `if (plot.it == TRUE)`;
+`if (plot.it)` should be enough
+
