@@ -1,0 +1,59 @@
+# BiocSet #1229
+
+* Code is nicely written and neat.
+* Generally, there is a mix between S4 and S3 methods and it's not immediately
+clear why use one over the other.
+
+## DESCRIPTION
+
+* It looks good
+
+## NAMESPACE
+
+* It looks like functions, such as `*_from_elementset`, should
+be coercion functions or be part of the constructor function?
+* Should the verbs like `mutate`, `select`, etc. be methods?
+
+## vignettes
+
+* It wasn't clear what the difference between `union` and `union_single` is.
+Could these be the same function with dispatch on either two or one `BiocSet`
+objects? (Also applies to `intersect*`)
+* Should the `file_cache` chunk be an internal / convenience function? It
+seems too manual..
+* When I try to run `union(es1, es2)` again after running the `airway` and
+`go_sets` chunks, I get an error:
+
+```
+> union(es1, es2)
+Error in as.vector(x) : no method for coercing this S4 class to a vector
+```
+It may be due to loading the other packages but when entering `union.BiocSet`
+I also get an error.
+
+
+## R
+
+* Is the `GMTFile` class necessary? It may be simpler to use a GMT file path
+string unless you have several methods for the GMTFile class.
+* Provide a coercion method from `GeneSetCollection` or `getGmt` to `BiocSet`
+(if not present already).
+* How closely do you want the functions to match `dplyr`? If quite close,
+`filter_element` would have to operate based on (potentially) three subclasses
+and be called `filter`.
+* `update_es_element` and friends seems a little circular, it may just be
+better to use `es_element<-` from the get-go
+* Do you want to export the replace methods? If so, consider using
+`setReplaceMethod`
+* Export the coercion method `setAs` as well.
+* It feels like the `*_elementset` / `*_set` definitions should not get in the
+way of the tidy verbs. `filter(...)` and other methods should just work without
+the extra suffix.
+* Perhaps you want to reorganize the class definition when doing `activate`?
+This will allow you to use `filter_*` based on the first class in line.
+
+Minor:
+* Use `character()` as argument defaults to avoid checking for `missing` in
+`BiocSet_from_elementset`
+
+
