@@ -1,0 +1,25 @@
+# scTGIF #1255
+
+## README.md 
+
+* Please use a vector of packages as input to `BiocManager::install`
+
+## DESCRIPTION
+
+* Please format the file to fit the 80 column width limit
+* It is recommended that the `Imports` field contain one package per line for
+readability 
+* `Date` field is not really needed
+
+## NAMESPACE
+
+* It looks good.
+* Consider using `roxygen2` for documentation
+
+## vignettes
+
+* Introduction well established. 
+* Avoid using `eval=FALSE` in chunks. Provide a smaller example dataset if the
+current one is too big.  
+
+## R
