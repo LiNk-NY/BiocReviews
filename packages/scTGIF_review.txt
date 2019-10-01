@@ -1,6 +1,6 @@
 # scTGIF #1255
 
-## README.md 
+## README.md
 
 * Please use a vector of packages as input to `BiocManager::install`
 
@@ -8,7 +8,7 @@
 
 * Please format the file to fit the 80 column width limit
 * It is recommended that the `Imports` field contain one package per line for
-readability 
+readability
 * `Date` field is not really needed
 
 ## NAMESPACE
@@ -18,8 +18,20 @@ readability
 
 ## vignettes
 
-* Introduction well established. 
+* Introduction well established.
 * Avoid using `eval=FALSE` in chunks. Provide a smaller example dataset if the
-current one is too big.  
+current one is too big.
 
 ## R
+
+* It is recommended that you do not create methods for classes that are not
+your own especially if there is only one method. Please use a plain function
+for `settingTGIF`.
+* Avoid `eval` / `parse` operations and use alternatives such as `[[`.
+* Avoid putting objects in the `.GlobalEnv` from an internal function. Use the
+conventional return object.
+* Do not save files / reports for the user by default, make this argument
+optional.
+* Use temporary files by default and display HTML pages
+* Consider using `Rcpp` for `text.aMat`
+
