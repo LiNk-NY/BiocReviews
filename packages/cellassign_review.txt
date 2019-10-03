@@ -54,3 +54,35 @@ that the user can set `verbose = TRUE` / `FALSE`
 before it is required and have a package option where something like
 `verboseInstall = FALSE`
 
+---
+
+> We would prefer not to do this as typically a SingleCellExperiment will have
+20k+ genes only of which ~ 20 will be markers, so encouraging storing of the
+marker info in the SingleCellExperiment encourages users to pass the entire
+SingleCellExperiment as input (a common mistake we have had collaborators do
+previously)
+
+It sounds like this could be a logical vector that you can keep track of in
+the object. I'm not sure to what level users will interact with the output. If
+you are doing most of the manipulation, it would be a good place to put it
+so to provide a more unified representation.
+
+> Can the rationale behind this request be further clarified? It seems common
+in Bioconductor packages to have the option of the object to return, as is
+implemented in e.g. the scran packages "findMarkers" which has a sf.out option
+for whether to return an SCE or just the sizeFactors. Similarly here, we have
+a return_SCE option for whether to return the SingleCellExperiment or
+cellassign fit directly.
+
+Endomorphic operations are the usual route. Class methods can be used to extract
+particular data. It is based on the principle of function "purity" (meaning
+having a consistent return value).
+
+> This data is necessary for the vignette on constructing the marker matrix.
+The alternative would be to host documentation for a bioconductor package
+outside bioconductor.
+
+This is still not clear to me why mock / abbreviated data can't be used. It is
+best to keep data within the package (especially for vignette examples).
+
+
