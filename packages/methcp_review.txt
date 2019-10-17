@@ -49,4 +49,15 @@ better to return nothing in `segmentMethCP`
 * I've noticed that you're extensively using `as.numeric` throughout the code
 is this due to the objects that don't have a reasonable type?
 
+-----
 
+> methcpFromStat is basically a constructor function for MethCP. It asks for four vectors as input, chromosome, position, statistics, and effect sizes. When the user provides the statsitics themselves, it is unlikely to be in the object of GPos or GRanges. I think ask for vector as input might be easier for the user.
+
+It looks pretty tedious to use. If a user has some data already represented in
+data.frame or GRanges form, you can just provide conversion as part of the
+constructor function. Perhaps I'm not familiar with the use case but it does
+seem like a lot of input for the `methcpFromStat` function.
+
+Minor:
+* It is customary (although not necessary) to have the package name case match
+the class case (i.e., MethCP).

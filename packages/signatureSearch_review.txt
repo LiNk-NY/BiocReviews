@@ -88,7 +88,43 @@ presenting these data objects to the user (e.g., `affyid_annot` chunk)
 and present the user with a `SummarizedExperiment`. Users should not have to
 run `readHDF5chunk` themselves.
 
+-----
 
+> The org.Hs.eg.db package needs to be imported since the org.Hs.eg.db object
+is used as an argument of the AnnotationDbi::select function. As a test, I
+have tried to include it in the Suggests field instead, but this resulted in
+an error in the package checking process (e.g. Namespace dependency not
+required: ‘org.Hs.eg.db’). To eliminate this error, I had to leave it in the
+import field.
 
+You can put it in the `Suggests` field and use:
+```
+if (!requireNamespace("org.Hs.eg.db"))
+    stop("Please install 'org.Hs.eg.db' to use this function")
+```
+in the function(s) that use it. This will allow users to use other functions
+without necessarily downloading the large `org.*.db` package.
+
+> * Why download data via FTP? The point of the experiment data package is to
+use AnnotationHub resources
+
+> We agree that this is the main purpose of the AnnotationHub resources.
+However, in certain cases it is useful for users to learn how to use their own
+data or those from public resources instead. Only to illustrate this, we
+provide instructions for downloading the CMAP raw data via FTP and then
+creating a custom database, even though the same result can be achieved by
+accessing the data from AnnotationHub. We feel this is useful since often many
+users (including both biologists and analysts from other data science
+languages) assume that many Bioconductor resources are only available to them
+if experts have pre-packaged the corresponding data for them which is
+certainly not the case.
+
+Downloading data via FTP this way is quite clunky and I'm not sure how it
+helps users especially when a whole number of files are downloaded via
+`getCmapCEL` which I imagine can take a long time. It would be helpful for
+the users to provide this data via `AnnotationHub` (possibly as a separate
+package) so you can spare the users the long download times. If the data
+in the database changes often, it may be better to find alternate means of
+obtaining the data.
 
 

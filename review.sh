@@ -20,7 +20,7 @@ if [ $? -ne 0 ]; then
     exit 2
 fi
 
-time Rdev CMD BiocCheck  $1
+time Rdev CMD BiocCheck ${pkgname}_*
 
 shopt -u expand_aliases
 
