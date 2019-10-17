@@ -1,0 +1,49 @@
+# netboxr #1272
+
+## DESCRIPTION
+
+* There are a lot of packages in the `Depends` field. Please reduce this to
+a minimal set of packages. Move packages to `Imports` and avoid duplicate
+package entries (e.g., `c('data.table', 'jsonlite', 'parallel', 'gplots',
+'plyr')`).
+* Include the suggested biocViews terms from BiocCheck
+* See also:
+```
+   * NOTE: Consider clarifying how 4 object(s) are initialized. Maybe
+      they are part of a data set loaded with data(), or perhaps part
+      of an object referenced in with() or within().
+    function (object)
+      geneConnector (phyper)
+      geneConnector (p.adjust)
+      localNullModel (sd)
+      localNullModel (pnorm)
+```
+* Remove `org*db` package from the `Depends` field and put it in `Suggests`.
+* Load it conditionally if the package is installed by using `requireNamespace`
+
+## NAMESPACE
+
+* Looks good.
+* Imports should be `Imports` only and not `Depends`
+
+## vignettes
+
+* Remove the `remotes::install_github` command and use `BiocManager::install`
+* Use `help(package = "netboxr")` to display the installed vignettes.
+* Looks good. Please keep the 80 column width for readability
+* Make sure commented code is either removed or un-commented
+
+## R
+
+* As in `BiocCheck`, avoid using `1:n` sequence generation, use `seq_len(n)`
+or `seq_along`.
+* Do not use `cat` to print messages to the user, use `message`.
+* It doesn't make sense to calculate both `pValue` corrections. Provide only
+the correction requested.  You can use `match.arg` on the `pValueAdj` argument.
+Set the default to `pValueAdj = c("BH", "Bonferroni")` in the function
+definition.
+* Remove all the commented code and code such as `write.table`
+* A list representation is not very helpful. Please find a more compact and
+meaningful data structure for representing your data.
+
+

@@ -35,3 +35,14 @@ optional.
 * Use temporary files by default and display HTML pages
 * Consider using `Rcpp` for `text.aMat`
 
+---
+
+> `assign(userobjects, sce, envir=.GlobalEnv)` is not for putting objects in
+the global environment, but updating the metadata slot in the
+SingleCellExperiment object (sce) the users defined in the global environment.
+So this part is necessary.
+
+Why not provide an endomorphic operation that takes an `sce` as input and
+returns `sce` with additional metadata? It is not recommended to change
+objects in the user's `.GlobalEnv`.
+
