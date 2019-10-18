@@ -41,9 +41,13 @@ or `seq_along`.
 * It doesn't make sense to calculate both `pValue` corrections. Provide only
 the correction requested.  You can use `match.arg` on the `pValueAdj` argument.
 Set the default to `pValueAdj = c("BH", "Bonferroni")` in the function
-definition.
+definition.d
 * Remove all the commented code and code such as `write.table`
+* Avoid using `dontrun` tags in examples. Static code leads to errors as
+package development progresses
 * A list representation is not very helpful. Please find a more compact and
 meaningful data structure for representing your data.
+
+
 
 
