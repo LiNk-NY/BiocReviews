@@ -1,0 +1,20 @@
+# JASPAR2020
+
+## DESCRIPTION
+
+* Looks ok
+* TFBSTools shouldn't be in the `Depends` field only in `Suggests`
+
+## NAMESPACE
+
+* Looks good.
+
+## R
+
+* Remove commented code `#namespaceExport(...)`
+
+## vignette
+
+* Provide some examples to load the data. They can include the use of
+`TFBSTools`.
+
