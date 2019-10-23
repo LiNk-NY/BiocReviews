@@ -130,6 +130,7 @@ obtaining the data.
 ---
 
 Hi Yuzhu, @yduan004
+
 Thank you for making additional changes.
 Your package has been accepted.
 
@@ -146,4 +147,13 @@ reproducibility. Again I would like to apologize for the confusion created by
 my initial response as well as the suboptimal way this aspect was described in
 the previous version of the vignette of the signatureSearchData package.
 
-Please keep in mind that usually, these functions / scripts are kept inside the
+Usually, these functions / scripts are kept inside the `inst/scripts/` folder and
+not exported. See
+https://bioconductor.org/packages/devel/bioc/vignettes/ExperimentHub/inst/doc/CreateAnExperimentHubPackage.html#building-the-data-experiment-package
+In other instances, these functions may even be kept in unreleased packages as
+in the case of `curatedTCGAData` where there is little end user interaction
+with the pipeline package.
+
+Best,
+Marcel
+
