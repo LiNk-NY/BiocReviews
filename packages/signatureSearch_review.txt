@@ -127,4 +127,23 @@ package) so you can spare the users the long download times. If the data
 in the database changes often, it may be better to find alternate means of
 obtaining the data.
 
+---
 
+Hi Yuzhu, @yduan004
+Thank you for making additional changes.
+Your package has been accepted.
+
+> Most users will not execute these steps (including the getCmapCEL function)
+if they don’t need to. However, this information is provided for transparency
+and reproducibility reasons, and also to support advanced users if they are
+interested in generating their own reference gene expression signature
+database from CEL files. I hope that these improvements and clarification in
+the vignette of the signatureSearchData package fully address your concerns in
+this regard. My supervisor Prof. Girke, who has developed and maintains a
+large number of widely used Bioconductor packages, also agrees that
+maintaining this data preprocessing information is important for
+reproducibility. Again I would like to apologize for the confusion created by
+my initial response as well as the suboptimal way this aspect was described in
+the previous version of the vignette of the signatureSearchData package.
+
+Please keep in mind that usually, these functions / scripts are kept inside the
