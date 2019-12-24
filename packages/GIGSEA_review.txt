@@ -5,6 +5,7 @@ to not exceed 80 column-width. This includes your `README.md`, `DESCRIPTION`,
 etc. This would make your files easier to maintain and review.
 * Remove any `.DS_Store` files from the repository and add it to the
 `.gitignore` file.
+* Remove the `.Rproj` file
 
 ## README.md
 
@@ -32,6 +33,24 @@ you are extending in the `Depends` field.
 `sapply` etc.
 * Is it necessary to include all of these datasets in the package? Do other
 packages already provide this data?
+* Ensure that your argument descriptions are making sense, for example in
+`termCol`, is it an index the split vector?
+* Avoid nesting for loops where possible.
+* Use the allocate and fill method instead of copy and append. For example,
+use `empiricalPval <- vector("numeric", nrow(shuffledPval))`
+* Avoid nesting lists as well. There are more efficient ways of representing
+the data
+* Use helper functions to avoid repetitive code
+* Allow options to suppress print outs to the screen with arguments like
+`verbose = FALSE`
+* Use `message()` instead of `cat()` so these messages can be suppressed if
+desired by the user.
+* You shouldn't have to use `setwd` inside a function. If you have intermediate
+files, you can create them in a `tempdir()`. 
+
+Minor:
+* Use the arrow `<-` for assignment
+
 
 ## vignettes
 
@@ -44,3 +63,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ```
 
+## inst/NEWS
+
+* Update your news file
