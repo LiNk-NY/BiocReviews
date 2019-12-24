@@ -1,0 +1,18 @@
+# RcisTarget #502
+
+## DESCRIPTION
+
+* Add a `Depends` fields with `R (>= 3.4.1)`
+* Please include a `BugReports` field with the URL of the GitHub repository
+issues
+* Add `lazyLoad: true`
+
+## NAMESPACE
+
+* Please use `roxygen2` to build your `NAMESPACE` 
+
+## R
+
+## vignettes
+
+

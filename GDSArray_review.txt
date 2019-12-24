@@ -1,0 +1,41 @@
+# GDSArray #664
+
+## DESCRIPTION
+
+* Looks good :+1:
+
+## NAMESPACE
+
+* It seems like the `gdsNodes` should match the other accessor, `gdsfile` as
+all lower case.
+
+## R
+
+* Assign a GDSArray class in the examples for demonstration / testing purposes,
+`gds <- GDSArray(file1, "annotation/format/DP/data")` when running
+`example(GDSArray)`.
+* It looks like you want to do @describeIn GDSFile-class for documenting the
+the `GDSFile` constructor because the text looks cut off in the Description
+section.
+* You could do the same for `gdsfile`, `gdsfile<-`, etc.
+* `unlist(lapply(...))` in `AllUtilities.R` could just be a `vapply(...)`
+* Is there a use case where you would want to grow GDSArray dimensions?
+
+## vignettes
+
+* Line#115 should say "represents"
+* Line#124 should say "Try typing in ... and then pressing ..."
+* You might consider separating the `Internals:` section from the rest of
+the vignette. It looks like a more advanced topic that may only interest
+developers.
+* It looks good. 
+
+## NEWS
+
+* Update the NEWS file
+
+## tests
+
+* Looks great !
+
+

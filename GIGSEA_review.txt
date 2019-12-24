@@ -1,0 +1,68 @@
+# GIGSEA #720
+
+* Please consider using formatR or a programmatic editor to format your files
+to not exceed 80 column-width. This includes your `README.md`, `DESCRIPTION`,
+etc. This would make your files easier to maintain and review.
+* Remove any `.DS_Store` files from the repository and add it to the
+`.gitignore` file.
+* Remove the `.Rproj` file
+
+## README.md
+
+* You likely don't need to provide a `wget` command for installing your
+package. Let users make use of `devtools` or `remotes` for downloading and
+installing `GIGSEA`.
+
+## DESCRIPTION
+
+* Consider selectively importing packages. You should only include packages
+you are extending in the `Depends` field.
+
+## NAMESPACE
+
+* Make sure you are consistent with class names (e.g., `dataframe` instead of
+`dataFrame`). Consider using `DataFrame` as well.
+* Try to shorten some names for example, `permutationMultipleLm` could be
+`permuteMultiLM` or something similar.
+* You may want to name your main function the same as your package name
+`GIGSEA`.
+
+## R
+
+* Check the `BiocCheck` results and follow the recommendations for avoiding
+`sapply` etc.
+* Is it necessary to include all of these datasets in the package? Do other
+packages already provide this data?
+* Ensure that your argument descriptions are making sense, for example in
+`termCol`, is it an index the split vector?
+* Avoid nesting for loops where possible.
+* Use the allocate and fill method instead of copy and append. For example,
+use `empiricalPval <- vector("numeric", nrow(shuffledPval))`
+* Avoid nesting lists as well. There are more efficient ways of representing
+the data
+* Use helper functions to avoid repetitive code
+* Allow options to suppress print outs to the screen with arguments like
+`verbose = FALSE`
+* Use `message()` instead of `cat()` so these messages can be suppressed if
+desired by the user.
+* You shouldn't have to use `setwd` inside a function. If you have intermediate
+files, you can create them in a `tempdir()`. 
+
+Minor:
+* Use the arrow `<-` for assignment
+
+
+## vignettes
+
+* Add the `vignette:` field in your RMarkdown document like this:
+
+```
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{GIGSEA: Genotype Imputed Gene Set Enrichment Analysis}
+  %\VignetteEncoding{UTF-8}
+```
+
+## inst/NEWS
+
+* Update your news file

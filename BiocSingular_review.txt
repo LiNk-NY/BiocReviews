@@ -1,0 +1,34 @@
+# BiocSingular
+
+## DESCRIPTION
+
+* Looks good. 
+* Add `BugReports` and `URL` fields.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Respect the 80 column width limits in the vignettes. It makes them
+easier to read as a reviewer and easier to maintain.
+* Good job at making them not too dense. They're easy to read. 
+
+## R
+
+* Class definitions look good.
+* See first bullet in vignettes.
+* Should default `center` and `scale` values be `FALSE` instead of `NULL`
+or is it convention to use `NULL`?
+* As with other Bioconductor classes, `LowRankMatrixSeed` should work
+with no arguments. For example, have resonable type defaults such as `matrix()`. 
+* Consider having a constructor function for `LowRankMatrixSeed` that does
+nothing with a `LowRankMatrixSeed` input (other than returning it) so
+that when you create a `LowRankMatrix` you don't need test for the class in
+[L:121](https://github.com/LTLA/BiocSingular/blob/master/R/LowRankMatrix.R#L121)
+and just run something like
+`DelayedArray(LowRankMatrixSeed(rotation, components))`
+* Consider combining preliminary checks for `runExactSVD`, `runRandomSVD`,
+and `runIrlbaSVD` into a single helper function.
+

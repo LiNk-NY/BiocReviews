@@ -1,0 +1,77 @@
+# treeAGG #896
+
+## DESCRIPTION
+
+* Looks good.
+* Please wrap the `Description` field text.
+* If you're extending `SummarizedExperiment`, it would be much easier to put
+`SummarizedExperiment` package in the `Depends` field. 
+
+## NAMESPACE
+
+* Looks good overall.
+
+## vignettes
+
+* It seems to me that `rowData(..., internal = TRUE)` is something that you
+should provide in another function. It is better to keep the consistency of
+what `rowData` does. Otherwise, you can throw your users off by returning
+data or employing an argument that is not expected by the method.
+* Looks good.
+
+## R/
+
+* For the bracket `[` method, it seems like you should have an accessor for the
+`SummarizedExperiment` data object so that you don't have run the constructor
+function.
+* You may want to use `BiocGenerics:::replaceSlots` after subsetting rather
+than reconstructing the object.
+* Look into using `@inheritParams` where possible. It might be better to have
+the same arguments that the `SummarizedExperiment` constructor function has so
+that it is clear to the user.
+* I'm not sure to what extent you need the different data sizes but I would
+consider using just one medium sized dataset for examples.
+* Some of the repetitive code can be reduced using conditional logic such as
+`onlyTip <- level == "leaf"` and then use the same operations for both
+conditions in `fdr0`, `tpr0`, etc.
+* Functions like `findAncestor` are only working on `phylo` trees. I thought
+you wanted to support functions / methods for your class,
+`treeSummarizedExperiment`? 
+* Use names instead of integer positions for subsetting where possible (e.g.,
+`vec[, "varA"]` vs `vec[, 1]`)
+* Avoid conditional return values as in `findAncestor`. Please provide functions
+with a single and consistent output.
+* Repeat may not be necessary, it can done via `lapply` or a `for` loop
+(`R/findOS.R`:L60)
+* Use helper functions to reduce repetitive code (see `matTree`)
+* Avoid nested `for` loops, use vectorized operations
+(see: http://bioconductor.org/developers/how-to/efficient-code/)
+* Avoid creating methods for classes that are not your own. For methods
+such as `nodeValue`, use an `ANY` class signature and filter using
+`is.data.frame` etc.
+* Combine files into groups of related functions. This makes it easier to find
+related functions and easier to maintain.
+* Use `seq_len` or `seq_along` to create sequences rather than `seq(1, n)`
+* Avoid nesting `lapply` calls where possible.
+* It seems like you're running the same checks over several functions, create
+a helper functions to standardize those checks across the functions such
+as `signalNode`
+* Remove `set.seed` from the inside of function calls
+* Remove commented code or provide a working version
+* Explicitly set defaults when arguments are `NULL`, for example, in the
+`addLegend` internal function, you can set `legend.theme = list(NULL)`
+instead of checking it's `NULL` and then setting it.
+
+Minor:
+* You don't need to set the object into itself (see `findAncestor.R` line 50)
+* Use `is.character` and other `is.*` type checking functions instead of
+`inherits` (where possible; such as `is.data.frame`, `is.matrix`, etc.)
+* `if (length(x) > 0)` is the same as `if (lenght(x))`
+* Use `methods::is` instead of `inherits` to test S4 classes (`R/selNode.R`)
+* Convention is to add a `.` period in front of a function name (e.g.,
+`.infLoc`)
+
+## tests/
+
+* Looks like you have plenty of tests. :+1:
+

@@ -1,0 +1,67 @@
+# CluMSID #933
+
+## DESCRIPTION
+
+* Please add `BugReports` and `URL` fields (if available)
+
+## NAMESPACE
+
+* Stick to either `camelCase` or `snake_case`. Try to avoid mixing both
+types.
+* Avoid using a `CluMSID_` prefix. It is not necessary and can be confusing.
+* Ordinary functions should start with lower case letters for instance,
+`Featurelist` becomes `featureList` unless it is a class.
+* You have more packages under the `Imports` field than documented in the
+`NAMESPACE`. They should have some level of concordance.
+
+## R
+
+* Why save an `Rdata` file in `extdata` than create it in the examples
+(for `access_id`)? The `extdata` should be raw data for a `read*` type of
+function.
+* Use `is()` to test for class memberships rather than `class(x) %in% ...`
+* It would be better to use `generics` that are already established in other
+packages or create your own generic and method functions for slot accession.
+* Provide all the options in the `type` argument as a vector, i.e.,
+`c("spectrum", "neutral_losses")` so that it is visible to the user and then use
+`match.arg` to take the first one within the function.
+* It is better to not assume that the user will input a `MS2spectrum` class and
+check for class membership within the `getSimilarities` function.
+* Avoid using `cat` and use `message` instead. Use `cat` for show methods only.
+* Although R has improved copy and append methods, these should be avoided when
+possible. It would be simpler to use `vapply` for looping along `featlist` in
+`findFragment` and other functions. You can even make this `subsetter` check
+into a helper function for reuse in other functions incl. `findNL` and
+`findFragment`. 
+* Replace `if else` logic in `getSpectrum` using a `switch()` call that returns
+*just the unevaluated condition* i.e., `what %in% m`, `abs(what - m) <= mz.tol`,
+`abs(what - m) <= rt.tol`. You would have to quote the expression and evaluate
+later.
+* Avoid use of `;`. You can just do `id <- mz <- rt <- c()` but this shouldn't
+be necessary if you're using `lapply` (in `Featurelist`).
+* Use `as(...)` coercion instead of the `convertSpectrum` function.
+* Some code can be reduced in `extractMS2spectra` by using a variable when
+`recalibrate_precursor` is `TRUE`
+* Avoid nested `for` loops where possible.
+* Why not let the user specify the column name for `mz` and `rt` in
+`extractPseudospectra`? This way you don't have to check whether it is in the
+`data.frame`.
+
+Minor:
+* `FUN.VALUE` in `splitPolarities` should just be `logical(1L)` it doesn't
+have to be a conditional expression.
+* Open up `specplot` (with `...`) for users to access additional arguments in
+`plot`. This makes plotting more customizable.
+* No need to test for `TRUE` within an `if` function:
+`if (recalibrate_precursor)`, if you're unsure if the result will be logical,
+you can use `isTRUE(recal...)`
+* Avoid `2:x` sequence generation in the event that `x = 0`.
+Use `seq_along(x)[-1]`
+
+## vignettes
+
+* Looks good.
+* Consider using `BiocStyle`.
+* Remember to change your download instructions to `BiocManager::install()`
+once it is accepted. 
+

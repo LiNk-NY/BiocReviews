@@ -1,0 +1,27 @@
+# loci2path #467
+
+Formatting of code and DESCRIPTION should make it readable. Please make sure
+you are not going over 80 columns.
+
+## DESCRIPTION
+
+* Please include `URL` and `BugReports` fields and their respective links
+* Review the need to include `GenomicRanges`, `BiocParallel` and `GenomeInfoDb`
+in the `Depends` field. Are you building on top of these packages or just
+using the functions and classes? The former would require you to list them
+in the `Depends` field.
+* Please use the release version of `roxygen2` unless the devel is required.
+
+## NAMESPACE
+
+* Explicitly export functions in your package, do not use a pattern for
+exporting functions, use the `roxygen` `@export` and related tags
+
+## R
+
+* Please use the `<-` assignment operator to avoid confusion with `=` in
+argument assignment. 
+* Please use accessor functions for your `eqtlSet` and other relevant classes,
+avoid the use of `@` in code for slot extraction.
+
+

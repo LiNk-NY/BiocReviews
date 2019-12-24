@@ -1,0 +1,44 @@
+Hi Rhonda, @rhondabacher
+Thank you for making those changes. I have taken a quick look at your package.
+Please see the review below.
+
+---
+
+# SCnorm #377
+
+## DESCRIPTION & NAMESPACE
+Looks good.
+* Please add relevant URL links to GitHub issues and source code.
+
+## data
+* Please rename the dataset provided to a more descriptive name. `ExampleData` can be any type of data. 
+
+## inst & man
+Looks good. 
+
+## R
+Major:
+* Please make sure that you are not saving plots without the user's explicit request. It is best to remove these type of functionalities from functions like `checkCountDepth` as the user can just save the plot independent of the function.
+* If the function is a plotting function, it should be indicated by its name. For example, rename `checkCountDepth` to `plotCountDepth` or something to that effect. 
+* Please update documentation to indicate `SummarizedExperiment` support in the relevant functions (e.g., `checkCountDepth`) 
+* Avoid growing a vector with code such as `Mode <- c(); for (i in 1:10) {Mode[i] <- foo}`. Use the allocate and fill method.
+* Separate plotting and computing functions, some functions do both (e.g., `GetK`)
+* Vectorize where possible, some functions are using `apply` and `sum`, these can be improved by using `rowSums`. 
+* Use helper functions to avoid repetitive coding
+* Use camelCase function naming conventions
+* `getResults` is not very descriptive, please use a more descriptive name
+
+Minor: 
+Please follow Bioconductor's best practices as listed in the [package guidelines](http://bioconductor.org/developers/package-guidelines/). The following are some examples where best practices can be implemented: 
+* avoid the use of `1:n` sequences, use the more robust `seq_len` or `seq_along` functions.
+* avoid using `sapply`, use `vapply` for more robust outputs
+* use `is(object, "SummarizedExperiment")` to test for S4 class membership
+* avoid using a function like `c` as an object, e.g., `checkWithinFactor.R` line 74
+* the usage section is automatically generated with roxygen2, there is little need to specify it yourself
+* avoid the use of while loops where possible
+* consider using `verbose = FALSE` arguments in functions that have a lot of message calls
+
+## vignettes
+
+* Nicely done. You showed the use of `SummarizedExperiment` which is helpful
+for those looking to integrate their analysis with your method. 

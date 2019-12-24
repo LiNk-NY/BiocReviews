@@ -1,0 +1,33 @@
+# bcSeq #495
+
+## DESCRIPTION
+
+* Please include a `Depends` field
+* Import additional packages based on @lawremi 's review
+* Include a `BugReport` field
+
+## NAMESPACE
+
+* Looks good 
+
+## R
+
+* Please remove "Error!" word from error message. `stop` already labels it as
+an error.
+* It looks like you're overwriting `tMatSeq[1]` with `tMatSeq[1] <- tMat[1, 1]`,
+it doesn't seem necessary
+* Avoid `1:nrow(x)`. Use `seq_len(nrow(x))` instead for robustness
+* Use `is.character` and related functions to check for S3 class membership
+
+## vignettes
+
+* I wasn't able to pull up the vignette after installation. I used:
+
+```
+# R CMD INSTALL bcSeq_* && R
+library(bcSeq)
+browseVignettes("bcSeq")
+vignette(package = "bcSeq")
+```
+* Other than that, the code runs without issues
+

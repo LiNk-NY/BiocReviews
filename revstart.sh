@@ -4,7 +4,7 @@
 
 pkgname=$1
 
-BIOC="$HOME/Bioconductor"
+BIOC="$HOME/bioconductor"
 
 PKGLOC=$BIOC/$pkgname
 

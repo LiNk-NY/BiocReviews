@@ -1,0 +1,48 @@
+# ddPCRclust #575
+
+## DESCRIPTION
+
+* Please format the `DESCRIPTION` for readability with a max width of 80
+columns. 
+* `Date` field can be omitted
+* Remove mention of `GitHub`. You can direct the users to the vignette.
+* Consider adding a `BugReports` field to the description pointing to the
+`GitHub` issues page.
+
+## NAMESPACE
+
+* It looks like some functions such as `export*` are not needed.
+These options should be left up to the user.
+* You may just want a plot method for your data structure.
+
+## R
+
+* Avoid overwriting functions with objects such as `t <- ...`
+* Fix the formating in the files, it is recommended that files
+not exceed 80 columns
+* Please use a data structure that will be an input to ddPCRclust, using
+files is not very extendable.
+* No need to use `ids <- annotations <- vector()`. `lapply` will
+take care of memory management internally. 
+* Consider using a more appropriate structure for your algorithm with
+validity checks. A `list` output will be prone to errors.
+* Where possible, avoid using numeric indices for subsetting as they can be
+prone to errors when the data changes, it is recommended that you use names
+(e.g., `dataset[, "var"]`)
+* Create helper functions for repeated operations
+
+
+Minor: 
+* Logical to Index switching is not necessary in most cases
+(e.g., `which(result == 8)` can be `result == 8`)
+* Length evaluates to `TRUE` when positive (e.g., `if (length(var))`)
+
+## vignettes
+
+* Vignette should not exceed 80-column width 
+
+## LICENSE
+
+* Does it have to be an academic only license? 
+* Perhaps @mtmorgan can comment on this.
+

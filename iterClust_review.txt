@@ -1,0 +1,72 @@
+# iterClust #449
+
+## DESCRIPTION
+
+* Please add the relevant links to the GitHub repository
+* Remove the date (not needed)
+* Include a depends field for R (>= 3.4.1)
+
+## NAMESPACE
+
+* Looks good
+
+## R
+
+* Please properly indent your scripts and other written documents,
+make sure they do not surpass a width of 80 characters
+
+* The `iterClust` function apprears to have a complicated interface which may
+be difficult for the user. The use of this many functionals will lower
+useability
+
+* Please provide a set of default functions for `iterClust`
+
+* Rename the function arguments and remove the `fun` tag from them. The
+argument names should be descriptive and documented well enough  for users to
+be able to see that they are functional arguments.
+
+* Observe where you can remove unnecessary functional arguments such as
+`featureSelectfun` which may be a logical vector applied to select features
+
+* Test class membership with the `methods::is` for S4 or `is.*` functions
+such as `is.matrix` and `is.data.frame` for S3 classes 
+
+* Avoid assigning objects to function names such as `c <- list()`. `c` is a
+function, please use a different name
+
+* Avoid using `sapply` and go for the more robust `lapply` and `vapply`
+functions 
+
+* Break up the iterClust function where possible into smaller functions so
+that it is more manageable
+
+* Avoid the use of `1:n` sequence generation, use the more robust `seq_len`
+or `seq_along`
+
+## vignettes
+
+* It's apparent that you're reusing the examples in your main function for
+the vignette
+* Please showcase the use of your function in your package in the main
+vignette
+* The "Run iterClust" shows that your nested list structure is unwieldly and
+it would require a user to dig into the list to find the necessary elements
+* The `iterClust` function should return an output with more structure
+
+## Other
+
+* Please remove the `thumbs.db` from the package folder and add it to the
+`.gitignore`
+* Please fix the errors in the examples and the vignette:
+
+```
+## example
+Error in silhouette.default(clust[[i]], dist) : 
+  object 'sildist' not found
+
+## vignette
+Error: object 'sildist' not found
+```
+
+If you did fix this error, please bump the package version. 
+

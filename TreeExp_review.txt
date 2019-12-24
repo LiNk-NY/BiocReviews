@@ -1,0 +1,43 @@
+# TreeExp #1122
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Constructor functions are usually the name of the class (TEconstruct?)
+* No need to export the print function
+
+## R/
+
+* Avoid mixing letters and numbers in function name `no0br` can be hard to read.
+* Use a structure like `TreeSummarizedExperiment` as input to functions such as
+`aee`. This avoids you checks on inputs when a standard structure is required
+as input.
+* Use `message` instead of `cat`
+* Avoid using `1:x` sequence generation, use the more robust `seq_len` /
+`seq_along`
+* Use helper functions to estimate the `Q_gene` object and save lines of code
+* It's hard to tell the difference between `estParaGamma` and `estParaQ` from
+the code, perhaps this should be one function with an extra argument since
+they're so similar.
+* Avoid nesting `for` loops whenever possible
+* Class names start with a capital letter by convention
+* Internal function documentation should contain the tag `@keyword internal`
+* Use a more descriptive name than `example_data`
+* Why use `switch` when you already have a helper for that?
+* Avoid using acronyms for function names such as `NJ`
+* Export `print.taxaExp` method instead of `print`
+* Elaborate on `x` and `y` argument inputs in `RelaRate.test`
+
+Minor: 
+* `length(x) != 0` is equivalent to `length(x)` within `if` function
+* Use `%in%` operator for `taxon_names %in% c(x, y, outgroup)` and then use
+this logical vector to subset `expTable` in `R/RelativeTest.R`
+
+## vignettes
+
+* Please format to 80 column widths for readability. It is also easier to
+review and maintain IMO
+

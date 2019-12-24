@@ -1,0 +1,60 @@
+# RGMQL #524
+
+The RGMQL package ports the GenoMetric Query Language
+into R. We acknowledge that this is a big undertaking and
+will certainly be useful. Special care should be taken
+of the implementation details as there is potential for other
+packages to build on the language.
+
+## DESCRIPTION
+
+* Please shorten the `Description` field for readability.
+
+## NAMESPACE
+
+* It seems like you're exporting many functions that might
+not be necessary for end users (e.g., `DF`, `EX`, `FN`)
+
+## R
+
+* Please avoid repetition for functions such as `FN`, `EX`,
+`DF`. They all appear to be doing the same thing but with
+a different value name.
+* Avoid the use of `@` calls. Please create a accessor function
+to extract values from the `GMQLDataset` class.
+* For `gmql_join` helper function and others, it looks like you
+should use `if (!output %in% c("CAT", ...))`
+* Set default values where appropriate (e.g., `num_fetch = 0L`)
+* Be a bit more specific with function names for example, use
+`read_GMQL` instead of `read_datset`
+* Avoid using `1:n` sequence generation, use the more robust
+`seq_len` or `seq_along`
+* Avoid name collisions with R functions such as `data` and `c`
+* For some functions, you can use the S3 generic to dispatch on
+the `GMQLDataset` or Aggregate class (e.g., `max.GMQLDataset`).
+It looks like you're using only regular functions 
+
+
+### Minor
+
+* `length(x) == 0` is the same as `!length(x)` and
+`length(x) >= 1` is the same as `length(x)` when evaluating
+with `if`
+* Avoid the use of `sapply` use `vapply` for predictable and
+robust code
+* Use `file.path` for creating paths
+* You can use `\n` line breaks in warning messages.
+
+## vignettes
+
+* Rename vignette file to `RGMQL-vignette.Rmd` or similar. Use a meaningful
+title in `%\VignetteIndexEntry{}`
+* No need to use `eval = TRUE`. Chunks are evaluated by default.
+* Consider creating a "quick start" vignette for beginner users with
+basic commands to get started using `RGMQL`
+
+## inst
+
+* As mentioned previously, reduce the size of the `jar` file, if possible.
+* Add updates to `NEWS` file
+

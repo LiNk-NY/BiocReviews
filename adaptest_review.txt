@@ -1,0 +1,44 @@
+# adaptest #628
+
+## DESCRIPTION
+
+* Looks good
+* Use the release version of `roxygen2`
+
+## NAMESPACE
+
+* You may want to separate the "shinyprint" functionality into a different
+package?
+
+## R
+
+* Avoid using cryptic argument names, use names that are descriptives and
+helpful for the end user
+* The `data_adapt` class is based on a list which is not the best structure
+to use as you can't really enforce any validity checks to the components of
+the class as easily as you would with an S4 class.
+* You've added support for `SummarizedExperiment` which is good :+1:
+* Avoid the use of `1:n` constructions
+* Use the allocate and fill method, e.g.,
+ `ls <- vector("list", ncol(adaptY_composition))`
+* Avoid using `grep` to find colnames in `cv_param_est`. Let the user provide
+the colname directly from the argument.
+* Replace `sapply` calls with the more robust `vapply`
+* You shouldn't need to "wrangle" the supported `SummarizedExperiment` class
+for your main function, it should just work with it as part of the integration
+process. In other words, it should make use of the `SummarizedExperiment` API
+rather than the `assay(x); t(x)` and `rownames(x) <- colnames(x) <- NULL`
+version. 
+* A proper API should not use `@` accessor functions. See: 
+http://bioconductor.org/developers/how-to/efficient-code/
+
+## data
+
+* Provide descriptive names for your data,`Y` and `A` can mean anything.
+
+## vignette
+
+* It looks like you commented `BiocStyle` out.
+* Please add an installation chunk. It doesn't have to run. 
+* Looks good overall.
+

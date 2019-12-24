@@ -1,0 +1,60 @@
+# mfBiclust #976
+
+* Overall, the package is in good shape. I would strongly consider separating
+the two main objectives in the package and make them separate packages.
+Create a shiny package that depends on the analysis package. It's easier to
+maintain this way and the available functionality is split into two.
+
+## DESCRIPTION
+
+* Expand a bit on the meaning of 'pipelines'. Do you just mean methods? It
+would be good to know from the `Description` field.
+* It appears that you are submitting analysis tools and a shiny package.
+Consider separating the two. 
+
+## NAMESPACE
+
+* Use either 'snake_case' or 'camelCase' consistently.
+* Class names should start with capital letters.
+
+## vignette
+
+* Please stick to the 80 column width recommendations. It not only makes it
+easier to review but also easier to maintain.
+* Be sure to include a `sessionInfo` section at the very end.
+
+## R
+
+* Your `setGeneric` should wrap `standardGeneric` with the name of the generic
+function. Consider creating a regular function instead since there is only one
+method registered for it.
+* `auto_bcv` doesn't have to be a generic, it can just work on matrix and
+`BiclusterExperiment` objects. Also, it's best not to create methods for
+classes that you don't own such as 'matrix'
+* Create helper functions out of checks and re-use them in functions like
+`auto_bcv` and `bcv`
+* `validObject` is run whenever you create an instance of
+`BiclusterExperiment` using `new` so you don't need to run it explicitly
+(in `setAs`)
+* You shouldn't need a generic `BiclusterExperiment` function to create your
+class. Please use a regular function as a constructor function and check for
+matrix input.
+* _Do not_ create methods for external classes in your package ('matrix')
+* You don't need to use `setMethod` to create an `as.matrix` function. You
+can create a regular S3 method. I suggest having an extractor function
+comparable to `assay` in `SummarizedExperiment` to obtain matrix data.
+* Avoid using indices to obtain data. Use more robust names for example,
+`results[["table"]]` instead of `results[[1L]]`.
+* Avoid creating generics for single methods `getStrat`. If possible re-use
+already established generics. It may be easier to just use `strategies` to
+obtain the data and remove `getStart`. It seems like a confusing interface.
+* Use `BiocGenerics:::replaceSlots` in the `setReplaceMethod` function.
+* Use `cat` only for show methods, otherwise use `message`
+
+Minor: 
+* Create a single `args` object from inputs `list(...)` and use that to 
+carry out the rest of the operations.
+* Use descriptive argument names where possible
+* Use `identical` to test scalar rather than vector conditions, i.e.,
+`if (identical(length(clusterHeight), 1L))`
+

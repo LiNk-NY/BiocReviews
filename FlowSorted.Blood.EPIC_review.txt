@@ -1,0 +1,32 @@
+# FlowSorted.Blood.EPIC #710
+
+## DESCRIPTION
+
+* Add a note about the source of the data in the `Description` field.
+* You probably don't need the `LazyData*` fields, the data are on 
+`ExperimentHub` now.
+
+## NAMESPACE
+
+* Looks good.
+
+## R
+
+* R will use `gc` automatically. It may help when removing large objects.
+You probably don't need to call it so many times.
+* Many of the messages are too long and should be shortened where
+possible. Use multiple lines to format the message.
+* Keep code within 80 column widths and add new lines to the roxygen block
+to improve readability.
+* You should define helper functions outside the functions that they are used
+in.
+* In cases like `splitit`, you can just call split once without defining
+a helper function since it only gets used once throughout the code (you can
+make `tIndexes` available throughout the function) and it's not long enough
+to warrant making into a function.
+
+## vignettes
+
+* You should include some examples of how to access resources
+in the vignette
+

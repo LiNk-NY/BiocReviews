@@ -1,0 +1,26 @@
+# Rbowtie2 #457
+
+The Rbowtie2 does not import any Bioconductor packages.
+We can see that an R interface to bowtie2 is valuable but
+it does not make an attempt to integrate to the Bioconductor infrastructure.
+
+## DESCRIPTION
+
+* The `Depends` field is missing. It should be set to `R (>= 3.4.1)`.
+
+## R
+
+* Make sure that your argument names are consistent across functions. 
+* Typo in `R/adapterremoval.R#L169` "Argument", also `seq2` is not an
+argument in the `remove_adapters` function.
+* Avoid using `1:length(x)` sequence generation, use the  more robust
+`seq_along(x)` or `seq_len(n)`.
+* Avoid growing a vector (`paramArray <- c()`), please use the allocate
+and fill strategy
+
+## vignettes
+
+* You can use parentheses to print your result in the same line
+(e.g., `(cdmout <- adapterremoveal_version())`)
+* Please include your `sessionInfo()` as the last chunk in your vignette.
+

@@ -1,0 +1,16 @@
+# evaluomeR #1005
+
+## DESCRIPTION
+
+* Consider using an `Authors@R` section instead of `Author` and `Maintainer`
+fields
+* Provide a `BugReports` field
+
+## NAMESPACE
+
+Looks good.
+
+## vignettes
+
+* Respect the 80 width limit. It will improve readability and maintainership
+* 

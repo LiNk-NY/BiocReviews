@@ -1,0 +1,51 @@
+# CNVRanger #
+
+## DESCRIPTION
+
+* Minor: Consider using an `Authors@R` field instead of Author and Maintainer
+fields
+* Add a `BugReports` field pointing to the GitHub issues page
+* `BiocCheck` will say to update your R dependency to `3.6.0`
+
+## NAMESPACE
+
+* Looks good. You might want to rename `importLRR_BAF` to use 'camelCase' so
+that it is consistent with other functions. 
+
+## R/
+
+* Consider providing support for MultiAssayExperiment inputs that contain
+appropriate data for running `cnvExprAssoc`. 
+
+* `.largest` can be simplified to: 
+
+```
+.largest <- function(scores, ranges, qranges) {
+    ind <- IRanges::which.max(GenomicRanges::width(ranges))
+    vapply(seq_along(scores), function(i) scores[[i]][ind[i]], scores[[1]]) 
+}
+```
+
+* Update the `@param` entry for `all.paths`
+* Check inputs to avoid errors (`plotManhattan`)
+* Consider using `GRanges` structures instead of `data.frame` in `plotManhattan`
+* Avoid saving PDF files for the user by default, make the `plot.pdf`
+argument `FALSE`
+* No need to use `gc()` explicitly
+* Functions like `setupCnvGWAS` should make use of structures such as
+`RaggedExperiment` rather than a collection of files.
+* Use names rather than integers to subset vectors and lists
+(ex. all.paths in `prodGdsCnv`Line:395)
+* It is more efficient to make a call to `rappdirs:::get_os()` once than
+every time you need to check the OS, therefore, assign the result to an object
+and use the object for checking (`prodGdsCnv`).
+* FWIW Perhaps `GDSArray` may help import GDS files (for `importLRR_BAF`)?
+* Vectorize where possible and use maps for matching and replacing (e.g., in 
+replace gain / loss sections of `.recodeCNVgenotype`)
+* Try to avoid reading in the data from a file and accept the dataset as an
+argument so that users can read as they choose. 
+* Use `TRUE` and `FALSE` and not character versions of `TRUE` and `FALSE`
+
+## vignettes/
+
+* Looks good and thorough

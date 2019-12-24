@@ -1,0 +1,46 @@
+# sevenC #700
+
+* A package for predicting chromatin looping events.
+* Nicely put together. Good work! 
+
+## DESCRIPTION
+
+* Looks good! You might want to format it just a bit so that it does not pass
+the 80 column width mark.
+
+## NAMESPACE
+
+* Looks good too. You could probably remove the "2015" from the function name
+and just make sure that you are documenting that function well in the man page
+so that users know it's from a particular publication. 
+
+## R
+
+* Why not sort the `inGR` for the user by default instead of giving an error?
+* Can you provide examples that work for windows as well? 
+* Avoid `1:length(x)` sequence generation, use the more robust `seq_len` and
+`seq_along`.
+* Why not use logical replacement instead of `ifelse`? For example,
+`start(ancWin)[start(ancWin) > 0] <- 1` instead of
+`start(ancWin) <- ifelse(...)`
+* You can remove the `2015` from `parseLoopsTang2015` and indicate the
+publication in the documentation. You can also provide a link.
+
+Minor: 
+* You can combine the `stopifnot` calls into one and format in a similar way. 
+
+## docs
+
+* Please remove the `docs` folder from the git repo and add it to a branch
+on GitHub if necessary.
+
+## tests
+
+* Great work on the tests!
+
+## vignettes
+
+* It would be good to keep the 80 column width limit in the vignette so that
+it is easier to maintain and read :)
+* Looks good!
+

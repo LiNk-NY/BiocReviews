@@ -1,0 +1,15 @@
+# GSEABenchmarkR
+
+* The package is pretty big with all the data (593 MB).
+Data should be stored locally not on GH.
+* Provide/export functions for downloading the datasets rather than including
+the data in the package as it is too big.
+* Avoid apply nesting, use `unlist`, `relist` method for such operations
+* Avoid the use of `sapply`, this will be a note in BiocCheck
+* create small helper functions for repreated code to replace `meval.res`,
+`opt`, and `rand` operations, this will reduce some nesting
+* Consider using `switch` when multiple options are available and
+assigning to a single variable such as for `methods` object from `eaType`. 
+* Avoid calling `sink` as it doesn't produce a standard format.
+
+
