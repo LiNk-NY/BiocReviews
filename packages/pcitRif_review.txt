@@ -1,0 +1,55 @@
+# pcitRif #1329
+
+* Consider renaming the package to something that is easier to remember.
+Packages with a lot of acronyms are not usually.
+
+## DESCRIPTION
+
+* It looks good. 
+* The `Authors@R` section is overflowing. Please maintain it within 80 column
+width.
+
+## NAMESPACE
+
+* `*input`, `*input1`, and `*input2` and related methods point out a potential
+area of improvement for the package
+* `*Data` functions may not be necessary (see below)
+
+## vignettes
+
+* Please keep the text within the 80 column width margin. It makes the source
+document easier to maintain and to review.
+* You do not need to explicitly install the dependencies for the package,
+a simple installation of the package will automatically get them for the user.
+Use `BiocManager::install("cbiagii/pcitRif")`
+
+## R
+
+* Avoid using `cat` inside a function unless it is the show method. Use
+`message` instead
+* `countsToTPM` can have a funcitonal argument that guides the conversion with
+the default being the original computation.
+* Arguments with default values will not be missing (e.g., `anno = NULL`) so
+the test is not relevant, use `is.null`.
+* Avoid using index positions to subset and rather opt for names when
+subsetting. For example, use `df[, "sample1"]` instead of `df[, 1]`.
+* Combine R files that are related to each other for example, some plotting
+functions can be in the same file.
+* Avoid using nested `ifelse`. Use a table of data to reassign values, see
+Martin Morgan's response in this stackoverflow link:
+https://stackoverflow.com/questions/39217432/r-improving-nested-ifelse-statements-multiple-patterns
+* Consider providing a more robust prototype for the `pcitrif` class. A list
+of lists does not have much structure.
+* It seems like creating accessors for specific inputs is not the right way to
+go. Please create one general function that will access different parts of the
+object based on an argument (similar to `SummarizedExperiment::assay`) for
+`PCITinput*` and related functions. This can also apply to the data accessor
+functions raw/tmp/norm `*Data`.
+* Usually, class names and package names match in case and class names have
+their first letters capitalized.
+* Avoid using `@` accessor and create dedicated accessor functions for your
+class
+* Please provide a more thorough description of the `tolerance` arguments `a`,
+`b`, `c`.
+
+
