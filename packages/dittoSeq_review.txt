@@ -1,0 +1,61 @@
+# dittoSeq #1302
+
+## DESCRIPTION
+
+* Please format the description field to fit within the 80 character width.
+* Looks good.
+
+## NAMESPACE
+
+* Are several `import*` functions necessary?
+
+## vignettes
+
+* Please update the formatting to fit the 80 character width. It is harder to
+review the source document when the text is running off the page.
+* The 'Bulk RNAseq data' section has some awkward code that uses `@`. Please use
+extractor functions or include those data as separate objects
+* Shouldn't `data.out` be part of the return value of the function rather than
+an argument? The `show` method would perform the plotting
+
+## R
+
+* The class name is quite general and we would like 'RNAseq' to refer solely to
+the method. Please change the name of your data class.
+* I don't see why your data class cannot extend `SummarizedExperiment`.
+* Please use endomorphic operations to resolve issues with `addPrcomp` and
+related functions. A more straightforward approach would be to use `object` as
+the first argument and require it to not be missing. Your return value would
+be your data class with additional data.
+* Avoid the use of `eval(parse(...))` and `typeof(x) == 'character'`
+* For metadata, you can make use of the `metadata<-` generic and create a method
+for your class.
+* It appears that you are use S3 methods on an S4 class with `addMeta<-.RNAseq`.
+Please see point above.
+* Avoid using character input and instead use only the object.
+* Create a wrapper for `message()` based on the `verbose` argument instead
+of re-running `importDemux2Seurat` with `suppressMessages`.
+* Check for package availability before using Seurat functions with
+`requireNamespace` and creating conditional code that will error when the
+package isn't available. See our guidelines for more information.
+* For `ditto*` functions with a `data.out` argument, it would be good to
+either break the function into two steps where you can use the data as input
+to the plotting method or return the data with the plotting object somehow.
+This is to avoid returning different objects based on input arguments.
+* `RNAseq_mock` data can be the output of `importDESeq2` or `prcomp`. You can
+then use this data to provide the `addDimReduction` example in the
+documentation.
+* Test class membership with `is(x, "classname")` avoid using `==` in
+`getReductions`.
+* Create accessor and setter functions for your class. There should be zero to
+minimal use of the `@` function.
+* `import*` functions can be reduced to one single function for your class with
+conditional checks for suggested packages as described above.
+
+## additional folders
+
+* Please remove / move the extra folders in the package. Consider merging the
+README.md files into one. Image assets can be placed in the vignettes or other
+folder or in a separate GitHub repository for linking (as it seems like they are
+only used for README files).
+
