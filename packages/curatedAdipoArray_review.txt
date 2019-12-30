@@ -1,0 +1,19 @@
+# curatedAdipoArray # 1311
+
+## DESCRIPTION
+
+* `Year` field is not necessary
+* Update your `License` field if you are going to include a file.
+* It looks good overall.
+
+## NAMESPACE
+
+* None
+
+## vignettes
+
+* Avoid using `ExpressionSet` and use `SummarizedExperiment`
+* We recommend storing the data as `data.frame`s and building a
+`SummarizedExperiment` from the downloaded data.
+* Please mention the other `curated*` packages that you maintain.
+
