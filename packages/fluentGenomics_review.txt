@@ -1,0 +1,37 @@
+# fluentGenomics #1350
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks okay although *cache* functions seem to be helpers rather than
+main functions.
+
+## vignettes/
+
+* Formatting looks great! R code could be formatted with 4 spaces but this
+is a minor detail.
+* The `*.bib` and `workflow.png` files should be in the main `vignettes` folder.
+Is there a reason for putting them in `/inst/vignettes`?
+* 'stable version' should read 'development version' after acceptance and
+until Bioconductor release.
+
+## data/
+
+* It would be good if the "peaks" data had a slightly more descriptive name
+
+## docs/
+
+* Please remove built documentation from the source package (`docs` folder).
+This is generated when the package is built.
+
+## Other
+
+* 'pkgdown' files (e.g., `_render.R`, and `_pkgdown.yml`) should go in another
+branch as they are related to the website build and not the Bioconductor
+software.
+* `WORDLIST` file should also be in that branch.
+* Consolidate `LICENSE` files, if possible.
+

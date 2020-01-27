@@ -1,0 +1,24 @@
+# iCAT #1288
+
+## DESCRIPTION
+
+* (Minor) Consider using Authors@R field instead of `Author` and `Maintainer`
+fields
+* There seem to be **no** Bioconductor packages listed in the DESCRIPTION file.
+What is the reasoning for submitting the package to Bioconductor?
+* Include a `BugReports` field
+* Use a release version of `roxygen2` not development
+
+## NAMESPACE
+
+* Consider using a more descriptive name for `classMat`.
+* Is `savePlot` really necessary? Most users should be able to save plots
+using functions such as `png`, `pdf`, etc.
+* `readTrn`-type of functions are usually reserved for new data formats. Is
+that the case here? Perhaps you should change it to `trainingSamples` or
+similar.
+* It appears that `getLib` is not very specific
+
+## vignettes
+
+* Include images in the folder not as a link to a website.
