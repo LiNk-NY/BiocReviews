@@ -1,0 +1,66 @@
+# HIPPO #1364
+
+## DESCRIPTION
+
+* It looks good. Please add a `BugReports` link that refers to the GitHub
+issues page.
+* Minor: Use fully qualified version numbers `R (>= 4.0.0)`.
+* Consider using `Authors@R` field instead of `Author` and `Maintainer`
+
+## NAMESPACE
+
+* Avoid using general names such as `dimension_reduction`,
+`compute_test_statistic`, etc.
+* Consider re-exporting the pipe operator if you want to provide that
+functionality for your users
+
+## vignettes/
+
+* Use a more descriptive title for the vignette
+* Include an 'Installation' section in the vignette
+* Avoid downloading data from the web (line #25). If the data is needed for an
+example, your first option should be to generate an example /mock dataset from
+code and the second would be to add a _small and condensed_ dataset to the
+`data/` folder to show usage
+* Please format the vignette code so that it doesn't go over the 80 column
+width limits
+* Consider providing a helper function / functionality to be able to read data
+from `sce@assays\$data\counts`
+* Include a `sessionInfo` section
+* Provide an extractor function for hippo results instead of having the user
+enter `sce@int_metadata$hippo$diffexp$result_table`
+
+## R/
+
+* Re-use functions where possible. For example, use `nb_prob_zero` inside
+`zinb_prob_zeo`.
+* Allow the use of a `SingleCellExperiment` where a matrix object of count
+data is the main input (e.g., `preprocess_heterogeneous`)
+* Use `assay` instead of `assays@data$counts`
+* Condense conditionals to just use "`setdiff`" of the code. For example,
+when `show_outliers` is `TRUE`, it should only add
+`ggplot2::geom_point(data = subset, ...)` to `g`.
+* Avoid using semicolons in the code (`;`)
+* Avoid using `print` and use `message` instead, provide a `verbose` option for
+users to opt-out of the messages
+* Consider extending `SingleCellExperiment` or providing a method to access
+`int_metadata` in an organized way.
+* Condense code by reducing repeated code in `dimension_reduction`. Use a
+`switch` to assign the appropriate function either (`umap` and `Rtsne`).
+* Rename functions that have 'generic' names such as `diffexp`,
+`compute_test_statistic`, etc.
+
+Minor:
+* Use `<-` for assignment instead of `=`
+* Avoid using `1:n` sequence generation and use the more robust
+`seq_len(n)` or `seq_along(x)`
+* Use  `rownames(df) <- NULL` to remove row names
+* `if (length(x) > 0)` is equivalent to `if (length(x))`
+
+## /
+
+* Remove non-package related folder such as `analysis`, `readme`, `docs`,
+`README_file`, `ensg_hgnc*.txt`, etc.
+* Move any datasets that you _absolutely_ need into a `data` directory,
+refer to data comments above
+
