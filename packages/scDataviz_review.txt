@@ -1,0 +1,46 @@
+# scDataviz #1374
+
+## DESCRIPTION
+
+* It looks good.
+* Please add a `BugReports` field pointing to the issues page on GitHub.
+
+## NAMESPACE
+
+* Use roxygen to generate `NAMESPACE`
+* Looks good.
+
+## vignettes
+
+* Keep to the 80 column width limit in the vignette
+* It would be good to include a small subset of the dataset in the package so
+to avoid download from the vignette and GitHub (`SeuratToSCEb`)
+
+## R
+
+* Provide a `verbose` argument for users who would like to suppress messages
+from functions.
+* Create a package-wide theme for `ggplot2` instead of copying and pasting the
+same code into different functions
+* Avoid `0:x` sequence generation, use the more robust `seq_len` or `seq_along`
+* Try to isolate differences in conditions, for example, `drawConnectors` as T/F and
+`celllab` NULL or not, into a simple assignment
+`colConnectors <- if (!drawConnectors) NULL`. This reduces the amount of code
+needed.
+* Some functions look similar enough, for example `metadataPlot` and
+`contourPlot`, to be abstracted (if possible) so to get both with one function
+* The sheer number of arguments in some functions may impact usability among
+novice users. If possible, keep arguments to a minimum.
+* Formatting looks good.
+
+Minor:
+* These are equivalent: `length(x) > 0` and `length(x)` within an `if`.
+* Avoid redundant `if (gridlines.major == TRUE)`. `if` is already checking for
+`TRUE`
+
+## / (src folder)
+
+* Remove folders and files that do not belong such as `README_files` and
+`library.bib` or at least add them to the `.Rbuildignore`. Ideally these
+should only exist in your local GitHub repository.
+
