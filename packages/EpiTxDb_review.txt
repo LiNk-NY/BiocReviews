@@ -1,0 +1,32 @@
+# EpiTxDb #1387
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+* Perhaps you may want to go over some imports and see which ones you can do
+without (e.g., `assertive`)
+
+## vignettes
+
+* Looks good and straightforward.
+
+Minor:
+* You can use multi-chunk options to include the `library` calls only in _one_
+chunk. For example, you can set
+`results="hide",include=TRUE,message=FALSE,warning=FALSE`
+to show the chunk but not the results or messages etc.
+
+## R
+
+* Good work. Keep in mind that some pain points would be that unexported
+helpers from `GenomicFeatures` can change at any time and you will have to
+support any changes to them.
+* Overall, the functions look modular and there are plenty of helper
+function to support the modulartiy of the package.
+* You could write SQL calls that are not string dependent but this is a minor
+point and may not be worth the dependencies overhead (see `dbplyr`).
+
