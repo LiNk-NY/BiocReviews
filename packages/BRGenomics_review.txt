@@ -1,0 +1,43 @@
+# BRGenomics #1398
+
+## DESCRIPTION
+
+* It looks good.
+* Add a `BugReports` field.
+
+## NAMESPACE
+
+* It looks good.
+* Try to make function names such as `aggregateByNdimensionalBins`,
+`densityInNdimensionalBins`, etc. shorter (if possible)
+* If you are using `SummarizedExperiment` as a standard representation in
+the package it may be better to import the entire package rather than just
+the `SummarizedExperiment` function.
+
+## vignettes
+
+* The front matter looks great.
+* (optional) The text width should not exceed 80 columns as it's easier to read,
+edit, and maintain.
+* Run vignette through spell checking software
+* Update the installation instructions to make use of `BiocManager::install`
+* Remove mention of `Rtools` since binaries would be provided for Windows users
+* It is quite lengthy and thorough, consider splitting the vignette into
+multiple parts to thematically target users
+
+## R
+
+* I think that functions should not be greedy in terms of core-usage, they
+should use options set by the user (e.g., as `options("ncpus")`) instead of
+`detectCores()`
+* Are there existing packages that import these type of files already (e.g.,
+`bam`, `bigwig`)? If not, perhaps differentiate these functions by giving them
+a more descriptive name.
+* Use identical to test equality between strings instead of `==`, it's not as
+robust with edge cases and multiple input vectors (`fix.start` and `fix.end`)
+in `genebodies`.
+* Code that intersects and reduces ranges by gene matches the functionality
+in `RaggedExperiment` package. Perhaps you may want to look into that data
+structure?
+
+
