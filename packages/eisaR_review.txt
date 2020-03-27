@@ -1,0 +1,28 @@
+# eisaR #1417
+
+## DESCRIPTION
+
+* It looks good.
+* Add a `BugReports` field for filing issues
+
+## NAMESPACE
+
+* It looks good. Not too extensive :+1:
+
+## vignettes
+
+* It is customary to provide an installation section in one of the vignettes.
+* Formatting looks good and is easy-to-read (Auth: MS).
+* For readability, it is recommended to limit text with to 80 columns (Auth: CS)
+* Content looks short and easy-to-read (Auth: CS)
+* Remove the `eisaR.R` file from the vignettes folder
+
+## R
+
+* It looks properly formatted.
+* Good to go.
+
+## /
+
+* OK
+

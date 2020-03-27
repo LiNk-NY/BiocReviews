@@ -1,0 +1,39 @@
+# HighlyReplicatedRNASeq #1436
+
+The title of the package is a bit vague and it may be more helpful to be
+specific.
+
+## DESCRIPTION
+
+* A more detailed description would be helpful for potential users of the
+package.
+* Include the source of the data in the `Description:` field
+
+## NAMESPACE
+
+* Nice and short
+
+## vignettes
+
+* It looks good / illustrative.
+* It may be better to provide the data in a standard format such as `matrix`
+and then provide a function in the package that takes the matrix and serves
+a `SummarizedExperiment`. This avoids issues with serialized objects in
+'long-term' storage.
+
+## R
+
+* You could put all the files in one `R` file.
+* Why not include a helper function to 'attach' the metadata to an existing
+`SummarizedExperiment` object?
+* Is the resource number supposed to be the same for both functions?
+
+## /
+
+* Keep one LICENSE file in the repository. The `LICENSE` file is not
+necessary because it is known that you are the author of the package.
+
+## README
+
+* Update the installation instructions to use `BiocManager::install`
+
