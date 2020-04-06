@@ -1,0 +1,61 @@
+# MOMA #1462
+
+Thank you for your submission.
+
+A few questions:
+
+Is the `moma.gbmexample` package necessary?
+Does it contain previously unpublished data?
+
+If the data is just for the examples in the vignette, perhaps you can take a
+subset of it so that you can provide a small representation in the `MOMA`
+vignette without the introduction of a second package.
+
+Other than the dependency on `ComplexHeatmap`, the author does not make use
+of existing Bioconductor infrastructure.
+
+## DESCRIPTION
+
+* It looks good.
+* Consider adding a `BugReports:` field in the `DESCRIPTION` file pointing to
+the GitHub repository.
+* Are the versions specified in the `Imports:` field really required? It may
+be a little too restrictive.
+* Only include `LazyData: true` if you have small manageable datasets.
+* Respect the 80 character width limit (`biocViews:` & `Authors@R` fields).
+
+## NAMESPACE
+
+* Use a consistent naming convention. Either `snake_case` or `camelCase`.
+
+## vignettes/
+
+* Include an installation section that uses `BiocManager::install`
+* The vignette is meant to show the functionality of the package and not really
+a 'real-world' example although it could but usually real-world data is too
+large for a package.
+* The `gbm.example` is an unstructured list. Consider using something like a
+`SummarizedExperiment` as input.
+* Constructor functions are usually plain functions that filter the inputs and
+ultimately call `new` to create a `MOMA` class object.
+* The constructor should be the same name as the class (for example, "Moma").
+* Usually, class names are capitalized (i.e., "Moma") though not required.
+* With a proper structure, you can avoid operations like
+`sapply(..., '[[', "reliability")` at the user level.
+* Include a `sessionInfo()` section.
+
+## R/
+
+* Remove any mention of `set.seed` from within a function (even if it is a
+comment)
+* Do not use `print`
+* Use `stop` to return an error
+* Are many of the functions internal? I don't think I saw that they were
+exported (e.g, in `diggit.r`) and they don't have an `@export` tag on them.
+* Unexported helpers / utility functions should have a `@internal` tag.
+* Avoid the use of `sapply` where possible
+* Consider using `MultiAssayExperiment` for combining samples from different
+assays (e.g., in `genomic.saturation.r`) and coordinating them.
+* It's interesting that the class has `output.folder` slot. Could you make a
+method that allows you to save whatever you need from the object?
+

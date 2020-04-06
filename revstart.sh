@@ -25,5 +25,5 @@ if [ ! -e "$biocfile" ] ; then
     touch $biocfile
 fi 
 
-vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R 
+vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R R/*\.r
 
