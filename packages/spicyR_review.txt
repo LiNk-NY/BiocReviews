@@ -1,0 +1,82 @@
+# spicyR #1447
+
+## R CMD check
+
+* The data should be small in order to demonstrate functionality
+
+```r
+* checking installed package size ... NOTE
+  installed size is  5.7Mb
+  sub-directories of 1Mb or more:
+    data      2.6Mb
+    extdata   2.7Mb
+```
+
+* Make sure all variables are accounted for:
+
+```r
+* checking R code for possible problems ... NOTE
+signifPlot: warning in pheatmap(pVal, col = pal, breaks = breaks,
+  cluster_rows = FALSE, cluster_cols = FALSE): partial argument match
+  of 'col' to 'color'
+.show_spicy: no visible binding for global variable ‘p.adjust’
+hatchingPlot: no visible binding for global variable ‘x’
+hatchingPlot: no visible binding for global variable ‘y’
+makeWindow : <anonymous>: no visible global function definition for
+  ‘rnorm’
+signifPlot: no visible global function definition for ‘p.adjust’
+spatialLM: no visible global function definition for ‘predict’
+spatialLM: no visible global function definition for ‘lm’
+spatialMEM: no visible global function definition for ‘predict’
+top,spicy: no visible global function definition for ‘p.adjust’
+top,spicy: no visible global function definition for ‘Which’
+Undefined global functions or variables:
+  Which lm p.adjust predict rnorm x y
+Consider adding
+  importFrom("stats", "lm", "p.adjust", "predict", "rnorm")
+to your NAMESPACE file.
+```
+
+## DESCRIPTION
+
+* It looks good.
+* It's recommended to use an `Authors@R` field instead of the `Author` &
+`Maintainer` combo.
+* Use `LazyData: true` if you have small datasets that don't take a long time
+to load.
+* Include a `BugReports: ` field in the `DESCRIPTION` with a link to the
+GitHub repo
+
+## NAMESPACE
+
+* (_Optional_) Bioconductor convention has a class names's first letter
+capitalized
+* Some names seem pretty general / vague: top, location
+
+## vignettes/
+
+* For readability and easy maintenance, keep an 80 column width limit to text.
+* Include an installation and `sessionInfo()` section
+* It's good to have broken up topics by vignette :+1:
+
+## R
+
+* Given the number of Bioconductor classes available, is there a class that
+could accommodate the needs of `spicy`? A `list` seems too simple.
+* Although it's the same, you could use `setReplaceMethod` instead of
+`location<-` for readability and easier identification
+* Avoid the use of `@`. There should be methods for data extraction, otherwise
+you can create accessor functions for those data
+* Register an S3 method `as.data.frame` for your class don't create an S4
+generic. Preferably, create an `as(x, "data.frame")` coercion method.
+* Avoid using `cat` and use `message` instead. Use `cat` only for `show`
+methods
+* Where possible, use name-based subsetting instead of index-based for
+robustness
+* There are two `plot.segmentedCells`. Should there only be one?
+* If you have default names in `cellData`, why not use those as the default
+argumetns for the rest of the function `segmentedCells` and avoid creating new
+columns?
+* Minor: You can use `grepl` instead of `length(grep(...)) == 0`
+
+
