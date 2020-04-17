@@ -1,0 +1,76 @@
+# dpeak #1427
+
+Overall, the package demonstrates useful functionality though I am not sure if
+these algorithms have been already provided in Bioconductor or on CRAN.
+The package uses `IRanges` but it seems like it could go a step further and
+make use of existing data representations such as `GRanges`.
+
+## DESCRIPTION
+
+* Submitters should be under the maintainer field and are considered responsible
+for the upkeep of the package.
+* Otherwise, have the maintainer affirm to responsibility of package maintenance
+in the issue.
+* It is suggested that you use the `Authors@R` field to provide maintainer and
+author information.
+* Dr. Chung can still be the author in `Authors@R` field
+
+## NAMESPACE
+
+* `export` (L#15) seems a bit vague, please rename to something more
+informative. Are you exporting the data within the class?
+
+## vignettes
+
+* Looks good
+* `plot` functions should not have file name arguments
+* Remove vignette products such as `eps` and `pdf` files, they should be
+created by the vignette code (?). If not, perhaps you can keep one file type
+in the folder?
+
+## R
+
+* Can you use a `GRanges` representation for `DpeakData`, `DpeakMotif`?
+* These classes look very complicated and perhaps it may be helpful if they
+were built from other classes.
+* Avoid using `print*` generic / methods. Create a `show` method for your
+class(es).
+* It's recommended to stay consistent with the naming conventions, this means
+sticking to either `camelCase` or `snake_case`
+* Avoid code duplication where possible (e.g., in `.combineModelSET` &
+`.combineModelPET`)
+* Use `message` to output to the console instead of `print` or `cat`
+* Use `cat` only for `show` methods.
+* We encourage to  find an alternative to using `perl` scripts and use native
+R operations where possible.
+* Be careful when using position indices instead of character ones. They are
+less robust.
+* Make sure that conditional statements evaluate to a single logical value,
+for example `if (n_group >= 2)` where `n_group <- c(1, 2)`
+* Avoid using `@` accessors and use established accessors for your class à la
+`SummarizedExperiment::assay` for example.
+* Remove old commented code
+* `parallel` is a base package and you should not need to check for its
+installation
+* Avoid setting `nCore`s for the user. Use one or two cores by default
+(important)
+* It may not be necessary to create generic and methods for single functions
+(e.g., `dpeakFit`)
+* Avoid emphatic language in error / messages (e.g., 'Inappropriate 'x'
+argument!')
+* Remove `gc` and `rm` calls as R will take care of unused objects
+* There are reservations for having `system` calls for external software such
+as `fimo` and `meme`. Perhaps the R code can work with the output of this
+software but not work with it directly?
+* Provide `verbose` arguments for users who wish to turn of the messages in
+functions.
+
+Minor:
+* Avoid double logical evaluation (e.g., `if (PET  == TRUE)` use
+`if (PET)` or `if (isTRUE(PET))` when 'PET' is not always expected to be
+logical.
+* Use `identical` when comparing two strings (e.g., `identical(x, "common")`
+instead of `estDeltaSigma == "common"`) especially within an `if` statement.
+* Why not use `tempdir()` as the default argument to `tempDir` in `dpeakMotif`?
+
+
