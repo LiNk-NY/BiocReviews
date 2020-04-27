@@ -59,3 +59,29 @@ assays (e.g., in `genomic.saturation.r`) and coordinating them.
 * It's interesting that the class has `output.folder` slot. Could you make a
 method that allows you to save whatever you need from the object?
 
+---
+
+Thank you for making those changes. The package is looking better!
+
+* I see that you reduced the strict version dependencies on packages. Good!
+* Do you need to import `BiocManager`? If so, for what reason?
+* Please find an alternative to `sink`. Perhaps `writeLines` can do the trick?
+If the data has no structure, consider tidying it.
+* Replace the user's options after changing them with `on.exit`
+* For the convenience of your users, provide arguments to the `MomaConstructor`
+that indicate the assay name for the datasets that you are interested in.
+For example:
+```r
+MomaConstructor(..., viperAssay = "viper") {
+    ...
+     Moma$new(viper = x[[viperAssay]], ...)
+}
+```
+this also allows you to have your own defaults.
+
+
+Minor:
+* Constructor functions are eponymous by convention although you can have
+a `MomaConstructor` in the package.
+* Remove any `Error: ` text from error messages. The `Error` keyword is already
+included.

@@ -1,0 +1,31 @@
+# AnVIL #1487
+
+## DESCRIPTION
+
+* Minor typo in `Description:`. `faast` > `fast`
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* We should note that AnVIL works best with OpenAPI v2 APIs somewhere in the
+vignette.
+* Credit / mention the use of `rapiclient`
+* Perhaps the developers section should be a separate vignette?
+
+## R
+
+* Should `"Leonardo"` be hard-coded in `authenticate()`?
+* Remove `.gitignore` from R folder, possibly modify `.gitignore` in package
+folder
+
+## inst/*
+
+* There is some unresolved merge text in `inst/script/demo.R`
+
+## NEWS.md
+
+* Update the `NEWS.md` file
+
