@@ -1,0 +1,52 @@
+# corral #1492
+
+## DESCRIPTION
+
+* It looks good.
+* Minor: Use `Authors@R` instead of `Author` and `Maintainer` fields if you'd
+like to add your ORCID ID and authorship details.
+* Consider using BiocStyle for the vignettes and adding it to `Suggests`
+
+## NAMESPACE
+
+* Looks good.
+* It seems that you are using an S3 class.
+
+## vignettes/
+
+* Please keep the text within the 80 column width limit. It's hard to read
+and maintain when the text goes off the page.
+* Perhaps it would be better for users to expect and get a consistent output
+despite the input (e.g., `SingleCellExperiment` or a derivative)
+* It would be good to have an easy way to convert a list of
+`SingleCellExperiment`s or similar into a `MultiAssayExperiment` object that
+uses the `colData` in one motion. The code in the 4th chunk of in the
+alignment vignette would be avoided. You could then do `assays` to get a list
+of matrices.
+
+## R
+
+* Use `match.arg` within the function instead of `c("irl", "svd")[1]` for
+vector default arguments (`corralm_matlist`)
+* Avoid using `'false'` strings. Use `FALSE`.
+* Shorten error messages where possible.
+* Re-using an S4 class has added benefits of a show method. Perhaps use a
+`List` derivative, `ExperimentList`, etc.
+* Functions that are not intended to be called directly should be internal.
+Use a `@keywords internal` tag.
+* Avoid using numeric indices where possible and use more robust names.
+* When creating a sequence, avoid using `1:n` syntax, use the more robust
+`seq_along(x)` or `seq_len(nrow(x))`.
+* The `na2zero` implementation should be endomorphic and vectorized so that
+it works on a matrix and returns a matrix rather than having the user enter,
+`apply(x, c(1,2), na2zero)`.
+* If I understand the process correctly, the `add_embeddings*` function
+adds the results to the list of SCE objects. Perhaps it supports the idea
+that the package could use a unified representation of SCEs as a `List` /
+`ExperimentList`.
+* Minor: It would be nice to see a single function handles both single and
+multiple tables and returns a consistent output.
+
+## test
+
+* Optional: Add more tests to increase the robustness of the package.
