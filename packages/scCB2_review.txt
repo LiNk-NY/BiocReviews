@@ -1,0 +1,33 @@
+# scCB2 #1509
+
+## DESCRIPTION
+
+* Looks good.
+* (optional) Reformat the `Description: ` field so that it doesn't run out of
+the screen
+* Is there a reason for importing `BiocStyle`?
+* BiocStyle should be used for the vignette and should remain in the
+`Suggests:` field
+
+## NAMESPACE
+
+* It looks good.
+* See note above regarding `BiocStyle`
+
+## vignettes
+
+* Remove code chunk that shows how to install via GitHub
+* Try to keep your lines within the 80-width columns limit
+* Pretty straightforward
+
+## R
+
+* Default values for `Ncores` arguments should be 1 or 2 and not more. These
+values should be set by the user and should not be greedy (see `CB2FindCell`).
+* Where possible, provide a unified representaiton as output rather than lists
+or use a central class throughout the package (e.g., `SummarizedExperiment`,
+`SingleCellExperiment`)
+* It looks like `BiocStyle` does nothing in the `R/QuickCB2.R` file.
+* Avoid using `dontrun` in the examples for `QuickCB2`. It shouldn't hurt
+to run the operations more than once. If the dataset / examples are small
+enough, it should not take very long.

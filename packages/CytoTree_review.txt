@@ -1,0 +1,40 @@
+# CytoTree #1501
+
+* Example code in examples, vignettes, unit tests, are meant to guarantee that
+a package is working for the users. The absence of this code in your package
+does not look favorable for users who would like to replicate a workflow.
+Please include working examples and a substantial vignette for users who
+do not want to access your online resources or who have limited internet
+connectivity on their servers.
+
+## DESCRIPTION
+
+* Looks good
+* Remove empty fields from the file
+
+## vignettes
+
+* Is there a reason why you link to the website instead of providing
+a vignette that is built nightly with other packages?
+* Do you have continuous integration set up on tutorial documents?
+* My concern is that content like this will become stale because it is not
+regularly updated and checked as it would if it were a vignette in the
+package.
+* An alternative to consider is to have the vignettes from the linked
+website built from the package and served to `github.io` using something like
+the `pkgdown` package
+
+## R
+
+* It is redundant to use 'ERROR', 'WARNING', etc. tags with the appropriate
+functions. `stop` already returns an explicit error message.
+* Why not use the `%in%` generic in `BiocGenerics`?
+* Avoid using `if (FALSE)` in the examples. This creates stale code, provide
+code that users can run if they need to test a function. If you data is large
+provide a small example dataset for testing and use within the examples.
+* Avoid using `1:ncol(x)` sequence generation use `seq_along(x)` or
+`seq_len(ncol(x))`
+* Rename R files so that they match with the function (e.g., `subsetCYT()` in
+`subsetFSPY.R`)
+
+
