@@ -1,0 +1,39 @@
+# clustifyrdatahub #1545
+
+## DESCRIPTION
+
+* Consider including ORCID IDs in `Authors@R`
+* Remove extra packages in the `Suggests` field (`tibble`, `dplyr`, etc.). You
+should only include packages that you use in the vignettes or examples.
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* Consider removing some columns that are not so relevant in the table output
+when printing the metadata table (first chunk)
+* Move installation section to the top.
+* Remove mentions of GitHub.
+
+Minor:
+* Use `TRUE` and `FALSE` instead of T and F.
+
+## R
+
+* Looks good
+
+## man
+
+* Looks good
+
+## /README.*
+
+Same comments with vignettes:
+
+* Consider removing some columns that are not so relevant in the table output
+when printing the metadata table (first chunk)
+* Move installation section to the top.
+* Remove mentions to GitHub.
+

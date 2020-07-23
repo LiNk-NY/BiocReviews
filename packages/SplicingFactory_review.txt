@@ -1,0 +1,37 @@
+# SplicingFactory #1517
+
+## DESCRIPTION
+
+* Looks good
+
+## NAMESPACE
+
+* Looks straightforward
+
+## vignettes/
+
+* Looks good
+
+## R
+
+* Use `is.matrix` and `is(x, "SummarizedExperiment")` type of methods
+for obtaining the class of the input object.
+* Use a `verbose` argument for all the `message`s in `calculate_diversity`
+and other functions
+* User-facing functions should allow a `SummarizedExperiment` input
+(`calculate_method`, `calculate_diversity`, etc.) and ideally return a
+`SummarizedExperiment`
+* Allow for alternative correction methods in `wilcoxon`. Is `BH` the only
+correction method? It seems to be hard-coded.
+* Should `calculate_*entropy` and related functions be exported and work on
+a `SummarizedExperiment` object?
+* Both`calculcate_entropy` and `calculate_laplace_entropy` look about the same,
+perhaps make them into one function with a type argument so that you're
+re-using code?
+
+## data
+
+* Rename the dataset `example_dataset` into something more descriptive
+* If possible, re-use data from an existing TCGA data resource (or even
+`GenomicDataCommons`)
+

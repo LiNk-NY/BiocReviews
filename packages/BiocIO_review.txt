@@ -1,0 +1,34 @@
+# BiocIO #1546
+
+## DESCRIPTION
+
+* Update the ORCID ID comment in the `Authors@R`.
+* Include a `BugReports` URL pointing to the GitHub/issues link.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignette
+
+* The vignette should highlight that the package is mostly used for building
+software that uses the generics.
+
+## R
+
+* Document all exported classes (i.e., `decompress`, `bestFileFormat`, etc.)
+* It may be helpful to export and provide documentation for the `GZ*` and
+related functions
+
+## README.md
+
+* Add some more substance to the `README.md` for GitHub viewing purposes
+
+## tests
+
+* It looks like you have some tests there. Good  :+1:
+
+Minor:
+## .gitignore
+
+* Merge .gitignores into one file in the base directory
