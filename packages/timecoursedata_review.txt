@@ -1,0 +1,32 @@
+# timecoursedata #1555
+
+## DESCRIPTION
+
+* Add slightly more detail to the `Description` field
+* (optional) Include an ORCID IDs in the `Authors@R` field
+* Does `covr` need to be in `Suggests`?
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* Consider using `output: BiocStyle::html_vignette` for the Bioconductor look.
+
+## R
+
+* There's an à in line 46 in `R/data.R`.
+* Consider creating an empty environment for data extraction to avoid
+sending the data to the `.GlobalEnv`:
+```
+dataEnv <- new.env(parent = emptyenv())
+data("varoquaux", envir = dataEnv)
+varoquaux <- dataEnv[["varoquaux"]]
+```
+* Data documentation looks great.
+* Minor: `*root` and `*leaf` functions can be combined into one
+* You may also consider combining the data into a single `SummarizedExperiment`
+representation that shares a single `colData` DataFrame ('varoquaux*$meta')
+and contains two assays.
+
