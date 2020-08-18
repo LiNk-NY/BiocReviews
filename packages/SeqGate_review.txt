@@ -1,0 +1,41 @@
+# SeqGate #1548
+
+## DESCRIPTION
+
+* Looks good and light weight in terms of dependencies.
+* Please add a `BugReports:` field to the `DESCRIPTION` file.
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* Please include an `Installation` section in the vignette that uses
+`BiocManager::install`.
+* Add a more descriptive name to example dataset
+* I think it would be helpful to allow a `SummarizedExperiment` input with
+`colData` annotations that indicate biological conditions in `applySeqGate`.
+* The return value could then be a `SummarizedExperiment` with
+`rowData` that indicate kept or filtered rows, `onFilter`, and `threshold`
+values.
+
+## R
+
+* There seems to be a typo in the `ckeckForReplicates` function name.
+* Use `data.matrix` on a `data.frame` avoid the `while` loop and the
+cyclomatic complexity
+* The `checkReadCounts` can be avoided by using a `SummarizedExperiment`
+which already implements such checks.
+* Avoid using `cat` for warnings / error messages (use `message`, `warning`, or
+`stop`)
+* Don't use keywords in the error / warning messages (e.g., `ERROR`, `WARNING`)
+these are output by the `stop` and `warning` functions. For example, run this
+in your console `stop("ERROR")`.
+
+## tests
+
+* Tests look good
+* If possible, avoid using an external dataset and use generated data
+to test your functions
+* Avoid using `rm(list=list())`

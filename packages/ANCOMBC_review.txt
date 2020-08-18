@@ -1,0 +1,62 @@
+# ANCOMBC #1586
+
+* The package does not seem to interface with any existing Bioconductor
+infrastructure
+* This is a challenge because there is less to 're-use' in Bioconductor that
+is related to the analyses that this package performs
+* On that note, why shouldn't it go to `CRAN`?
+
+## DESCRIPTION
+
+* Include more information in the `Description:` field to give users a sense of
+the scope of the package
+* Your ORCID IDs should include just the numbers at the end of the URL.
+* Remove the `LazyData: true` field, your package does not seem to include
+data
+* Perhaps `Rdpack` should be in `Suggests:`
+
+## NAMESPACE
+
+* Looks pretty clean
+
+## vignettes
+
+* (optional) You could add is a `# Reference` section at the bottom when
+using https://rmarkdown.rstudio.com/authoring_bibliographies_and_citations.html
+* Avoid using backticks in the recode function unless the name has a
+special character (also in `tests/testthat/*`)
+* Use `TRUE` instead of `T`
+* Are users expected to write `summary_template`? It may be more helpful to
+provide this object via a helper function
+* Avoid using the semi-colon `;` and add a new line
+* Use the group of assignments (lines 133 - 139) _inside_ the `ancombc`
+function call with proper indentation and argument names for readability
+* You may want to add a small description of the `ANCOMBC primary result`
+informing the reader what kind of return is to be expected.
+* Everything else looks good.
+
+## R
+
+* Avoid using `;` in package code as well
+* Clean up objects that are not used after creation (e.g., `taxa_id`,
+`samp_id` in `R/ancombc.R`)
+* General Note (No action required). It seems from the coding that it can be
+tough to keep track of every object that is created. It's better to create a
+general class that work with functions that would only extract the information
+that is needed.
+* Perhaps algorithms such as E-M are implemented elsewhere and a
+re-implementation may not be necessary?
+* Good use of `vapply`
+* Avoid, where possible, nested apply family calls (e.g., in
+`R/get_struc_zero.R`)
+* Minor: Avoid using `c()` on what should already be a vector
+(in `R/em_iter.R`; L#4-7)
+* Use `<-` instead of `=` for assignment (`R/fit_summary.R`)
+* You can use `on.exit` to reset `options` in `para_est`
+* Avoid constructions like `ifelse(res$q_val < alpha, TRUE, FALSE)` which can
+be `res$q_val < alpha & !is.na(res$q_val)` if there are NA values otherwise
+the first condition (`res$q_val < alpha`) should be enough
+
+## tests
+
+* Looks good

@@ -1,0 +1,57 @@
+# PhosR #1538
+
+## DESCRIPTION
+
+* Is there a proteomics `biocViews`?
+* Looks good
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* I'd suggest that you keep your vignette within the 80 character width limit.
+* Add an `Installation` section that shows users how to install the package using
+`BiocManager`
+* It looks good and thorough
+
+## R
+
+* Can you get the KEGG and reactome data from the internet? I am not sure you
+need a serialized dataset in the package.
+* Avoid copy and append methods in `selectTimes`. Although this has been
+improved in R, you could use pre-allocate and fill. See the Bioconductor
+guidelines https://bioconductor.org/developers/how-to/efficient-code/.
+* Where possible, avoid nested `for` loops and use vectorized operations
+* Avoid using `print` or `cat` in package code, use `message` for easier
+suppression, consider adding a `verbose` argument to your function as well.
+* It seems to me like `ptImpute` should accept something like
+`SummarizedExperiment` with an annotation like `treatment` in the `colData` to
+separate columns
+* Should the general representation for your data be `SummarizedExperiment`
+rather than a plain matrix?
+* Allow users to modify parameters for plotting with `...` in plotting
+functions
+* It seems like functionality such as ORA is already available in Bioconductor.
+Have you looked at the `EnrichmentBrowser`?
+* Use more descriptive options for the `panel` argument in `plotQC`. The name
+of the function would be more helpful IMO.
+* Avoid using `tidyr::spread` since it is 'retired' in its lifecycle:
+https://tidyr.tidyverse.org/reference/spread.html
+* Provide friendlier examples to your users. This code does not seem very
+new-user friendly:
+```
+tmp <- do.call(cbind, lapply(split(1:ncol(phospho.L6.ratio), gsub('_exp\\d+',
+                            '', colnames(phospho.L6.ratio))),
+                            function(i){rowMeans(phospho.L6.ratio[,i])}))
+```
+* Try to avoid using `1:x` sequence generation.
+
+Minor:
+* Similarly to `sapply`, `mapply` automatically reduces the output into a
+simpler format, use the more robust `Map` function to obtain a predictable
+result (e.g., in `createFrequencyMat`)
+* Avoid evaluating to logical twice (e.g., `if (reorder == FALSE)`,
+`if (scale == TRUE)` in `medianScaling`; simply use `if (reorder)`)
+
