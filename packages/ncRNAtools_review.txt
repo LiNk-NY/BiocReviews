@@ -1,0 +1,67 @@
+# ncRNAtools #1575
+
+* General comments: It would be great if the API had a formal protocol that
+you could use to feed into a package such as `rapilclient`.
+* Is there functionality in `Biostrings` that you could use?
+* Overall it looks solid. Object naming is descriptive. It could use a bit more
+code formatting for readability.
+
+## DESCRIPTION
+
+* Please reconsider the use of `reshape2` since the package is in the 'retired'
+phase. If possible, perform the operations using base R.
+* Include a `BugReports:` field that points to the GitHub issues link.
+* Re-evaluate the `Suggests:` package `BiocGenerics`
+* (optional) Include `ORCID` IDs as comments in Authors@R.
+* Everything else looks good.
+
+## NAMESPACE
+
+* `flattenDotBracket`, `readDotBracket`, and `writeDotBracket` seem to be
+helper functions. Should they be exported? **Update**: This seems to be a
+useful format that is used an input for the tool.
+* Based on the number of functions imported, reconsider imports from functions
+whose operations can be readily preformed using `base` R (~ `stringr`,
+`stringi`, `rvest`, `reshape2`).
+
+## vignettes
+
+* Please stay within the 80 column width limit. It makes it easier for the
+reviewer to read and even maintain.
+* Include an installation section that uses `BiocManager` to demo how the
+package would be installed (see Bioconductor landing pages for examples).
+* Avoid direct download of resources (e.g., from the Broad) within the
+vignette and even package code (if any).
+* Place __small__ illustrative data formats in the `inst/extdata` folder
+* Add a `sessionInfo` section to the end of the vignette (before References)
+
+## R
+
+* The first two conditions in `checkInferenceEngine` are the same. Perhaps
+you meant to add a different method (`centroidHomFold`)?
+* Use double vertical bars `||` to ensure that conditions on either side
+evaluate to length 1 (`R/ncRNAtools_checkInputFunction:L#32`).
+* I would recommend that you keep warnings and error messages as brief as
+possible and within the default R width (`getOption("width") == 80`).
+* Use `globalVariables` function to avoid using `Var1 <- NULL` in every
+plotting function.
+* Avoid saving plots for the user. Remove `filename` argument. The user should
+be able to call `ggsave` themselves with the return of your function.
+* Use the alpha-numeric regex class to match numbers and letters `[[:alnum:]]`
+* Good use of `GRanges`
+* Avoid using `sapply`. Use either `lapply` or `vapply` if the return is
+predictable.
+* Format the code so that it fits the 80 character width limit where possible.
+* (optional) Create helper functions for repetitive operations, for example
+`function(x, text) { unlist(strsplit(x, text)) }`
+* Avoid downloading data in the examples (see vignette section above)
+* It would be good to have more unit tests in the package.
+
+Minor:
+* To avoid the 'cyclomatic' complexity, use strategies that save you space
+(e.g., `match(method, c("centroidFold", "centroidHomFold", "IPknot"))` in
+`R/ncRNAtools_otherSupportFunctions.R:L#4-12`)
+* Avoid using all the letters in the alphabet by doing `A-Z` inside the regex
+or using regex classes.
+* Use 4 space indentation
+
