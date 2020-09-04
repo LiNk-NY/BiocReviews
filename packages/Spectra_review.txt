@@ -1,0 +1,59 @@
+# Spectra #1614
+
+* Solid package with very expansive functionality.
+* You may want to consider separating the plotting functionality from
+the infrasturcture package into its own package.
+
+## DESCRIPTION
+
+* Looks good.
+* Use `LazyData: false` if you have data that is on the larger side.
+
+## NAMESPACE
+
+* Perhaps the implementation of `asDataFrame<-` needs revisiting
+* Could the `replaceList<-` method work as `List<-` for the list-like element
+in the class?
+* Why does `lapply` need to be exported?
+* Perhaps `lapply` could be inherited by only the list-like representation
+within the class?
+
+## vignettes
+
+* Include an `Installation` section that uses `BiocManager`.
+* It looks like the show method print out from line 122 in the vignette is
+missing something:
+```
+> sps
+MSn data (Spectra) with 3 spectra in a MsBackendDataFrame backend:
+    msLevel     rtime scanIndex
+  <integer> <numeric> <integer>
+1         2        NA        NA
+2         2        NA        NA
+3         2        NA        NA
+ ... 18 more variables/columns.
+Processing:
+
+```
+* Perhaps using `filter(x, dataOrigin == "XYZ")` should be supported rather
+than having a function for each type of filtering (e.g., `filterDataOrigin()`)?
+
+## R
+
+* Can the `asDataFrame` generic and methods be avoided by using the `setAs`
+function?
+* It seems to me that `asDataFrame<-` is an awkward construction.
+* I'd encourage the use of `S4` method on an `S4` class (e.g., using
+`as(x, "List")` when `x` is an `MsBackendHdf5Peaks` class rather than
+`as.list` which looks like an S3 method but is created as an S4 method.
+* Use the `@` accessor sparingly in package code.
+* I'm not sure you should have methods for the virtual class in
+`R/MsBackend.R` ... (@mtmorgan?)
+* Why not let the user execute `bplapply` themselves rather than having
+an `lapply` method wrapper?
+* Coding and formatting look good.
+
+## tests
+
+* It looks like the is plenty of coverage with the tests.
+
