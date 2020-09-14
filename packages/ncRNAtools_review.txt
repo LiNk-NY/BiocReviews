@@ -65,3 +65,53 @@ Minor:
 or using regex classes.
 * Use 4 space indentation
 
+---
+
+> In its current version, there are no functionalities in ncRNAtools that
+relate to alignments of sequences or subsetting sequences. However, the
+package could be easily modified to accept RNAString and DNAString objects, in
+addition to plain strings. Let us know if you think this would be an useful
+addition and we will perform the required changes!
+
+Yes, if possible integrate with `Biostrings`. You will be able to implement
+this feature after it is added to the Bioc-git repository.
+
+> We have included Suggests: RUnit, BiocGenerics as instructed at
+http://bioconductor.org/developers/how-to/unitTesting-guidelines/ in order to
+perform unit tests. Would there be another preferred way to do this?
+
+Sounds good! Sorry I wasn't aware of this alternative method.
+
+> Dependency on rvest was based on its html_text function to parse the HTML
+content of a query response. After checking in detail, this seems to be just a
+wrapper for xml_text from xml2. We have now changed our code to use directly
+xml_text, and included xml2 as a dependency. This leads to importing only
+xml2, instead of rvest and xml2 as was previously the case. Would this be
+fine?
+
+Yes, this is perfect.
+
+> We have now tried to format the code to fit into the 80 character width
+limit as much as possible. We believe splitting the remaining lines into
+smaller lines could make code readability worse. Would be fine to keep it in
+this way? Otherwise, we can split the remaining lines as well
+
+Yes, this is fine. There are some instances where this is not readily possible,
+for example, URLs in RMarkdown files.
+
+> We have now added unit tests for all exported functions except writeCT and
+writeDotBracket, which are used to write files. Would these be enough?
+Otherwise, we would be happy to add additional tests
+
+You are welcome to add more tests. In an ideal scenario, all functions would
+have accompanying tests.
+
+> We have checked how the code would look like with 4 space indentation
+instead of the current general 2 space indentation, and we believe that, due
+to the frequent occurrence of multiple nested function calls, this might make
+code readability worse. However, if you believe it might still be desirable to
+use 4 space indentation, we can certainly modify the package.
+
+I don't think it would make readability worse. Perhaps you could un-nest
+function calls by creating intermediate steps, but this is a minor issue.
+
