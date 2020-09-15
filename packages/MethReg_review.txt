@@ -1,0 +1,65 @@
+# MethReg #1613
+
+## DESCRIPTION
+
+* Add more details to the `Description:` field.
+* Add a `BugReports:` link for issue reporting.
+
+## NAMESPACE
+
+* If possible, shorten function names.
+* You may want to import the entirety of `GenomicRanges` e.g.,
+`import(GenomicRanges)` rather than using `importFrom`.
+
+## vignettes
+
+* Remove the `GitHub` installation instructions.
+* Show how to use `BiocManager` to install the package.
+* Remove the repeated `library(MethReg)` call in the vignette.
+* Avoid awkward constructions such as `get(data(...))` in a user-facing
+vignette. `data` should return the data instead of a character. Perhaps
+use `usethis::use_data`.
+* Observe the 80 character width limit. It makes text easier to read
+and even maintain.
+* You don't need to remove the data object from memory with `gc()`.
+* Remove any code for `coMethDMR` as it is not in Bioconductor or CRAN.
+
+## R
+
+* It is possible for the user to save a file themselves without the need of the
+`file.out` argument in your function. It may be more simple to remove the
+argument and include an example in the documentation that shows the user how
+to write the data to disk.
+* Avoid using `dontrun{}` in examples. This creates stale code whenever there
+is an API change.
+* If the `dontrun` examples are too computationally intense, I would suggest
+using a smaller example dataset.
+* The `min.confidence` argument does not match the documentation in
+`R/create_triplet_regulon_based.R`
+* Use caching such as `BiocFileCache` to avoid re-download of `human_tfs`
+resources.
+* Update documentation for `dnam` and others to include `SummarizedExperiment`
+as an option.
+* Avoid downloading files from an Amazon bucket. It is recommended that you
+obtain it from the official source or from ExperimentHub so that other
+users/developers can make use of the data (`cRegulome.db.gz` in
+`R/get_tf_targets_cistrome.R`).
+* I think the documented data in `R/MethReg.R` should be named rather than
+`NULL`. See `usethis::use_data`.
+
+Minor:
+
+* Reduce repetitive code by combining logical tests, for example,
+`if (missing(exp) || is.null(exp))` in `R/cor_region_dnam_target_gene.R`.
+* Allow users to turn off the verbosity from `message` function calls in
+functions like `get_promoter_avg`.
+
+## tests
+
+* Remove or update any commented code.
+* Looks good.
+
+## README.Rmd
+
+* Update installation instructions to use `BiocManager` instead of GitHub.
+
