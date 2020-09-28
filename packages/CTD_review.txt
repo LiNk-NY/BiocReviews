@@ -1,0 +1,6 @@
+# CTD #1630
+
+## DESCRIPTION
+
+* Add a `BugReports` field with a GitHub URL that points to the issues page
+*

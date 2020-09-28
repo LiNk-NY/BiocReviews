@@ -1,0 +1,59 @@
+# tomoda #1635
+
+## DESCRIPTION
+
+* Briefly describe the tomo-seq technology and possibly even provide a
+reference.
+
+## NAMESPACE
+
+* (optional) An unwritten convention is to use capital case function names for
+constructor functions for classes (e.g., `SummarizedExperiment()`). Otherwise,
+use lower case for 'plain' functions.
+* The names of some functions are quite general and can cause confusion for
+your users (e.g., `base::scale` vs `Scale` and `stats::kmeans` vs `KMeans`).
+Please add a more descriptive name to your functions or consider renaming them.
+* The number of exports looks reasonable though I'd be careful with function
+names that differ only by case.
+
+## vignettes
+
+* Consider limiting your lines to the 80 column width in the vignette. It makes
+it easier for the reviewer to read and potentially for the maintainer to
+update.
+* Use `r BiocStyle::Biocpkg('tomoda')` when accepted.
+* Why not use a `SummarizedExperiment` to represent the example dataset
+(`zh.data`)
+* Should `Normalize` and `Scale` operations be part of your `CreateTomo`
+function?
+* Use color-blind friendly default colors for the heatmaps.
+* Remove the `.gitignore` file in the vignettes folder (`.R` and `.html` files
+do not belong in the directory).
+
+## R
+
+* `CreateTomo` should support both `matrix` and `SummarizedExperiment` inputs.
+* You can also have a normalize / scale argument in the `CreateTomo` function.
+* Consider renaming `CreateTomo` to something like `checkTomo` as 'Tomo' is not
+really a class or subclass of `SummarizedExperiment`.
+* Add more details in the documentation to what operations are performed on
+the data as part of the `CreateTomo` function.
+* Given that `SummarizedExperiment` is the main data representation. The
+`GetMatrix` function is repeated code for `assay(se, i = "counts")` and should
+be removed. The documentation should inform users to use the `assay` function
+to extract a matrix.
+* Avoid using `cat` and use `message` instead to notify the user.
+* `HClust` and `KMeans` seem to be thin wrappers for `hclust` and `kmeans` and
+consider including the convenience functions inside the main `CreateTomo`,
+if at all.
+* Avoid hardcoding the assay name in `FindPeakGene` (`assays(object)$scaled`).
+Allow the user to input the scaled assay name (`scaled`) using an argument.
+This applies to other functions that use `assays(object)$scaled` etc.
+* Use `assay` rather than `assays` when extracting one
+* Use the allocate and fill strategy in `FindPeakGene` `for` loop when
+`nperm > 0`.
+
+## README.md
+
+* Update the `BiocManger::install` code chunk
+

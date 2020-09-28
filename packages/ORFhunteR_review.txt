@@ -1,0 +1,48 @@
+# ORFhunteR #1620
+
+## DESCRIPTION
+
+* Please include a `BugReports` field.
+* (optional) Include a ORCID ID as a comment in `Authors@R`
+* Minor: format the code so that it is within the 80 column width limit
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Use `eval = FALSE` for chunks of R code that are not meant to run (e.g.,
+installation instructions)
+* Try to avoid cryptic argument names such as `f.orf`. The unwritten convention
+is to use `.` in arguments that require logical inputs, otherwise use camel
+case.
+
+## / package folder
+
+* It looks like there is an invalid file name `.onUnload.R`
+
+## R
+
+* Avoid using `cat` function for printing to the screen. Use message with a
+`verbose` argument in the function to reduce the noise.
+* Due to the size, move the `BSgenome` package to the `Suggests` field.
+* Functions that use the package should check that the package is installed
+otherwise provide an error for the user.
+* Although it's best to avoid writing files for the user, `d.work` should
+point to a temporary directory by default.
+* Use a caching mechanism such as `BiocFileCache` for downloading online
+resources.
+* Reduce repetitive code using pseudocode:
+`df[] <- vapply(df, as.numeric, numeric(1L))`
+* Avoid writing the results to a file, allow the user to write their
+own results (in `finderORFs`).
+* Where possible, use named columns instead of column indices (e.g., in
+`R/finderPTCs.r`). This ensures that your code is more robust to changes.
+
+Minor:
+* Use function names as verbs (e.g., `findORFs` instead of `finderORFs`;
+though this is a matter of style)
+* Use arrow `<-` for assignment rather than `=`.
+* Remove commented code, it is confusing and probably stale anyway
+
