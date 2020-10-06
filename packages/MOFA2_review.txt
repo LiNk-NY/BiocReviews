@@ -1,0 +1,110 @@
+# MOFA2 #1661
+
+* Should `MOFA` go under deprecation procedures?
+* Why not release `MOFA` version `2.0.0` instead?
+* As @Alanocallaghan said, consider using `basilisk` for possibly smoother integration to python.
+* Consider inheriting from a standard Bioconductor representation (e.g.,
+`SummarizedExperiment`, `SingleCellExperiment`, etc.). The main representation
+could benefit from having a more structured format including accessor functions.
+
+## DESCRIPTION
+
+* Preferably use `Authors@R` field for more detailed authorship attributions as
+well as inclusion of ORCID identifiers.
+* Include a `BugReports` field pointing to the GitHub issues location.
+
+## NAMESPACE
+
+* My preference is to avoid using names that are application specific and use
+or reuse a more general term (e.g., using `sample_names` vs `colnames`,
+`features_names` vs `rownames`, and `factor_names` vs `levels`) but this is
+optional.
+* Where possible, reduce the function name length to more manageable names.
+* Look into the possible reuse of the `plot` generic if there are package
+classes involved in `plot_*`.
+* Consider re-exporting the `%>%` if you intend your users to use the
+pipe as well.
+
+## vignette
+
+* Avoid using the `@` accessor and use a more formalized interface with
+such as `samples_metadata(model)` or even `metadata(model)` if you
+inherit from the `Annotated` class. (instead of `model@samples_metadata`;
+applies to `model@cache` as well).
+* Update any commented code (Line#204)
+* Keep the text within the 80 character width limit.
+* Remove any HTML documents from the vignettes folder
+
+## R
+
+* Use `||` to ensure that conditions on either side return a single logical
+value.
+* (optional) Show method can be condensed based on the values of
+`object@status` and `nfactors`
+* Remove any old / commented code (`R/AllGenerics.R` and others).
+* Where possible, use vectorized operations (e.g.,
+`lapply(r2_mk, function(x) x*100)` could be `unlist` > `*100` > `relist`
+operation
+* Where possible, avoid nesting `apply` family loops
+(`R/calculate_variance_explained.R`)
+* If `models` were a formalized S4 class with validity checks, you wouldn't
+have to use "sanity checks" in `compare_elbo` and `select_model`
+* Avoid using `class(x) == "character"`. As seen with the `matrix` class,
+it is better to use the `is.character` function (`R/correlate_covariates.R`).
+* Check that `MultiAssayExperiment` namespace is available (using `requireNamespace`)
+in `.create_mofa_from_mae` function otherwise return an error to the
+user and ask them to install the package.
+* Setter functions (e.g., `names(x)<-value`) can be used to 'initialise' the
+MOFA object (rather than using `@`).
+* Provide users a way to turn the messages off (`R/enrichment.R`).
+* Is there a reason for using `doParrallel` insted of `BiocParallel`? I do not
+know what the differences are.
+* Checking if the class `.hasSlot(x, 'on_disk')` should not be necessary,
+unless there are old serialized instances of this class. If so, you should
+have an `updateObject` method as well.
+* Perhaps the `make_example_data` function (not exported) should be either in
+`data-raw` or `inst/extdata`  / `inst/scripts` and saved as a serialized
+dataset in the package using `usethis::use_data`.
+* Because the package includes a lot of functions, consider separating the
+plotting and the infrastructure into separate packages.
+* Provide additional details for the user in some functions (e.g.,
+`get_default_tranining_options`) Ideally, the documentation should answer
+questions like 'What is the function for?', 'At what point
+in the process is it used?' etc.
+* Avoid using semicolons `;` and move the code to another line
+* Where possible use character instead of numeric indexing (e.g., x[1] vs
+x["group"])
+* `.onAttach` startup messages can become verbose if all packages are using
+them, avoid their use where possible.
+
+Minor:
+* Use `<-` arrow for assignment instead of the `=` equals sign.
+* `length(x) > 1` is equal to `length(x)` when evaluated within an `if`
+conditional
+* Avoid using `isTRUE(x)` on arguments that are logical, simply use `if (x)`
+(`R/correlate_covariates.R`).
+* Condense `message` functions into one (`R/enrichment.R`).
+
+## / pkg folder
+
+* Remove scripts `template_script*` from this folder and possibly place them
+in `inst/scripts`.
+* `images` should be in the vignettes folder for use
+* I recommended that you create a separate repository for `mofapy2` and only
+keep relevant R code in the repository.
+* Remove the setup.py script.
+
+## tests
+
+* It's good that you have quite a few unit tests. The recommended way of
+adding tests is according to file name (e.g., `test_enrichment.R` for testing
+`enrichment.R`) but this is optional
+* Avoid downloading resources from external websites such as `GitHub` these
+can change at any time (in `test_creating_model.R`). Provide your own dataset
+or obtain one from running their examples (if possible).
+* More tests can't hurt :)
+
+## NEWS.md
+
+* Include a NEWS file
+
