@@ -1,5 +1,9 @@
 # recount3 #1691
 
+* Overall looks pretty good.
+* This package is a software package that imports data resources from
+a JHU url.
+
 ## DESCRIPTION
 
 * Looks good.
@@ -52,3 +56,24 @@ enter a 'file path' for the `url` argument. A convenience function would
 tell them what data is already downloaded.
 * I'm not sure how `match.arg` works with non-vector choices in
 'match.arg(project_home)'
+* Is the `fread` dependency needed? Perhaps, it can be a suggests?
+(`R/read_counts.R`)
+
+Minor:
+* Perhaps a `Reduce(merge(...))` can replace the merging of `metadata` in
+`R/read_metadata.R`. If metadata files are consistent then maybe use
+`do.call(rbind(...))`.
+
+## / pkg directory
+
+* There's a `dev` folder there. Perhaps move it to `inst/scripts/*` or put it
+somewhere else?
+
+## tests
+
+* Add more tests :)
+
+## man
+
+* I am not sure if image files should go in the `man` folder. Are they used
+for the vignettes?
