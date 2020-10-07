@@ -1,0 +1,54 @@
+# recount3 #1691
+
+## DESCRIPTION
+
+* Looks good.
+* Replace the DOI url with a real one in the `Description` file.
+* Consider `BiocIO` instead of `rtracklayer` for importing files.
+
+## NAMESPACE
+
+* It looks good.
+* Consider shortening some function names, if possible (e.g.,
+`file_locate_url_annotation` and `project_home_available`).
+* I don't think you need explicit imports for `SummarizedExperiment` functions
+(`Depends` field) but I guess it doesn't hurt.
+
+## vignettes
+
+* I like that you've included a quick start guide.
+* Can't the `.bib` file be provided as a `inst/references.bib` file? It's good
+that you generate the `.bib` file with R code but you can also have a static
+document because it doesn't change often. Also, you won't need to 'clean it up'
+afterwards
+* It's easier to review vignettes (and possibly maintain) that conform to the
+80 character width limit.
+* Consider including non-interactive code in another chunk with `eval=FALSE`.
+* Consider providing some user-friendly layer for typical `BiocFileCache`
+operations.
+
+## R
+
+* Internal functions are not usually `@export`ed and are only available in the
+package environment (`annotation_ext`, `annotation_options`, etc).
+* `rtracklayer::import` will be moved to `BiocIO` AFAIU
+* Provide a `verbose = FALSE` option for the user in functions like
+`R/create_rse_manual.R`.
+* Consider using a helper function for the `stopifnot` messages in
+`R/create_rse_manual.R`.
+* If possible, create an abstraction layer for the `bfc` argument that allows
+a user to set their own cache location via path rather than using a BFC object.
+* Package specific cache locations can be set using
+`tools::R_user_dir("recount3", "cache")` (optional).
+* `file_list` should have a sensible default for the `url` argument and
+avoid checking the users files to ensure 'purity'. The user should use
+`list.files` directly.
+* `file_list` should also access a file that lists all the data available
+rather than 'scraping' the website to see what's available. This file would
+have to be generated on the server end rather than the client end.
+* When downloading data to local computer, the package should manage the
+user's downloaded data using `BiocFileCache` so that they shouldn't have to
+enter a 'file path' for the `url` argument. A convenience function would
+tell them what data is already downloaded.
+* I'm not sure how `match.arg` works with non-vector choices in
+'match.arg(project_home)'
