@@ -1,0 +1,78 @@
+# bambu #1596
+
+* Overall, the package looks good.
+* Because of the number of unexported helper functions in the package,
+consider creating a utility package with exported helpers for users
+looking to use the same operations.
+* See the comments for `NanoporeRNASeq` below.
+
+# NanoporeRNASeq
+
+* Was there no existing package that could provide this example data on
+`ExperimentHub`?
+* If not, please use more descriptive names for the data. 'annotation' and
+'sample_info' are too broad and can apply to any dataset.
+* Avoid installing packages for the user, remove the chunk where the `ipak`
+function is created and used (vignette lines#55-67)
+* Add any packages in 'packages' L#65 to the `Suggests:` field in the
+`DESCRIPTION` file.
+* Add `sessionInfo` and remove `devtools::load_all`.
+* Provide installation instructions using `BiocManager::install` as seen
+on package landing pages.
+
+## DESCRIPTION
+
+* Avoid adding `devtools` in the `Suggests` field.
+* Avoid depending on `BiocManager`.
+* Generally, the package is really heavy in terms of dependencies. If possible,
+avoid using packages where you only have a few number of functions that are
+imported. Perhaps, there are ways around the importing of `data.table` and
+`dplyr`.
+
+## NAMESPACE
+
+* Are there other packages that provide read and write GTF functionality? It
+may be better to not re-invent the wheel.
+
+## vignettes
+
+* Remove the `ipak` code chunk similar to that in `NanoporeRNASeq`.
+* Include an `Installation` section that uses `BiocManager` instead of
+`devtools`.
+* Is `Content` necessary when `BiocStyle` provides a `toc: true` option?
+* Can you provide a small files to show how the functionality of `bambu`?
+* Or, can you find a package that does provide example files for the vignette?
+* The previous bulletpoints raise the question whether you need
+`NanoporeRNASeq` at all.
+* Avoid using `eval=FALSE` where possible. If need be, write to the `tempdir()`
+directory. It's better to test code this way than to not test at all.
+
+## R
+
+* Combine non-exported functions into a single R script rather than having
+separate files.
+* Avoid unneccesary clean up (using `rm` and `gc` functions). R does this
+internally already.
+* If possible, reduce the length of argument names in the main `bambu`
+function.
+* If you must save a file, set `readClass.outputDir` to `tempdir()` in the
+top-level function arguments rather than down in the code.
+* It may be better to drop the `fs` dependency by using either your own
+mechanism or `BiocFileCache` if `fs::path` is the only import from the
+package.
+* Avoid nesting `*apply` function calls. Use `lapply(..., tail, 1L)` instead
+(in line#484 of `R/isore.R`).
+* Perhaps you can combine conditions using the `%in%` operator for operations
+like `x$strand %in% c("+", "-")` (L#487-497 of `R/isore.R`).
+* Consider creating a separate package for providing the helper functions
+as utilities for other users (with proper documentation).
+* Consider creating an `import` & `export` method for a particular file
+subclass (e.g., `GTF`; where an alternative import function is not available;
+see generic in `BiocIO`)
+* If reasonable, create a feature request for `GenomicAlignments` to allow
+the behaviour that you would like to use instead of copying the function
+body from `GenomicAlignments`.
+
+Minor:
+* Use `on.exit` calls for clean up such as `on.exit(close(bf))`.
+* `if (length(x) > 1)` is equivalent to `if (length(x))`
