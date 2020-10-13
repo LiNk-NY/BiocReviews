@@ -1,0 +1,45 @@
+# NanoMethViz #1647
+
+* Overall, the coding looks good and neatly written.
+* Remove / untrack the `*.Rproj` file
+* Add a `NEWS.md` file
+* Add a tests folder to enhance robustness.
+
+## DESCRIPTION
+
+* Provide at least a three sentence `Description` in the DESCRIPTION file
+(`BiocCheck` Note)
+* Do you need to depend on `magrittr` when you have `dplyr` imported?
+
+## NAMESPACE
+
+* Looks good for using the `snake_case` style.
+* Perhaps you can combine `get_exons*` and make them differ by arguments (same
+with `plot_agg_regions*` and `query_exons_*`)?
+* It looks like `load_example_nanomethresult` should be more of a
+`data(nanometh)` call.
+* It may be better to avoid importing from `glue` and `rlang` if you are only
+using one function / object from those packages.
+
+## vignettes
+
+* Include an `Installation` instructions section.
+* Try to stick to the 80 character width limit. It's useful for the reviewer
+and for maintenance (esp. when you have multiple scripts open on the screen).
+
+## R
+
+* Interesting use of `readr::cols_only`. It's a good way to ensure type.
+* If these files are standardized, it makes sense to use a certain combination
+of column names in `guess_methy_source`.
+* Consider checking the sub directories exist before using `file.create` in
+`convert_methy_format`.
+* Avoid using `library` inside a function. Try `loadNamespace` or
+`requireNamespace`.
+* Both `get_exons_*` functions are quite similar. Consider combining these.
+* Allow users to opt out of the verbosity from functions such as
+`methy_to_bsseq`.
+* Why create a generic `plot_gene` and `plot_region` functions? Why not a
+plain functions like `plot_grange`?
+
+

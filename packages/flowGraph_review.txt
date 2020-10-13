@@ -1,0 +1,13 @@
+# flowGraph #1703
+
+## DESCRIPTION
+
+* Keep the `DESCRIPTION` file (and possibly other files) within the 80 column
+width limit.
+* Update the `Depends` field to have the `R (>= 4.0.0)` dependency.
+* Consider reducing the number of imported packages (~23). If there are
+packages where you only import one or two functions, consider using alternative
+functionality.
+* Remove `flowType` from the `Suggests` field.
+* Remove any mentions of `flowType` from the package as it will confuse users
+when they do not find the `flowType` package.
