@@ -1,0 +1,20 @@
+# preciseTADhub #1725
+
+## DESCRIPTION
+
+* Provide more details in the `Description` field for users. This helps them
+identify the purpose of the package.
+* It looks like `preciseTAD` should be in the `Suggests:` field
+* Why suggest `BiocCheck` and `BiocManager`?
+* Include a `BugReports` link and a `URL` pointing to the GitHub page for
+users.
+
+## vignette
+
+* What is the purpose of using a width of 400?
+* Include an `Installation` section in the vignette (usually at the top).
+* It would be good to have a small wrapper function to avoid the 'manual'
+calls to `ExperimentHub`. This makes it easier for the users.
+* Include some details about what is contained in the
+`CHR1_GM12878_5kb_Arrowhead` object
+

@@ -1,13 +1,28 @@
 # flowGraph #1703
 
+* One of our major requirements for incoming software contributions is
+interoperability with the Bioconductor ecosystem. What efforts have you
+made to provide a seamless integration with recognized Bioconductor
+data structures?
+Please answer this question before the review can continue. Thank you.
+
+## LICENSE
+
+* I am not aware of an Artistic-3.0 License. Perhaps you meant to use
+[Artistic-2.0](https://opensource.org/licenses/Artistic-2.0)?
+
 ## DESCRIPTION
 
 * Keep the `DESCRIPTION` file (and possibly other files) within the 80 column
 width limit.
 * Update the `Depends` field to have the `R (>= 4.0.0)` dependency.
-* Consider reducing the number of imported packages (~23). If there are
+* Consider reducing the number of imported packages (~20). If there are
 packages where you only import one or two functions, consider using alternative
 functionality.
-* Remove `flowType` from the `Suggests` field.
-* Remove any mentions of `flowType` from the package as it will confuse users
-when they do not find the `flowType` package.
+
+## NAMESPACE
+
+* Do the functions written require an `fg` prefix? If these are methods,
+you may not need a prefix.
+* Consider renaming some functions with general names (e.g., `*load`, `*merge`)
+
