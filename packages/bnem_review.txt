@@ -1,0 +1,63 @@
+# bnem #1740
+
+## DESCRIPTION
+
+* Looks good.
+* Please format the `Description` field so that it does not run across the
+screen.
+* Include `BugReports` and `URL` fields for the package.
+
+## NAMESPACE
+
+* AFAICT, should `bnembs` and `bnemBs` have the same case? The first is the
+class and the second is the constructor function.
+* Avoid importing `exprs` from Biobase, the `ExpressionSet` structure is
+retired.
+
+## vignette
+
+* Does the function that creates the DAG need to be displayed? Do you expect
+users to write their own function similarly (lines 86 - 105)? Should it be
+a helper function?
+* Avoid using `print` anywhere in the code (vignette or otherwise).
+* There is some code to calculate sensitivity and specificity in the vignette
+that can be re-used in the form of a helper function. You may want to create
+it within the vignette only.
+
+## R
+
+* Consider using `colSums` and `rowSums` instead of `apply(x, 2 / 1, sum)`.
+* `exprs` alludes to deprecated functionality. If this is not internal,
+use a keyword that is more descriptive in `R/bnem_low.R`.
+* Avoid writing files to the disk for the user (e.g., in `addEdge`). Write
+to the temporary directory using `tempdir()`.
+* If possible, avoid nested for loops (in `adj2dnf`).
+* Although entertaining, perhaps it is better to remove error messages such as
+"I'm sorry, Dave. I'm afraid I can't do that." in `checkMethod`.
+* Avoid using the `@` accessor see the package guidelines:
+https://bioconductor.org/developers/package-guidelines/#rcode
+* Using `print` is not recommended in package code unless in a `show` method.
+Use `message` instead.
+* (optional) Consistently use the assignment operator `<-` and avoid `=` for
+assignment.
+* Workflows related to a publication are best published in a separate
+repository or package (`processDataBCR`).
+* It would be more consistent to have a constructor that uses the same name
+as the class (`bnemBs` -> `bnembs`)
+* Avoid copying and pasting code (e.g., use `glob2rx` in `gene2prot`).
+
+Minor:
+* `dim(x)[2]` corresponds to `ncol`
+* Avoid redundance by removing `paste` from inside `stop`, `message`, etc.
+* In some instances you don't need to convert logical to numeric index (e.g.,
+`which(Epos < -beta)` can simply be `Epos < -beta` based on `Epos[wrongPos]`)
+unless there is `NA`.
+* Avoid using `flush.console()`
+
+## tests
+
+* It's recommended to add more unit tests
+
+## other
+
+* Perhaps add `bnem_app.R` to `inst/scripts`.

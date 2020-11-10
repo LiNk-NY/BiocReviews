@@ -26,3 +26,35 @@ functionality.
 you may not need a prefix.
 * Consider renaming some functions with general names (e.g., `*load`, `*merge`)
 
+## R
+
+* Remove any commented code in `.R` files.
+* Avoid any `.onLoad` hooks for data in `00_data.R`.
+* Default arguments to writing files should be `FALSE` or files should
+be saved to the `tmp` directory via `tempdir`
+* In general, graphics should not be saved to the user's system. Users should
+be allowed to choose their own format.
+* What is the reasoning for saving data as `.rds`? Wouldn't it suffice to
+save the entire object if you will be using R to load the `.rds` files anyway?
+(`fg_save` and `fg_load`)
+* `base` should be the default package loaded and therefore you do not need
+to use references such as `base::sort`. Are there other packages interferring
+with using `sort`, `which`, `length`, etc.?
+* Avoid direct slot access via `@` in package code. Please include a formal
+interface for your class. I see you have `fg_get*` but perhaps the functions
+you provide are not enough. See
+https://www.bioconductor.org/developers/package-guidelines/#rcode
+* The `overwrite` argument should be `FALSE` by default in `fg_add_summary`.
+
+## tests
+
+* It is strongly recommended that you add unit tests for code robustness.
+
+## vignette
+
+* It looks good.
+* I would recommend keeping the sample code in the vignette straight forward
+and simple for your users.
+* This means avoiding the nested `gr$v$label` calls and using `grep` to set a
+nested variable. It seems like only package authors would know about these
+since they are quite nested which is not good for usability.
