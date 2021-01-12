@@ -1,0 +1,33 @@
+# Travel #1838
+
+* It's not clear from the `DESCRIPTION` how the package works with the
+Bioconductor ecosystem. Perhaps add info addressing this point in the
+`Description` field? The package seems to have broader applications than just
+Bioconductor.
+
+## DESCRIPTION
+
+* Add `URL` and `BugReports` fields
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* We recommend sticking to the 80 column-width limit for all vignettes and
+package code
+* The package introduction looks good.
+* It may be a challenge to install the package properly on the builders. That
+said, runnable examples would keep the package continually tested.
+
+## R
+
+* Reconsider exporting functions that are not mean to be used manually (e.g.,
+`deploy_filesystem`) or provide the documenation with `@keyword internal`.
+
+Minor:
+* I think you mean to say `drive path` rather than `driver path` in
+`R/filesystem.R`
+
+
