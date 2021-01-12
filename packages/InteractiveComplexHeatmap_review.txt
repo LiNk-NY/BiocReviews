@@ -1,0 +1,48 @@
+# InteractiveComplexHeatmap #1827
+
+## DESCRIPTION
+
+* Add a `BugReports` field
+* (optional) Add your ORCID ID to the `Authors@R` field
+
+## NAMESPACE
+
+* Looks good.
+* Consider using all 'camelCase' or all 'snake_case' for your function names
+instead of a mix of both.
+
+## vignettes
+
+* Provide an `Installation` section in one of the vignettes to show users how
+to install the package from Bioconductor.
+* If possible, avoid static code chunks (as in `implementation.Rmd` and
+`shiny_dev.Rmd`) and use actual data
+
+## R
+
+* We encourage all developers to remove the noisy messages when loading a
+package. Consider removing the `.onAttach` messages. A user wishing to report a
+bug or see the package version would use `bug.report()` or even
+`packageVersion()` for just the package version.
+* There is some value in having sensible defaults. For example, use the
+defaults that you have defined in the function body in the function's
+arguments (e.g., `title = "ComplexHeatmap Shiny App"` in `ht_shiny`). This
+way, you don't have to worry about whether the argument is `NULL` or not since
+you have a working default. It reduces the overall cyclomatic complexity.
+* Because you have interactive demonstrations, consider using the `demo`
+subdirectory instead of the `ht_shiny_example` function. It seems like you
+already have a script that is ready-to-run. For more details, see here:
+https://cran.r-project.org/doc/manuals/r-release/R-exts.html#Package-subdirectories
+* Avoid any `library` calls in package code. Your examples can have `library`
+calls as long as those packages are added to the `Suggests` field.
+
+## / base pkg directory
+
+* Remove `build_pkg_site.R` or put it in `inst/scripts`.
+* `docs` should also be removed
+
+## README.md
+
+* Add a Bioconductor installation section after acceptance.
+* Consider using an `Rmd` file and rendering to `md` so that code chunks are
+evaluated.

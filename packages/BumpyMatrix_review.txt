@@ -1,0 +1,24 @@
+# BumpyMatrix #1817
+
+## DESCRIPTION
+
+* Looks good
+
+## NAMESPACE
+
+* Consistent with `splitAsList`, perhaps you want `split*As*BumpyMatrix`?
+
+## vignettes
+
+* It looks like you missed the `sparse` argument when creating `smat` in
+Line#62?
+* Looks good
+
+## R
+
+* It seems like `BumpyMatrix()` (no args) should work much like
+`SummarizedExperiment()` and `DataFrame()`
+
+## tests
+
+* Looks good

@@ -1,0 +1,32 @@
+# methylclockData #1780
+
+## DESCRIPTION
+
+* Include a `BugReports` field.
+* Update the `biocViews` field so that it matches the tree in
+https://www.bioconductor.org/packages/release/BiocViews.html
+* Spell out the acronym before using it in the `Description` field
+* Because you don't have any code in the package, avoid using the `Depends`
+field for your dependencies. Use the `Imports` field.
+* Add `utils` and `ExperimentHub` to your `Imports`
+
+## NAMESPACE
+
+* Looks good
+
+## vignette
+
+* Show how the user is supposed to download the data from `ExperimentHub`
+
+(*Enhancement*)
+* Ideally, you'd have a function where the user can see a table of the
+data resources available along with the text data that you provide in the
+"Cell counts" section.
+* This table would show the user what kind of cells are available in each
+dataset.
+* Your main function could then provide users with the data they've selected.
+
+## R/zzz.R
+
+* Avoid `library` calls in package code and use `utils::read.csv` etc.
+

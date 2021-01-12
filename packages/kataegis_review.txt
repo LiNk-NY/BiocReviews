@@ -1,0 +1,12 @@
+# kataegis #1803
+
+* Please state how this package re-uses existing data structures avialable
+in Bioconductor.
+* Please follow the Bioconductor package guidelines
+http://bioconductor.org/developers/package-guidelines/
+* Otherwise consider submitting to CRAN.
+
+## DESCRIPTION
+
+* Include `BugReports` and `URL` fields
+
