@@ -1,0 +1,25 @@
+# TrajectoryUtils #1865
+
+## DESCRIPTION
+
+* Add `BugReports` and `URL` fields pointing to GitHub locations.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Looks good.
+
+## R
+
+* You may not need to deprecate argument use since the package has not been
+released (in `.create_cluster_mst`).
+* Avoid nested `for` loops if possible in `splitByBranches`.
+
+## tests
+
+* Tests look extensive.
+
+
