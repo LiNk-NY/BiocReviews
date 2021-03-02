@@ -1,0 +1,82 @@
+# sitadela
+
+## DESCRIPTION
+
+* Update the package URL to be either the packages GitHub repository or
+a dedicated webpage for introducing new users the package and not an
+institutional page.
+* `BiocManager` should not be a suggested package.
+
+## NAMESPACE
+
+* Looks good.
+* `stringr` may be a dependency you can avoid.
+* If I'm not mistaken, `BiocIO::import` will replace `rtracklayer::import`
+@Kayla-Morrell
+
+## vignettes
+
+* There is quite a bit of platform dependent code. Why wouldn't `example-4`
+and others work on all platforms?
+* Use R utilities like `R.utils` for functions such as `gunzip` rather than
+using `system` commands.
+* You don't have to rely on full real-world annotations for the vignette,
+you can provide your own small dataset to demonstrate the functionality
+of the package.
+
+## R
+
+* Avoid over-using switch and nesting switch calls by creating a lookup table
+for `.checkNumArgs`. The only difference in `numeric` and `integer` switches
+is the text "numeric" and "integer" in the error message. The look up table
+can be a `list` (roughly):
+
+```r
+argBounds <- c(5, 7)
+gt <- list(op = function(x) x <= argBounds[1], cls = class,
+    desc = function(x) "greater than")
+lapply(gt, function(f) f(3))
+# $op
+# [1] TRUE
+#
+# $cls
+# [1] "numeric"
+```
+* Avoid nested for loops where possible (`R/external.R`)
+* Do not use `writeLines` or `print` in package code. If you need to show
+a message, use `message`.
+* Your error messages in `.myGetBM` should indicate that `sitadela`
+should be tagged when reporting at https://support.bioconductor.org.
+* The functions you are writing look quite manual and laborious. Is there a
+way to interface with bioMaRt using the `xml` package or another package?
+* Using numeric indices to subset can be risky when the data change. We advise
+using names to subset data e.g., `ann[, "score"]` rather than `ann[, 1]` (from
+`R/fromtxdb.R`; and avoid repeating this code if possible)
+* Minimize the amount of copy-and-paste code by creating a helper function
+and reusing it. Hehe is one block of code that gets repeated quite often:
+
+```
+    ann <- as.data.frame(unname(gr))
+    ann <- ann[,c(1,2,3,7,9,5,10,11)]
+    names(ann)[c(1,4)] <- c("chromosome","exon_id")
+    ann$chromosome <- as.character(ann$chromosome)
+    ann <- ann[order(ann$chromosome,ann$start),]
+```
+* See also `R/query-ensembl.R`.
+* Find ways to avoid the cyclomatic complexity in the
+`.makeSumTranscriptExonFromTxDb`. Perhaps there is a way to abstract and
+modularize the functionality so that you can apply different modules across
+related functions.
+
+
+Minor:
+
+* How is `ncol(values == 1)` different from `ncol(values)` when `values` is a
+`data.frame`? (`.myGenerateFilterXML`)
+* Switching from logical to integer index is not always useful, e.g.,
+the lines 8-11 in `R/fromtxdb.R` can become
+`map[, !names(map) %in% c("exon_id", "transcript_id"), drop = FALSE]`.
+
+## tests
+
+* Add more tests in general and avoid creating system specific tests

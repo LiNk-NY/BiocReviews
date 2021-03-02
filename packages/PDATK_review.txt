@@ -1,0 +1,39 @@
+# PDATK #1881
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Is there a reason for exporting class unions (e.g.,
+`PCOSP_or_ClinicalModel`)? These should be internal to the
+package for easier method dispatch.
+
+## vignettes
+
+* Include an `Installation` section in the vignette
+* Include the PCOSP paper reference.
+* It may be better to use the `assays` argument instead of a `sumExp` one in
+the constructor function of `SurvivalExperiment` for ease-of-use and simplicity
+you can test for class membership inside your constructor function.
+* Add references to both vignettes
+
+Minor:
+* Use `grep` with `value = TRUE` instead of `x[grepl(..., x)]`
+
+## R
+
+* We do not recommend setting a `randomSeed` inside functions. This should
+be done outside the function by the user (in `trainModel` and others).
+See: http://bioconductor.org/developers/package-guidelines/#rcode
+* Avoid using inprecise comparisons when merging data such as `colData` in
+`!all(colDTL[[1]] == colDTL[[2]], na.rm=TRUE)` if there are NA values in
+different cells the two datasets may still pass this test even though they are
+not equal. I would suggest merging using a `key` identifier and with
+`all = TRUE`.
+
+## tests
+
+* We highly recommend adding tests to the package for maintaining robustness
+of the code.
