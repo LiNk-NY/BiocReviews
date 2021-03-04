@@ -10,24 +10,23 @@ to create a 'legacyR' type of branch.
 
 ## NAMESPACE
 
-* It looks good. `PCAGenomicSignatures` looks method specific and may grow if
-you start adding more methods.
+* It looks good.
 
 ## vignettes
 
-* Change the installation instructions to use `BiocManager` once you have
-submitted the package to the issue tracker.
+* Change the installation instructions to use `BiocManager`.
 * Avoid installing packages in the vignette, simply use a `library` call to
-the package. These dependencies are stated in the `Suggests` field of your
-`DESCRIPTION` file.
+load the package. These dependencies are stated in the `Suggests` field of
+your `DESCRIPTION` file.
 * `eval=FALSE` chunks in the Quickstart vignette should be evaluated or removed
 
 ## R
 
 * Don't include manual outputs in your examples (`R/annotatePCcluster.R` and
-others). Perhaps you can use these templates to create unit tests.
+others). Perhaps you can use these as templates for unit tests.
 * To reduce the amount of repeated code, isolate the difference in the
-conditions and make that the body of the if else statements, for example:
+conditions and make that the content of the `if` `else` statements, for
+example:
 ```r
 FUN <- if (abs) { abs } else { I }
 ```
@@ -59,11 +58,13 @@ list()
 ```
 * Using `get` in package code is not usually recommended (`commonGene`).
 If you're trying to load data from the package create an environment for
-depositing that data and extract it from there (see example in `TCGAutils`).
+depositing that data and extract it from there (see `local_data_store` example
+in `TCGAutils`).
 * Avoid setting a seed inside a function (`drawWordCloud`).
 * Avoid using `sapply`.
-* I'm not sure why you need to create methods for a virtual class? Perhaps
-the methods should be for `PCAGenomicSignatures`?
+* If you created methods for the virtual class (`GenomicSignatures`) you may
+not need to create additional methods for `PCAGenomicSignatures` because
+they're automatically inherited, unless those methods are different.
 * Some methods are compatible out of the box, e.g., `colData` because you
 are inheriting from `SummarizedExperiment` so you don't need to create them.
 * State your `rappdirs` dependency in the Imports field or use
