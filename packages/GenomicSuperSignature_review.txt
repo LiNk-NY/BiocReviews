@@ -1,0 +1,120 @@
+# GenomicSuperSignature
+
+## DESCRIPTION
+
+* Bioconductor devel only works on R version `4.1.0` and above. If you'd like
+to maintain the package for older versions of R, it might be a good idea
+to create a 'legacyR' type of branch.
+* Consider cutting down on the number of `Suggest`ed packages.
+* Everything else looks good.
+
+## NAMESPACE
+
+* It looks good. `PCAGenomicSignatures` looks method specific and may grow if
+you start adding more methods.
+
+## vignettes
+
+* Change the installation instructions to use `BiocManager` once you have
+submitted the package to the issue tracker.
+* Avoid installing packages in the vignette, simply use a `library` call to
+the package. These dependencies are stated in the `Suggests` field of your
+`DESCRIPTION` file.
+* `eval=FALSE` chunks in the Quickstart vignette should be evaluated or removed
+
+## R
+
+* Don't include manual outputs in your examples (`R/annotatePCcluster.R` and
+others). Perhaps you can use these templates to create unit tests.
+* To reduce the amount of repeated code, isolate the difference in the
+conditions and make that the body of the if else statements, for example:
+```r
+FUN <- if (abs) { abs } else { I }
+```
+and then do:
+```r
+topAnnotation <- annotatedCluster[
+    order(FUN(annotatedCluster$NES), decreasing = TRUE),,drop = FALSE][1:n,]
+```
+in `R/annotatePCcluster.R`.
+* Avoid using `1:n` sequence generation and use the more robust `seq_len(n)`.
+* Clear up the documentation about `PCnum` in `annotatePC`. Is it a sequence
+of numbers or a single value? The docs say a value from 1 to 8 but the code
+does `seq_along(PCnum)` which is intended for a vector of greater than length
+1, e.g., `seq_along(8)` will give you `1` which may not be what you want.
+* Test S4 class membership with `is(RAVmodel, "PCAGenomicSignatures")` from
+the `methods` package. For S3, use `is.list` (`R/buildAvLoading.R`).
+* Describe what the default NULL behavior does in `findStudiesInCluster`.
+* Avoid using copy-and-append methods with for loops, use the allocate and
+fill method (`buildAvgLoading`).
+* Use coercion rather than wrapping when checking class membership in
+`calculateScore`, e.g.,
+```
+> list(List())
+[[1]]
+List of length 0
+
+> as.list(List())
+list()
+```
+* Using `get` in package code is not usually recommended (`commonGene`).
+If you're trying to load data from the package create an environment for
+depositing that data and extract it from there (see example in `TCGAutils`).
+* Avoid setting a seed inside a function (`drawWordCloud`).
+* Avoid using `sapply`.
+* I'm not sure why you need to create methods for a virtual class? Perhaps
+the methods should be for `PCAGenomicSignatures`?
+* Some methods are compatible out of the box, e.g., `colData` because you
+are inheriting from `SummarizedExperiment` so you don't need to create them.
+* State your `rappdirs` dependency in the Imports field or use
+`tools::R_user_dir`.
+* I'm not sure if the order matters here but generally you would run
+`.RAVName` before creating the `PCAGenomicSignatures` class in the constructor.
+* Some of the inputs in your class are matrix which perhaps should be your
+class or even `SummarizedExperiment`? (`plotAnnotatedPCA`)
+* Avoid using `class(x) %in% c("x", "y", "z")` constructions and use the S3
+methods of `is.data.frame`, `is.matrix`, `is.list` (`subsetEnrichedPathways`).
+* These functions can be reduced to one (`R/validatedSingatures.R`):
+```r
+.filterByClusterSize <- function(data, cutoff) {
+  ind <- which(rownames(data) == "cl_size")
+  val_ind <- which(data[ind,] >= cutoff)
+  dat <- data[,val_ind]
+  return(dat)
+}
+
+.filterByScore <- function(data, cutoff) {
+  ind <- which(rownames(data) == "score")
+  val_ind <- which(data[ind,] >= cutoff)
+  dat <- data[,val_ind]
+  return(dat)
+}
+
+.filterByAvgSW <- function(data, cutoff) {
+  ind <- which(rownames(data) == "sw")
+  val_ind <- which(data[ind,] >= cutoff)
+  dat <- data[,val_ind]
+  return(dat)
+}
+```
+
+```r
+.filterBy <- function(data, cutoff, type = c("cl_size", "score", "sw")) {
+  type <- match.arg(type)
+  ind <- rownames(data) == type
+  val_ind <- which(data[ind,] >= cutoff)
+  data[,val_ind]
+}
+```
+
+Minor:
+* You don't need ot use `isTRUE`, `isFALSE`, or `x == TRUE` on expected
+logical values. What you should do is check those inputs by doing something
+like: `stopifnot(is.logical(abs), length(abs) == 1L, !is.na(abs))`.
+* Note you can also use `utils::globalVariables` for line 29 in
+`R/funcForGSEA.R`
+* Stick to the 80 column width limits for your code.
+
+## tests
+
+* Add more tests to make the code more robust.

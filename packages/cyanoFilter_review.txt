@@ -1,0 +1,91 @@
+# cyanoFilter #1917
+
+Are you depending on other packages that are using `Biobase`? Otherwise
+it is recommended to use `SummarizedExperiment`. Some of my feedback here
+is based on that assumption that `Biobase` is no longer used. This may be
+different if your workflow uses `Biobase` extensively.
+Consider separating the plotting and infrastructure functionality into
+different packages. This will avoid the growth of dependencies on packages
+that only use the infrastructure classes in your package.
+
+## DESCRIPTION
+
+* Can you provide more information about the `Config/testthat/edition` field?
+* Is the `Biobase` dependency necessary? See note above.
+* Some package version dependencies are overkill. You can remove them for the
+internal packages such as `graphics`, `methods`, `stats`, `utils`, and
+`grDevices` because those are tied to the R version.
+* Unless you are using a specific feature in that version of the package, you
+don't need to specify the version number dependency.
+
+## NAMESPACE
+
+* For package consistency, use either `camelCase` or `snake_case` function
+naming conventions.
+* Looks good.
+
+## vignettes
+
+* (optional) It is easier to review and maintain a vignette whose text is not
+flowing off the side of the page. Keep the total column width to 80 characters.
+* Avoid loading the `tidyverse` because it is not listed in the `Suggests`
+field and the package loads a boatload of unnecessary dependencies for the
+vignette. Consider only loading `dplyr`.
+
+## R
+
+* Set your default values to the intended value, e.g., when
+`proportion = NULL`, the function changes it to `proportion = 1`. Why not have
+`1` as the default value?
+* Avoid accessing elements of your class with the `@` symbol. Create a formal
+interface to your class.
+* Make sure that your logic makes sense, e.g., in `R/debris_nc.R` there is an
+`if` `else` statement that appears to do the same thing in both conditions.
+* Isolate code differences within `if` `else` logic and only change the
+parameter that changes, e.g., `pks <- if (lp2 >= 2) min(pks) else pks` in
+`R/debris_nc.R`. This would reduce the number of lines of code and places
+where you could have bugs / errors.
+* There seems to be a typo in line 46 of `R/good_measurement.R`. It appears
+that the code should be `!is.null(mxd_cellpML)`
+* I would recommend an alternative name to the `exprs` function and slot name
+in your class because it is considered legacy code for extracting and storing
+an `ExpressionSet`.
+* The tag `Error` does not need to be in your `stop` calls: see
+`stop("Error:")`
+* It will be confusing to the user to have two `new_flowframe` functions. Can
+these be reduced to one?
+* Avoid using `AnnotatedDataFrame` and use `S4Vectors::DataFrame`.
+* Consider using a different name for your `summary` method because the
+arguments do not match the S3 generic. Also, you're combining systems here
+with S4 and S3 which may confuse users.
+* Reduce cyclomatic complexity by simplifying these lines for checking inputs
+in `phyto_filter`:
+```r
+  } else if(!is.null(pig_channels) & is.null(com_channels)) {
+
+    channels <- pig_channels
+    #gate based on the pigments
+
+  } else if(is.null(pig_channels) & !is.null(com_channels)) {
+
+    channels <- com_channels
+    #gate based on the complexity channels
+
+  } else {
+
+    channels <- c(pig_channels, com_channels)
+    #gate based on the pigments
+
+  }
+```
+to this:
+```r
+channels <- c(pig_channels, com_channels)
+```
+
+## tests
+
+* It is highly recommended that you add tests to your code to keep it
+robust.
+
+
