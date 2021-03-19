@@ -1,0 +1,29 @@
+# MsBackendMgf #1930
+
+## DESCRIPTION
+
+* It looks good.
+* Perhaps consider using the BiocIO::import generic to provide an import
+method for `mgf` files.
+
+## NAMESPACE
+
+* It looks good.
+
+## vignettes
+
+* The installation should look consistent with the landing page instructions.
+
+## R
+
+* I think it makes sense to have an `import` and `export` method for the file
+type. `import` may replace `backendInitialize`.
+* You can then choose to pass along the imported file to the `Spectra`
+constructor function or immediately represent the file using `Spectra` as the
+return of `import()`.
+* Default `BPPARAM = bpparam()` configuration should not use all the cores
+available. Please use one or two cores and allow users to adjust this.
+
+## tests
+
+* Looks good.

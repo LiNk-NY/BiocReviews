@@ -1,0 +1,40 @@
+# mia
+
+* Consider separating analysis and plotting functions into separate packages to
+make mia more lightweight.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* It may be more appropriate to have the conversion functions in
+`TreeSummarizedExperiment` (the package where the class resides)
+* I don't think the conversion
+`exportMethods(makePhyloseqFromTreeSummarizedExperiment)` should be a method.
+It can be a plain function or an `as` function. This is best done in the
+`TreeSummarizedExeriment` package though.
+* Consider removing dependencies on packages where you import only one or two
+functions (e.g., 'yaml', 'rlang', 'stringr').
+
+## vignettes
+
+* Add an installation section to the vignette modeled after the Bioconductor
+installation instructions on package landing pages.
+* Add a package argument to `data(GlobalPatterns, package = "mia")`
+to make it clear that this is coming from the package and not `phyloseq`.
+Also, consider changing the name so that the names don't collide between
+packages.
+
+## R
+
+* Avoid if possible creating methods for classes that you do not own (e.g.,
+`meltAssay` on `SummarizedExperiment`). Perhaps these methods can be
+implemented in `TreeSummarizedExperiment`? It also makes assumptions on the
+data which are likely more apt for `TreeSummarizedExperiment`.
+
+## tests
+
+* Looks good.
+
