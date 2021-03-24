@@ -1,0 +1,25 @@
+# CIMICE #1950
+
+## DESCRIPTION
+
+* Minor point but the person function perhaps should be
+`person("Nicolò", "Rossi")`? The first two arguments correspond to the first
+and last names (nome e cognome), respectively.
+* The `biocViews` tags should follow the hierarchy as shown here:
+http://bioconductor.org/packages/release/BiocViews.html#___Software
+* I noticed that you are not using any Bioconductor packages. We have packages
+for working with mutation data (e.g., `maftools` and `RaggedExperiment` among
+others).
+* Consider supporting `Matrix` and/or `HDF5Array` for large sparse matrices
+especially in the single cell context where the data can be quite large.
+* A binary `RangedSummarizedExperiment` could also work.
+
+## NAMESPACE
+
+* Avoid using `.` delimiters in your functions. They indicate method dispatch
+in the S3 system which can cause some confusion. It is advisable to use
+snake_case since you are already using the tidyverse.
+
+* Please respond to the interoperability concerns raised in the review before
+we can continue.
+
