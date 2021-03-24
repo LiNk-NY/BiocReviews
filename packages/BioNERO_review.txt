@@ -1,0 +1,66 @@
+# BioNERO #1941
+
+* For the most part, the package looks like it is in good shape. Though there
+is some functionality that you cover here already implemented in Bioconductor.
+* Make sure that you are following Bioconductor practices and check the output
+of `BiocCheck`.
+
+## DESCRIPTION
+
+* Provide an appropriate `biocViews` field based on the hierarchy on this
+page: http://bioconductor.org/packages/release/BiocViews.html#___Software
+* A high number of `Imports` can lead to fragility of the package. Please try
+to reduce the amount of imports if possible.
+
+## NAMESPACE
+
+Minor:
+* Use consistent case for abbreviated terms in your function names (sft vs SFT)
+
+## vignettes
+
+* `remove_na` is not only removing NA values but replacing them with zero.
+Reconsider renaming this function and whether the user can carry out this
+operation themselves without the use of the function.
+* Keep the vignette character / column width to 80 for easier readability
+of the source file.
+* Do not write files / plot figures to the user's directory. These should
+be displayed as output from the function. The user can then save them in the
+format of their choosing which may not necessarily be PDF. What if they want
+a PNG?
+
+## R
+
+* For `concensus_modules`, decide on the modular functionality of a function.
+If it is a plotting function, then produce the plot otherwise produce results
+but not both.  Having arguments like `reportPDF` makes the function impure
+because the output depends on that argument. See point above for letting
+the user decide the format.
+* The same as above for `consensus_trait_cor`, and `exp2gcn`.
+* Avoid duplicating functionality (`is_singleton` and `is_duplicated`).
+Perhaps the functions can be simplified to:
+`lengths(split(og.zma.osa[og.zma.osa$Gene %in% genes, "Gene"], genes)) == 1`
+* Allow input of `BPPARAM` for `module_enrichment`, `get_edge_list`, and
+`grn_filter` so that the user can modify to their liking with the default
+being `SerialParam()`.  The examples should be runnable.
+* To avoid repeating code, it is possible to combine `grl_*` into one function
+that allows the user to input the method which would then correspond
+to the function used on `mi_mat` with some arguments. The rest of the code
+looks the same across the functions.
+* Allow the user to save the `preservation` Rda file (if you must save the
+file at all)in the location of their choice. It is good to have a `FALSE`
+default in `modPres_WGCNA`.
+* Avoid code repetition in `net_stats`.
+* Why not use a functional for the `method` argument in `detect_communities`?
+* The same as above for layout in `igraph2ggnetwork`.
+* Avoid redundant code `is_SE` does the same as `is(x, "SummarizedExperiment")`
+
+Minor:
+* Include `verbose=FALSE` arguments to functions with lots of messages (e.g.,
+`PC_correction`)
+* Avoid, where possible, numeric indices and use more robust named /character
+indices.
+
+## tests
+
+* Looks good.
