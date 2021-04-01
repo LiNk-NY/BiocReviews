@@ -4,7 +4,7 @@
 
 pkgname=$1
 
-BIOC="$HOME/bioconductor"
+BIOC="$HOME/bioc"
 
 shopt -s expand_aliases
 
