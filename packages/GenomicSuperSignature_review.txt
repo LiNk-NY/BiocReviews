@@ -1,4 +1,4 @@
-# GenomicSuperSignature
+# GenomicSuperSignature #2003
 
 ## DESCRIPTION
 
@@ -23,7 +23,7 @@ your `DESCRIPTION` file.
 others). Perhaps you can use these as templates for unit tests.
 * To reduce the amount of repeated code, isolate the difference in the
 conditions and make that the content of the `if` `else` statements, for
-example:
+example in `R/annotatePCcluster.R`:
 ```r
 FUN <- if (abs) { abs } else { I }
 ```
@@ -32,7 +32,6 @@ and then do:
 topAnnotation <- annotatedCluster[
     order(FUN(annotatedCluster$NES), decreasing = TRUE),,drop = FALSE][1:n,]
 ```
-in `R/annotatePCcluster.R`.
 * Avoid using `1:n` sequence generation and use the more robust `seq_len(n)`.
 * Test S4 class membership with `is(RAVmodel, "PCAGenomicSignatures")` from
 the `methods` package. For S3, use `is.list` (`R/buildAvLoading.R`).
@@ -66,8 +65,9 @@ they're automatically inherited, unless those methods are different.
 are inheriting from `SummarizedExperiment` so you don't need to create them.
 * State your `rappdirs` dependency in the Imports field or use
 `tools::R_user_dir`.
-* I'm not sure if the order matters here but generally you would run
-`.RAVName` before creating the `PCAGenomicSignatures` class in the constructor.
+* Perhaps run `.RAVName` before creating the `PCAGenomicSignatures` class
+in the constructor function? Usually the class construction occurs after the
+pre-processing steps.
 * Some of the inputs in your class are matrix which perhaps should be your
 class or even `SummarizedExperiment`? (`plotAnnotatedPCA`)
 * Avoid using `class(x) %in% c("x", "y", "z")` constructions and use the S3
@@ -106,7 +106,7 @@ methods of `is.data.frame`, `is.matrix`, `is.list` (`subsetEnrichedPathways`).
 ```
 
 Minor:
-* You don't need ot use `isTRUE`, `isFALSE`, or `x == TRUE` on expected
+* You don't need to use `isTRUE`, `isFALSE`, or `x == TRUE` on expected
 logical values. What you should do is check those inputs by doing something
 like: `stopifnot(is.logical(abs), length(abs) == 1L, !is.na(abs))`.
 * Note you can also use `utils::globalVariables` for line 29 in
