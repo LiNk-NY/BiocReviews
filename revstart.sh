@@ -12,8 +12,8 @@ if [ -z "${pkgname// }" ]; then
     echo "Enter a package folder name"
     exit 1
 elif [ ! -d $PKGLOC ]; then
-    echo "Directory does not exist"
-    exit 1
+    cd $BIOC
+    git clone git@git.bioconductor.org:packages/${pkgname}.git
 fi
 
 cd $PKGLOC
