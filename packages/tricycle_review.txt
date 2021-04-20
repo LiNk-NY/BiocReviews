@@ -1,0 +1,46 @@
+# tricycle #2021
+
+## DESCRIPTION
+
+* You may want to move the `methods` package to `Imports`..
+* `org.*.db` packages should likely go in the `Suggests`
+* If `dplyr` already exports the pipe, do you need `magrittr`?
+* Add a `BugReports` URL.
+* Make `LazyData: FALSE` in the `DESCRIPTION`.
+
+## NAMESPACE
+
+* Is there a reason for importing the `ANY` class in `methods`?
+* It would be better for the user to not import the large `org.*.db` package.
+* You should be able to reduce some of these dependencies (e.g., `forcats`,
+`purrr`) and use base R functionality.
+
+## vignettes
+
+* It is easier to review a vignette that does not go off the page. This means
+keeping to an 80 character width limit. The code should especially follow this
+character width limit for display purposes.
+* Use `library` to load packages in the vignette
+
+Minor:
+* `labs(x = "Oroginal"...)` should probably be "Original".
+
+## R
+
+* The S4 generics look like S3 functions which can lead to confusion. Perhaps
+these should be plain functions or S3 methods?
+* I recommend creating methods for classes you own so that you don't pollute
+the methods environment for other classes. This means removing the `setMethod`
+functions and creating a plain function that is conditional to each class
+input. The methods all call `.getTheta` which can be called once in the new
+plain function.
+* Be more specific with error messages. "Something is wrong" is not very
+helpful to the new user; describe the error.
+* Optionally load packages if the user has them installed in `.getSYMBOL` &
+`.humanSymbol`.  Otherwise, tell the user to install those packages in an
+error (after these have been added to the `Suggests` field)
+
+## tests
+
+* We highly recommend that you add tests to your package to minimize bugs
+and increase robustness in package code.

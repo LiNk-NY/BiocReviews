@@ -1,0 +1,70 @@
+# SingleMoleculeFootprinting #2034
+
+## DESCRIPTION
+
+* Please use full sentences in the `Description` field (for `BiocCheck`).
+* Do you need to import both `AnnotationHub` and `ExperimentHub`?
+* Most often, the data package goes in the `Suggests` field.
+* Make `LazyData: false` or remove the line.
+* Add a `BugReports` field.
+
+## NAMESPACE
+
+* `AnnotationHub` seems out of place.
+* Perhaps the `parallel` functionality listed here is for user-level commands?
+* Everything else looks good.
+
+## vignettes
+
+* Please stick to the 80 width character limit convention. It makes it easier
+to read and review.
+* Load the packages that you use with `library(parallel)`, for example.
+* Avoid using `eval = FALSE` in code chunks. Use an small example dataset to
+show the functionality of your package. `eval=FALSE` chunks can become stale
+quite quickly.
+* Why are `\` backslashes needed in the text?
+* I suggest moving the `Installation` section to the beginning of the vignette.
+* Remove the `GitHub` installation section.
+* The `AnnotationHub` query is not necessary when you already have a data
+package that has a covenience function for loading the data. Use your own
+package.
+* Please don't move the file and keep it in the default cache. Otherwise,
+your package will be downloading the data every time it gets checked on
+our build system (BBS).
+* Perhaps you can provide a runnable `qQCReport` with a small dataset?
+* Avoid `1:n` sequence generation, use the more robust `seq_len(n)`.
+* Do not use `print` even in the vignette. Use `message` if necessary.
+* Provide a `sessionInfo` at the end of the vignette.
+
+Minor:
+* Our convention is to use `<-` for assignment instead of `=` but this not
+strictly enforced.
+* There are some typos chuck > chunk
+
+## R
+
+* You can use the data package for your examples, if necessary. Avoid using
+the `tempdir()` especially for downloaded data as pointed out above.
+* Some of the logic can be improved, for example:
+```r
+  MethSM_minus = MethSM[apply(MethSM[,IsMinusStrand], 1, function(i){sum(is.na(i)) != length(i)}) > 0, IsMinusStrand]
+  MethSM_plus = MethSM[apply(MethSM[,!IsMinusStrand], 1, function(i){sum(is.na(i)) != length(i)}) > 0, !IsMinusStrand]
+```
+It's not clear in the code what you're trying to do. Perhaps `!all(is.na(i))`
+is what you need to check for each row? or `rowSums(is.na(i)) > 0`? These are
+likely to be faster.
+* Add a `verbose` argument to functions like `CallContextMethylation` and
+others.
+* Where possible, avoid numeric indices and use named indices.
+* Consider using `BiocParallel` instead of `parallel::makeCluster` for
+`BaitCapture`. It may work better across systems.
+* `SampleCorrelation` should be using data in the `extdata` directory.
+* Avoid saving the file for the user in `SampleCorrelation`, create the plot
+and display it in the graphics device. The user will then be able to choose
+their format of choice (e.g., `png`).
+
+## tests
+
+* We highly recommend adding unit tests to your package.
+
+

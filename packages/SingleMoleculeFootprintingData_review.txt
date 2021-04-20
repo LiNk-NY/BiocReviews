@@ -1,0 +1,11 @@
+# SingleMoleculeFootprintingData
+
+## DESCRIPTION
+
+* Please include more information in the `Description` field.
+
+## vignette
+
+* Show the user how to download the data for the package by calling
+the function created by `createHubAccessor`.
+
