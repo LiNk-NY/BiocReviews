@@ -1,0 +1,42 @@
+# sechm #2057
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks pretty compact.
+
+## vignettes
+
+* Remove the GitHub installation code upon acceptance.
+* Use a more descriptive dataset name rather than `SE`. You could even use the
+author's name and year of publication.
+* Everyhthing else looks good.
+
+
+## R
+
+* Avoid using `eval(parse(...))` in `resetAllSechmOptions`. You can simply
+list and set them to `NULL`.
+* Would `.getDef("assayName")` return the value `assay` in the `switch`
+function? These should probably agree to avoid errors.
+* It may be better to create a package-wide environment / object for the
+various options. See here for an example:
+https://github.com/Bioconductor/SOUNDBoard/blob/master/R/zzz.R.
+* Deprecations in un-released packages are not usually necessary. If you wish,
+you can deprecate arguments with `.Deprecated`.
+* Describe what type of data can `ses` contain.
+* The code looks quite complicated and the number of arguments in `sechm`
+can overwhelm any user. Try to reduce the number of specifiable arguments in
+the function calls, if possible.
+
+## tests
+
+* We highly recommend adding unit tests to the package.
+
+## NEWS
+
+* Please add a `NEWS` file.
+

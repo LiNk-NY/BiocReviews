@@ -1,0 +1,25 @@
+# gwascatData #2074
+
+## DESCRIPTION
+
+* Add a `BugReports` field
+* Any reason why the data is saved as a `data.table` as opposed to a regular
+`data.frame`?
+* If you opt for using `data.table`, you should list the package in the
+`Imports` field.
+
+## NAMESPACE
+
+* No functions exported.
+
+## R
+
+* Include an `.onLoad` function that makes the resource available.
+* Perhaps try using the `ExperimentHub::createHubAccessors` function in a
+`zzz.R` as in
+https://github.com/Bioconductor/HubPub/blob/master/inst/templates/zzz.R
+
+## tests
+
+* None
+

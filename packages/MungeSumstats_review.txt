@@ -1,0 +1,46 @@
+# MungeSumstats #2043
+
+* The package does not make a strong case for Bioconductor approval given
+the extensive use of `data.table` and lack of formal integration to the
+resources already available in Bioconductor (e.g., `VariantAnnotation` for
+.vcf files and `GPos`, `GRanges`, and others for representing the data)
+
+## DESCRIPTION
+
+* Remove `LazyData: TRUE` according to `BiocCheck`.
+* If possible, avoid downloading large packages by moving them from the
+`Imports` to `Suggests` field.
+* Add a `BugReports` field
+
+## NAMESPACE
+
+* Save as above regarding the data packages.
+
+## vignettes
+
+* It is preferrable to add `warning=FALSE` options at the chunk-level rather
+than the document-level.
+* Remove the GitHub installation section.
+* You don't need to include the `BiocManager::install(version="devel")` bit
+of code. This is known among developers. Your package will go into release
+so this code will not be relevant for the majority of your users (conditional
+on acceptance).
+* The `ieuAmlVcf` appears to be a bit cryptic, perhaps use a more descriptive
+name.
+* Include a `sessionInfo` section.
+
+## R
+
+* Ensure that defaults are defaults. `allele_flip_check` has no default
+although the documentation says it does.
+* Avoid using code that writes to the `.globalEnv`. This is bad practice:
+`assign("rsids", rsids, envir = parent.frame())`.
+* I'm not sure how you can run names on a file `names(sumstats_file)`. Perhaps
+the documentation needs a bit more details (in `check_chr`)?
+* Avoid writing files for the user in `chekc_four_step_col`.
+
+## tests
+
+* It looks like you have plenty of tests.
+
+

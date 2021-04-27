@@ -1,0 +1,29 @@
+# granulator #2065
+
+## DESCRIPTION
+
+* Add a `BugReports` field
+* Update R version to `>= 4.1`
+* `LazyData` should be set to `FALSE`
+
+## NAMESPACE
+
+* Looks good.
+* Consider re-exporting the `%>%` if you expect users to use your functions
+that way.
+
+## vignettes
+
+* Avoid using `print` for inspecting an object. Simply use `correl$summary`,
+for example.
+
+## R
+
+* Remove the redundant `paste0` on line 112 of `R/deconvolute.R` as pointed
+out by `BiocCheck`
+
+## tests
+
+* Please add unit tests to ensure that your functionality is robust and less
+prone to bugs and errors.
+
