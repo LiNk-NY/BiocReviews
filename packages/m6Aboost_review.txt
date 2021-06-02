@@ -1,0 +1,42 @@
+# m6Aboost #2126
+
+## DESCRIPTION
+
+* Looks good.
+* Perhaps define what miCLIP2 data is in the `Description` field.
+
+## NAMESPACE
+
+* Looks good.
+* Consider using a more descriptive function name for `getFeatures`.
+
+## vignettes
+
+* Good introduction.
+* Please remove the GitHub installation code and use the `BiocManager`
+conditional code found on package landing pages when accepted.
+
+## R
+
+* Why not use `rowData` instead of `getFeatures`. The description says that
+the function is not only extracting the features but also doing some
+calculations. Perhaps these steps should be separated.
+* What is the reason for using code conditional to Windows OS?
+* Why not use a logical to define whether the peak would overlap in
+`.assignment`? It would be easier to work with down the line, e.g., simply
+having `object %over% UTR3`.
+* You don't need `isTRUE` for inputs that will be evaluated to logical, e.g.,
+in `isTRUE(!colname_reads %in% meta_name)` in the `getFeatures` method.
+* Remove any old commented code.
+* Avoid creating methods for classes that are not your own to avoid polluting
+the class's methods environment. `m6Aboost` and `truncationAssignment` can be
+plain functions that take `GRanges` as input.
+
+## tests
+
+* Looks good.
+
+## README.md
+
+* Please provide a more substantial description of the package
+
