@@ -1,0 +1,23 @@
+# CTCF #2109
+
+* Thanks for providing a valuable resource.
+
+## DESCRIPTION
+
+* Looks good.
+* `LazyData: true` is not needed and can be slow with big datasets. Please
+remove.
+
+## NAMESPACE
+
+* Empty
+
+## vignettes
+
+* Remove the GitHub installation instructions.
+* We discourage the use of external hosting platforms for data. Why can't these
+be hosted on `AnnotationHub`?
+* Do you need to track the time it takes to build the vignette in the vignette?
+* I suggest you use `time R CMD build CTCF`.
+
+

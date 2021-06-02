@@ -1,0 +1,13 @@
+# tLOH #2087
+
+* Perhaps this package is best suited for CRAN.
+
+## DESCRIPTION
+
+* Include a `BugReports` field.
+
+## NAMESPACE
+
+* It seems that you are not using existing Bioconductor infrastructure.
+* There are opportunities to use `GPos`, `VariantAnnotation`, `spatialLIBD`,
+etc. for the data representation.

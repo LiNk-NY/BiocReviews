@@ -1,0 +1,49 @@
+# NUMTDetect #2100
+
+* The package looks good. A few minor changes are requested.
+
+## DESCRIPTION
+
+* Add more details to the `Description` field (at least 3 sentences).
+* Add a `BugReports` field.
+* Remove the dependency on `covr`. If you need this for `.travis.yml` you can
+install the package as a preparation step.
+
+## NAMESPACE
+
+* Looks good.
+* Consider using the same case as the package name for your main function.
+
+## vignettes
+
+* We recommend keeping to an 80 character width limit.
+* Use `library` calls for loading packages.
+* Use chunk options
+```
+include=TRUE,results="hide",message=FALSE,warning=FALSE
+```
+to avoid using `suppressPackageStartupMessages` for a single package loading
+chunk.
+* If you are using an _small_ example `vcf`, please include it in the
+`inst/extdata` folder and load it with `system.file`
+* Remove commented code.
+
+## R
+
+* For S4 classes, use `methods::is` to test for class membership rather than
+`class(x) == "y"`.
+* Where possible, use dedicated methods for classes, e.g., `isEmpty(gr)`
+instead of `length(gr) > 0`.
+* Avoid the use of `sapply` and use `lapply` or `vapply`.
+* Remove commented code.
+* Use `@keywords internal` for documentation of internal helper functions
+(`.mtLen`)
+
+## tests
+
+* You should not need to add tests for `GenomicRanges` objects. The tests
+should ensure that all the possible outputs of your functions are tested,
+as well as errors, warnings, and messages. This is something to work on
+in the long run.
+
+
