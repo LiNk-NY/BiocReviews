@@ -1,0 +1,72 @@
+# mitoClone2 #2158
+
+## README
+
+* Please don't advertise your package as install-able from Bioconductor
+when it hasn't been accepted.
+
+## DESCRIPTION
+
+* Update the R version to >= 4.1.0 which corresponds to the current devel
+version.
+* Include `BugReports` and `URL` fields that point to GitHub
+* Use whole sentences in the `Description` field. `BiocCheck` will flag short
+`Description` fields by checking for `.`.
+* Remove the `LazyData: true` or set to `false`.
+
+## NAMESPACE
+
+* Looks good.
+
+## R
+
+* Use character indices rather than numeric ones for more robust code.
+* Include all options in the argument, e.g.,
+`what = c("alleleRatio", "ternary")`, and then use `match.arg()` inside the
+function to obtain one.
+* Avoid using `@` in the package code. You should have formal extractor
+functions for your class.
+* Avoid using system calls in `plotTree`. That code may not be portable to all
+platforms. Separate the plotting and saving functionality. Do not save files
+for the user by default.
+* Consider using `reticulate` or `basilisk` rather than system calls to python.
+* Does `Rsamtools` have the functionality that you are looking for? This is
+preferred over `system("which samtools")`
+* Reduce repetitive coding by using conditional inputs in `ggplot`, e.g.,
+`legend.pos <- if (showLegend) "top" else "none"`
+* Please follow up with the Notes from `BiocCheck::BiocCheck()`, current count:
+15.
+
+* Minor: the `new("mutationsCalls", ...)` should be the last call in the
+constructor
+* Save the output of `GRanges(sites)` and re-use it in
+`mutationCallsFromCohort`.
+
+## vignettes
+
+* Restrict text to an 80-character width limit. It makes it easier to review
+and maintain.
+* Avoid using `@` access and provide formal accessor and replacement functions.
+* Your example datasets in the vignette should be minimal enough to allow
+the demonstration of function use. Avoid providing code that takes more
+than 1 minute to run in the vignette.
+* Provide a `sessionInfo` section at the end of the vignette.
+* Avoid downloading data from a link.
+* Keep examples from publications (Ludwig et. al) in a separate repository.
+The main focus of the vignettes should be to demonstrate the functionality of
+the package rather than reproducing a real-world analysis. If you wish,
+you can create a workflow package to that end.
+
+## src
+
+* We would prefer that you do not include external software with your package.
+Perhaps you can instruct users to use that software independently of yours and
+your package can optionally work with the output of the `SCITE` software?
+For the time being we can't accept your package with the `SCITEpkg` code
+inside of it.
+
+## tests
+
+* We strongly recommend that you add unit tests to your functions to make
+them more robust and reliable.
+

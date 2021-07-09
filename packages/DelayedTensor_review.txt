@@ -1,0 +1,36 @@
+# DelayedTensor #2143
+
+## DESCRIPTION
+
+* Please add a `BugReports` field and URL pointing to the GitHub repository.
+* (minor) Consider wrapping the text in the `Description` field.
+* I'm not sure why you need to import `BiocStyle` and `knitr`?
+
+## NAMESPACE
+
+* Looks good.
+* Perhaps you should use a more descriptive name for the `vec` function.
+* It seems that `fold` and `unfold` should be methods with an argument input
+that will differentiate the ones you have listed in the `NAMESPACE`.
+
+## vignettes
+
+* The `BiocStyle` vignette states that you should add `BiocStyle` and `knitr`
+to the `Suggests` field in the `DESCRIPTION`.
+* The introductory vignette looks good. Consider using a spellchecker to find
+some typos and spelling errors.
+* In vignette 2, perhaps consider combining the functionality of `k_*`, `rs_*`,
+and `cs_*`.
+* The vignettes look comprehensive and easy to follow.
+
+## R
+
+* The code looks good overall.
+* It looks like you can combine `k_*`, `rs_*`, and related functions
+but it may be more convenient to the user to keep them as-is.
+* It looks like `vec` is doing more than just coercing to a `vector`. Consider
+using a more descriptive name.
+
+## tests
+
+* Looks good.

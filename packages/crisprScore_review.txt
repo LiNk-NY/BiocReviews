@@ -1,0 +1,22 @@
+# crisprScore #2157
+
+## DESCRIPTION
+
+* The data package is usually in the `Suggests` field.
+
+## LICENSE
+
+* I will confirm with the rest of the core team but you cannot restrict the
+use with the current (albeit version `2.0`) license.
+
+* We have this check in place for version 4.0:
+
+```r
+> BiocCheck:::.checkLicenseForRestrictiveUse("CC BY-NC-ND 4.0")
+* Checking License: for restrictive use...
+    * ERROR: License 'CC BY-NC-ND 4.0' restricts use
+```
+
+* If you do decide to continue with the submission, the license will have to
+be suitable for redistribution according to our policies.
+
