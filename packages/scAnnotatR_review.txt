@@ -1,0 +1,69 @@
+# scAnnotatR #2176
+
+## DESCRIPTION
+
+* It would be good to keep the `DESCRIPTION` file to a max 80 character limit
+so the text does not run off the screen.
+* Avoid using `LazyData` field as this usually does not help with large
+datasets.
+* Include `BugReports` and `URL` fields
+
+## NAMESPACE
+
+* Avoid acronyms where possible (e.g., `clf`) and provide a more descriptive
+name.
+* Consider renaming the `features` function to provide a more specific and
+informative name.
+
+## vignettes
+
+* Provide a more descriptive name to the `default_models` dataset. Perhaps
+by including the origin study name, if any.
+* If possible avoid using spaces in names e.g., `"B cells"` and use underscores
+* Declare dependency on `scClassifR`:
+
+```r
+> default_models[['B cells']]
+Loading required package: scClassifR
+Error in .requirePackage(package) :
+  unable to find required package 'scClassifR'
+In addition: Warning message:
+In library(package, lib.loc = lib.loc, character.only = TRUE,
+  logical.return = TRUE,  : there is no package called 'scClassifR'
+```
+* Do not write files in the vignette, i.e., remove the
+`path.to.models = getwd()` argument and replace it with `tempdir()`
+
+## R
+
+* What is the need for a `path_to_models` argument?
+* Use `setReplaceMethod` instead of `cell_type<-` if you are creating an S4
+method.
+* We would recommend that you use an empty environment to load data rather
+than the function environment to avoid conflicts and messages from
+uninitialized objects (in `load_models`):
+
+```r
+data_env <- new.env(parent = emptyenv())
+data("default_models", envir = data_env)
+default_models <- data_env[["default_models"]]
+```
+* We wouldn't recommend creating methods for classes that are not your own
+because it would pollute that class's method space, e.g.,
+`setMethod("check_parent_child_coherence", c("obj" = "Seurat"), ...` and
+for `SingleCellExperiment`. It may even be better to reconcile both methods
+into one that would handle both class inputs.
+* Avoid using `/` in file paths as this is not portable for all systems, use
+`file.path` instead.
+* Do not write to the user's directory without explicit permission (e.g.,
+`models.file.path` and `path.to.models`)
+* Use a temporary directory by default in `path.to.models`.
+* Consider using `BiocFileCache` to manage these saved instances.
+* It would be better to let users save their own `.Rda` files rather than
+providing a function like `save_new_model` especially if it does not provide
+much functionality outside of `save`.
+
+## tests
+
+* Look good.
+* Consider adding more test for increased coverage.

@@ -1,0 +1,48 @@
+# FindIT2 #2166
+
+* Please rename your package as it does not seem related to the `FindIt`
+package on CRAN and could cause confusion.
+
+## DESCRIPTION
+
+* Looks good.
+* Consider removing the magrittr dependency if you're only using it for the
+pipe operator (which is also exported by `dplyr`).
+
+## NAMESPACE
+
+* Consider seperating the `shiny` functionality from the package and creating
+a dedicated `shiny` version of the package
+* Consider removing the `findIT` prefixes. These generally do not add much
+to the function name other than increasing the length of it.
+
+## vignettes
+
+* Avoid package installations instructions that are not consistent with the
+current availability of the package in Bioconductor. Next time, please
+add `BiocManager::install` and remove the GitHub installation instructions
+_after_ the review has been concluded.
+* Consider reformatting the vignette to stay within the 80 character limit.
+This makes it easier to review and even maintain.
+
+## R
+
+* Avoid using `cat` to send messages to the user. Use `message` instead and
+include a `verbose` argument for minimizing the verbosity.
+* Avoid right hand assignment `->` as it hinders readability
+* Use more specific / informative names rather than `input_genes` and
+`input_feature_id` for datasets in the package.
+* Describe the inputs in the documentation, e.g., for `input_feature_id`,
+should it be a `character` vector or `GRanges`?
+* List all options in arguments, e.g., `output_type` in `getAssocPairNumber`
+should be `c("feature_id", "gene_id")` by default, then you can use
+`match.arg` to resolve the input inside the function.
+* Avoid using the `quiet` and `sink()` functions in `R/utils.R`
+
+## tests
+
+* Looks good.
+
+
+
+

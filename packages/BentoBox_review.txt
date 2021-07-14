@@ -1,0 +1,55 @@
+# BentoBox #2165
+
+* BentoBox has the same issue with large `.git/object/pack` files. Please
+remove these with the BFG repo cleaner.
+
+## DESCRIPTION
+
+* Add a `BugReports` field
+* It does not look like you use the Bioconductor infrastructure to the fullest
+extent but you do provide some Bioconductor packages in the `Suggests` field.
+
+## NAMESPACE
+
+* Perhaps it's a matter of personal preference but consider removing the `bb`
+prefix from all of your functions. Users who would like to see what functions
+are available in the package could use `help(package = "BentoBox")` or
+`ls(2)` after loading the package.
+* Do all of these functions need to be exported? Some look like helper
+functions for plotting and may not need to be exported.
+
+## vignettes
+
+* Consider breaking up the vignette into smaller ones. These can get pretty
+dense and having separate vignettes for the four functionalities may be
+helpful for the user.
+
+## R
+
+* The general recommendation for checking whether a package exists or not in
+the users installation is to use `requireNamespace`. You could then emit an
+error when the package is not avialable (instead of `check_loadedPackage`).
+This is described in the package guidelines.
+* One general strategy to use is to create a data.frame for listing the
+supported genome assemblies, creating a multiplier for the 'just' argument
+(e.g., in `bb_annoHighlight`), etc. This way you have an actual data
+representation rather than code with embedded data. This is also easier to
+expand and maintain.
+* Avoid using numeric indices for subsetting and use character ones, i.e.,
+`df[, "chr1"]` is more robust than `df[, 1]`.
+* Throughout the code you have `as.numeric` in many places, this indicates
+that you should have more control over the data inputs rather than coercing
+repeatedly. You could also use `utils::type.convert` iteratively on the data,
+if necessary.
+* Due to the size of the package. I am unable to review all of the code.
+Please ensure that you are following the package guidelines.
+
+## tests
+
+* Avoid using the `skip_on_bioc()` for tests. The save functionality does
+not need tests as that is pretty robust and not really related to your
+package.
+* Please include more tests for checking the helper functions in the package.
+
+
+

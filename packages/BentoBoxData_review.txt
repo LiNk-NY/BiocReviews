@@ -1,0 +1,20 @@
+# BentoBoxData #2165
+
+* Please remove the 85 Mb of `.git/object/pack` files with the BFC repo cleaner
+
+## DESCRIPTION
+
+* Looks good.
+* Add `BugReports` and `URL` fields
+
+## vignettes
+
+* Either load the package with `library` or use the package argument in the
+`data` call.
+* Consider dropping the `bb_` prefix from the data names.
+* Consider renaming `bb_imrHiCData` and dropping the word 'Data' as this is
+understood for a data resource.
+* Please use more descriptive names (`bb_bedData`)
+* Perhaps the cytoband data should be in a separate `AnnotationHub` package?
+(See also: `AHCytoBands`)
+
