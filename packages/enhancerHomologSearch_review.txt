@@ -1,0 +1,38 @@
+# enhancerHomologSearch #2181
+
+## DESCRIPTION
+
+* Include a `BugReports` and `URL` field.
+* Looks good.
+
+## NAMESPACE
+
+* The usual Bioconductor convention is to use a capital letter name for
+class names, e.g., `SummarizedExpeirment` vs `enhancers`.
+
+## vignettes
+
+* Concise. Looks good.
+* Add an installation section using `BiocManager`.
+* Avoid using double `$` which suggests a nested list. Perhaps use S4
+extractors and replacers.
+
+## R
+
+* Use a single worker by default in the examples (`alignmentOne`).
+* Create helper functions to check for typical cases (those in `stopifnot`)
+and re-use them in `alignmentOne` and `alignment`, for example.
+* Consider using explicit / documentable arguments in the `enhancers`
+constructor function rather than the elipses `...`.
+* Avoid using `$` for extraction or setting of a slot. Create a dedicated
+extractor function, e.g., `assay` method for `SummarizedExperiment`. `$` are
+indicative of list classes and can cause confusion when used outside of that
+context.
+* Consider using caching in `getENCODEdata`, possibly via `BiocFileCache`.
+* The `dir <- tempdir()` is not used in `getENCODEdata`.
+* Avoid writing to the users file system without explicit instruction.
+The `output_folder` in `saveAlignments` should be `tempdir` instead of `.`.
+
+## tests
+
+* We strongly recommend adding unit tests for more robust code.
