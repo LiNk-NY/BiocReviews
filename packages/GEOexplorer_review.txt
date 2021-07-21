@@ -1,0 +1,45 @@
+# GEOexplorer #2191
+
+## DESCRIPTION
+
+* (optional) Keep to the 80 character width limit in the `DESCRIPTION` file
+for easier review.
+* Update the `License` field.
+* Include packages such as `shiny` in the `Depends` field since you use the
+functions in the package extensively.
+* Add `Biobase` dependency to the `DESCRIPTION` when using functions like
+`exprs` and `pData`.
+
+## NAMESPACE
+
+* The function names are quite long but are these user-level functions?
+* Perhaps these funcitons need not be exported given that it is a `shiny`
+package.
+
+## vignettes
+
+* Restricting the text to the 80 character-width limit is better for reviewing
+and even maintaining.
+* I think the vignette for a shiny-app package should include
+screenshots that show the user how to interact with the app and the coding
+should be minimal.
+* Can a user input code from the shiny app?
+
+## R
+
+* Remove `library` calls from inside functions (see note in `DESCRIPTION`).
+* The functions provided do not need to be exported for the shiny app, AFAICT.
+* Perhaps you may want to separate the analysis and visualization functions
+from the shiny funcitonality into separate packages?
+* Functions like `convertAdjustment` should probably be a lookup table rather
+than a series of `if` `else` statements.
+
+## /
+
+* Please remove the errors folder.
+* Sourcing the R files should not be necessary in `app.R`.
+* Remove the `rsconnect` folder. This should only be on your local computer.
+
+## tests
+
+* Looks good.
