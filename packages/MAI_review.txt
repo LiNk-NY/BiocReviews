@@ -1,0 +1,8 @@
+# MAI #2203
+
+* `MAI` does not make use of the existing Bioconductor infrastructure in the
+field of metabolomics and therefore is not a candidate for acceptance.
+* If you would like to revise your package please state how you will integrate
+the package to existing Bioconductor classes and methods.
+
+---
