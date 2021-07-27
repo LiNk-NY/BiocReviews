@@ -1,55 +1,93 @@
-# BentoBox #2165
+# bentobox #2165
 
-* BentoBox has the same issue with large `.git/object/pack` files. Please
-remove these with the BFG repo cleaner.
+* bentobox has the same issue with large `.git/object/pack` files. please
+remove these with the bfg repo cleaner.
 
-## DESCRIPTION
+## description
 
-* Add a `BugReports` field
-* It does not look like you use the Bioconductor infrastructure to the fullest
-extent but you do provide some Bioconductor packages in the `Suggests` field.
+* add a `bugreports` field
+* it does not look like you use the bioconductor infrastructure to the fullest
+extent but you do provide some bioconductor packages in the `suggests` field.
 
-## NAMESPACE
+## namespace
 
-* Perhaps it's a matter of personal preference but consider removing the `bb`
-prefix from all of your functions. Users who would like to see what functions
-are available in the package could use `help(package = "BentoBox")` or
+* perhaps it's a matter of personal preference but consider removing the `bb`
+prefix from all of your functions. users who would like to see what functions
+are available in the package could use `help(package = "bentobox")` or
 `ls(2)` after loading the package.
-* Do all of these functions need to be exported? Some look like helper
+* do all of these functions need to be exported? some look like helper
 functions for plotting and may not need to be exported.
 
 ## vignettes
 
-* Consider breaking up the vignette into smaller ones. These can get pretty
+* consider breaking up the vignette into smaller ones. these can get pretty
 dense and having separate vignettes for the four functionalities may be
 helpful for the user.
 
-## R
+## r
 
-* The general recommendation for checking whether a package exists or not in
-the users installation is to use `requireNamespace`. You could then emit an
-error when the package is not avialable (instead of `check_loadedPackage`).
-This is described in the package guidelines.
-* One general strategy to use is to create a data.frame for listing the
+* the general recommendation for checking whether a package exists or not in
+the users installation is to use `requirenamespace`. you could then emit an
+error when the package is not avialable (instead of `check_loadedpackage`).
+this is described in the package guidelines.
+* one general strategy to use is to create a data.frame for listing the
 supported genome assemblies, creating a multiplier for the 'just' argument
-(e.g., in `bb_annoHighlight`), etc. This way you have an actual data
-representation rather than code with embedded data. This is also easier to
+(e.g., in `bb_annohighlight`), etc. this way you have an actual data
+representation rather than code with embedded data. this is also easier to
 expand and maintain.
-* Avoid using numeric indices for subsetting and use character ones, i.e.,
+* avoid using numeric indices for subsetting and use character ones, i.e.,
 `df[, "chr1"]` is more robust than `df[, 1]`.
-* Throughout the code you have `as.numeric` in many places, this indicates
+* throughout the code you have `as.numeric` in many places, this indicates
 that you should have more control over the data inputs rather than coercing
-repeatedly. You could also use `utils::type.convert` iteratively on the data,
+repeatedly. you could also use `utils::type.convert` iteratively on the data,
 if necessary.
-* Due to the size of the package. I am unable to review all of the code.
-Please ensure that you are following the package guidelines.
+* due to the size of the package. i am unable to review all of the code.
+please ensure that you are following the package guidelines.
 
 ## tests
 
-* Avoid using the `skip_on_bioc()` for tests. The save functionality does
+* avoid using the `skip_on_bioc()` for tests. the save functionality does
 not need tests as that is pretty robust and not really related to your
 package.
-* Please include more tests for checking the helper functions in the package.
+* please include more tests for checking the helper functions in the package.
 
+
+---
+
+> since annotationhub depends on a valid connection, we would like to keep
+this data as part of bentoboxdata as a failsafe.
+
+this is not a good reason to keep duplicated data. most users will have an
+internet connection; otherwise, they would not be able to download your
+package. if the resources are there, use them and avoid duplication. the
+`annotationhub` resources are cached and only need to be downloaded once,
+therefore the users' internet has to only be reliable once.
+
+also, "experience" with `annotationhub` is not a necessary component of usage
+because the developer (you) can make the download of resources easy for the
+user through easy-to-use functions.
+
+>  we feel the bb_ prefix is helpful for less experienced r users,
+particularly with interfacing with r intellisense to help auto-complete
+function names. we have found it’s easier and quicker to find all bentobox
+functions with the bb_ prefix.
+
+i am not sure what the uptake is on intellisense and visual studio for r but
+this is certainly not a typical setup. bioconductor users are more likely to
+be using either rstudio or the command line. rstudio provides an auto complete
+version where the user can enter `bentobox::` and then press <kbd> tab </kbd>
+to see all the exported functions in the package. Users on the command line
+would likely know to use `help(package = "BentoBox")` or `ls(2)`.
+
+> Breaking up the main vignette into vignettes for the four functionalities
+could be helpful, but we feel that the current structure of the main vignette
+is necessary for users to understand the overall workflow of the package. We
+feel that further splitting the vignettes would make the information too
+fragmented for the structure of the package and difficult to find.
+
+Having a large vignette is conducive to losing / overwhelming users. It is
+easy to get lost in lots of nuanced examples. That is why I was proposing a
+break up by funcitonality to make these operations easier to find for
+the user that is searching for it.
 
 

@@ -67,3 +67,20 @@ much functionality outside of `save`.
 
 * Look good.
 * Consider adding more test for increased coverage.
+
+---
+
+
+> We are afraid that reconciling both methods into one would generate many much
+more complicated bugs. Therefore, we feel that we arrive at a cleaner code
+base if we use dedicated functions for these objects. As both a very
+established already, it's unlikely that additional basic objects of scRNA-seq
+data will be developed.
+
+When you have two versions of similar code, you would have twice the bugs.
+Putting them into one function will reduce the places you have to debug.
+Again, these classes are not yours so you shouldn't be adding methods to
+their namespace. The appropriate place for additional methods is in the
+package where the classes are defined. Otherwise, this will cause confusion
+among users. Please remove these methods and make a single plain function that
+processes both class inputs and returns the `return_val` list.
