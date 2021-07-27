@@ -6,3 +6,56 @@ field of metabolomics and therefore is not a candidate for acceptance.
 the package to existing Bioconductor classes and methods.
 
 ---
+
+
+# MAI #2203
+
+## DESCRIPTION
+
+* Add `BugReports` and `URL` fields pointing to GitHub.
+* Looks good.
+
+## NAMESPACE
+
+* Avoid using `exportPattern` in the `NAMESPACE`.
+* Export only the functions that are relevant to end users.
+
+## vignettes
+
+* Use a more descriptive name than `data_miss`. Usually the names are relevant
+to the technology from which the data is collected. If it is generated data,
+use the technology name that the data emulates.
+* The extraction of data looks cumbersome with `[[x]][[y]]`.
+* Rename `data_miss` to `se` or something similar so that the user knows the
+object is a `SummarizedExperiment`.
+* Minor: Use `<-` instead of `=` for assignment.
+
+## R
+
+* Avoid the use of `1:n` sequence generation and use the more robust,
+`seq_len(length(x))` and / or `seq_along(x)`
+* Include the character vector of algorithms (in `R/MAI.R:MAI()`) in the
+function arguments and use `match.arg` within the function body to match to
+one.
+* Avoid using `print` within the function and use `message` also allow users
+to turn off the messages with a `verbose` argument in the function (`MAI()`).
+* Either only take the first assay in `data_miss` when it is a
+`SummarizedExperiment` or allow users to specify the assay with an `i`
+argument in the function that has a default of 1. This allows users to select
+which assays to impute missing data for (more flexible).
+* The use of `exists` is awkward and not encouraged. You can add `stopCluster`
+to `on.exit`.
+* Minor: Use `<-` instead of `=` for assignment.
+* Minor: `seq_along(1:10)` is the same as `1:10`
+
+## man
+
+* Properly document the `data_miss` argument so that it includes the use
+of `SummarizedExperiment`.
+* Note that the MAI function returns a list in the `value` section.
+
+## tests
+
+* We strongly encourage that you add more tests to ensure that the code
+is robust to all types of inputs.
+
