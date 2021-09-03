@@ -1,0 +1,16 @@
+# drawCell #2240
+
+* Please indicate why you would like this package to be part of Bioconductor.
+The package does not seem to use the existing infrastructre in Bioconductor
+other than `BiocStyle`.
+
+## DESCRIPTION
+
+* Add `BugReports` and `URL` fields.
+* Do you need to import `rmarkdown`?
+
+## NAMESPACE
+
+* Exporting only one function, `drawCell`. It matches in case and it looks
+good.
+

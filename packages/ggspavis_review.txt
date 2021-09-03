@@ -1,0 +1,48 @@
+# ggspavis #2220
+
+## DESCRIPTION
+
+* Looks good.
+* Consider adding `ggplot2` to the `Depends` field given the number of imported
+functions in the `NAMESPACE`.
+* (Minor) Format the `Authors@R` field to wrap the text to less than 80 column
+width.
+
+## NAMESPACE
+
+* There are only a handful of exported functions. Looks good.
+
+## vignettes/
+
+* Consider restricting the text to 80 column width. It makes it easier to
+review and maintain IMO.
+* Nice visuals and examples. The vignette is concise.
+
+## R
+
+* Make sure you are using `match.arg` in `plotDimRed` to ensure that your code
+is robust to inputs outside of `c("UMAP", "PCA")`.
+* Plotting the example in `plotDimRed` does not use the default palette. It
+looks like it depends on `annotate` being present, otherwise the palette input
+does not work.
+* Consider using `.get_pal` in `plotDimRed` as well.
+* Add some checks to inputs (e.g., `molecule` in `plotMolecules`) to ensure
+robustness
+* Avoid redundancy by using a character input for `in_tissue` and using
+`df[[in_tissue]]` within the code. The default argument value can be
+`"in_tissue"` or even rename the argument to `tissue_column`.
+
+* Minor: Consider using `identical(palette, "libd_layer_colors")` etc. within
+your `if` conditions.
+* Minor: Consider using `cbind.data.frame` instead of
+`as.data.frame(cbind(...))` in `plotQC`.
+
+## /
+
+* Update section in `README.md` to reflect the use of `BiocManager` for
+installation (after acceptance).
+
+## tests
+
+* Consider adding unit tests to make the code more robust.
+

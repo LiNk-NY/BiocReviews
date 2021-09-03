@@ -1,0 +1,84 @@
+# OptiLCMS #2210
+
+The package will need a lot of work before it can be accepted. Unfortunately,
+given the lack of adherence to standard Bioconductor practices, the code can
+be extremely fragile and unreliable.
+
+## DESCRIPTION
+
+* If you only need one funciton from `MSnbase`, please put the package in the
+Imports field.
+* Minor: Keep the `Description` field limited to 80 column width.
+
+## NAMESPACE
+
+* Avoid using `.` delimiters in function names. These are meant to indicate an
+S3 method dispatch. Use `camelCase` instead.
+
+## vignettes/
+
+* Consider limiting the text to 80 column-width. This helps reviewers and
+even maintenance.
+* Remove the Google Drive link in the vignette. If you'd like to make the
+source tarball available, create a "release" on your GitHub page (though this
+is not the usual way to distribute the package).
+* Remove `eval=TRUE` flags from code chunks. This is the default.
+* Minimize the number of `eval=FALSE` code blocks. If the data is too big,
+consider making it smaller.
+* Consider breaking down the `running.plan` function call in to several
+smaller steps. It looks quite complicated and not very user friendly.
+* Avoid using semicolons (`;`).
+
+## R/
+
+* Avoid double logical evaluation, e.g., (`if (TRUE) TRUE else FALSE` in
+`continuousPtsAbove*` etc.)
+* Use consistent delimiters in a error message (e.g., in `which.colMax` :
+`'x'`)
+* Use `as.double` without checking to see if a matrix `is.double` because you
+will coerce anyway. This applies to other coercions where you're checking
+first before coercing. Checking is not necessary.
+* Consider using a helper function to check the inputs of the `binYonX` and
+other related functions.
+* Your comment in `binYonX` and `fast.write.csv` does not apply because your
+package will not be available for older R versions only versions 4.1 and above
+(once in Bioconductor; if accepted).
+* Check for `NA` in `x` earlier in the function (especially if it is an error).
+* Avoid writing files without the user's consent (e.g., `write.table` in
+`MessageOutput` and others).
+* Remove any `.onAttach` messages, this is against Bioconductor standards of
+practice.
+* Avoid empty validity checks (e.g., in the `controller` and `ResumeHistory`
+classes) and add a validity function to ensure the proper class structure.
+* Does the `ResumingePlan` class have a typo in it?
+* I do not see an `OptiLCMS` class defined in the `R/OptiLCMS_Class.R` file.
+* Remove `;` from the code.
+* Remove excitement from error messages (i.e., exclamation mark `!`) and
+'Don't worry' / 'ADVICE' directives (in `PerformParamsOptimization`).
+* Default the `ncore` value to a single core.
+* Remove or fix any commented code in R files.
+* Avoid nesting `ifelse` functions and use a table
+https://stackoverflow.com/a/39217596
+* Avoid the use of `nSlaves` / `SlaveCluster` terms.
+* Do not use `@` to access slots and use a formal interface detached from the
+slotNames in the event that these need to change (e.g. in `calcCV`).
+* Avoid using the copy and append method within `for` loops as it can cause
+major slow downs (e.g., in `getRGTVValues`)
+* Add authors to `DESCRIPTION` for any code that you are porting into your
+package. Note that it is common courtesy to ask the original authors for
+permission to port their code into your package.
+* Avoid manipulating the working directory inside a function. This is not
+standard practice. See `GeneratePeakList`.
+* Do not hardcode file paths in a function (`CachePathCorrection`).
+* Make it possible for users to turn off the excess of messages in
+`FastRunningShow_auto` with a `verbose = FALSE` option at the top level
+function.
+* Is there a better way to `SetPeakParam` without almost 2000 lines of
+conditional code?
+
+## tests/
+
+* The maintainers will need a large amount of tests to make sure that all
+the functionality in the package is reliable and robust.
+* Currently there are no tests in the package.
+

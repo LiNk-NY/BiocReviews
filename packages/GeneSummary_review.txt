@@ -1,0 +1,42 @@
+# GeneSummary #2257
+
+* It seems like you are taking a web resource and providing the data within
+the package.
+* Do you have a formal mechanism for updating the package?
+* How often will updates be run to update the internal data
+`refseq_gene_summary`?
+
+## DESCRIPTION
+
+* Add a `BugReports` field.
+
+## NAMESPACE
+
+* Looks good and minimal.
+
+## vignettes/
+
+* Short and straightforward. Looks good.
+
+## R/
+
+* Why not use `roxygen2` to write the documentation?
+* The vignette says that the `status` argument can only be set to "reviewed"
+but the code allows more inputs. Please clarify.
+* The name of the file usually agrees with the function `R/gene_summary.R` vs
+`loadGeneSummary`.
+* Looks straightforward.
+
+## tests
+
+* OK
+
+## /
+
+* Update `README.md` after acceptance to include Bioconductor installation
+instructions.
+
+## NEWS
+
+* Update the NEWS file.
+

@@ -1,0 +1,41 @@
+# crisprScoreData #2157
+
+## DESCRIPTION
+
+* You don't need to import `ExperimentHubData`.
+* Suggest your own `crisprScore` package.
+* Add `BugReports` and `URL` fields.
+
+## NAMESPACE
+
+* Remove the `ExperimentHubData` dependency.
+
+# crisprScore #2157
+
+## DESCRIPTION
+
+* Suggest your own `crisprScoreData` package.
+* Add `BugReports` and `URL` fields.
+* Remove `LazyData` field
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes/
+
+* Looks good.
+
+## R
+
+* Code looks good.
+* Remove stale code `R/basilisk2.R`
+* If possible, avoid using numeric indices e.g., `scores[, c(1,4,5,6)]` and
+use more robust `colnames`.
+* It looks like some functions are not supported on Windows. This should be
+noted in the `Description` field.
+
+## tests/
+
+* Looks good.
+
