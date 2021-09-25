@@ -1,0 +1,34 @@
+# biodbChebi #2283
+
+* Perhaps the package can benefit from an API layer that avoids using
+`chebi$X`?
+
+## DESCRIPTION
+
+* Please keep the `Description` field at maximum 80 character width.
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Please update the vignette to use the proper database name rather than `Foo`.
+* Use a more descriptive contructor class name (instead of `newInst`).
+* If possible, avoid using `vapply` and provide a helper function to facilitate
+extraction of entry fields.
+* Vignette looks good and comprehensive with examples.
+
+## R
+
+* Indent functions so that the code is easier to read inside the reference
+class.
+* The `concatenate` argument is not used in `doGetEntryContentRequest`.
+* Consider abstracting functions and using a single function that combines
+functions in lines 340-370 in `R/ChebiConn.R`.
+
+## /
+
+* Consider moving `yml`, `R_front`, and `Makefile` to another folder.
+* Update the `README.md` file.

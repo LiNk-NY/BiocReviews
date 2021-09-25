@@ -1,0 +1,75 @@
+# curatedTBData #2292
+
+* Please reduce the size of the repository. Currently it sits at 3.6 Gb. Use
+the BFG repo cleaner and notify us after to re-clone.
+
+## DESCRIPTION
+
+* Consider using the native pipe `|>` to avoid the `magrittr` dependency.
+* Looks good.
+
+## NAMESPACE
+
+* Looks concise.
+* Use either 'camelCase' or 'snake_case' exclusively.
+* Consider using the `subset` generic rather than `subset_curatedTBData`.
+
+## vignettes
+
+* Remove GitHub installation and after acceptance.
+* Avoid using `devtools::load_all()` anywhere in package code.
+* Please keep the text to a 80 character width limit.
+* Consider naming logical argument consistently, e.g., `curated.only` and
+`dry.run`
+* Fix typos in the results and add a `\n` carriage return at the end of the
+output:
+```r
+Will download the following resources for GSE19439 from the ExperiementHub:
+GSE19439_assay_raw
+GSE19439_assay_curated
+GSE19439_column_data
+GSE19439_row_data
+GSE19439_meta_data>
+```
+* "Now" keyword in the output is probably not needed.
+* Consider adding a progress bar so that the user knows it is working.
+* Avoid installing packages for the user. The `curatedTBData` function
+consistently asks the user to update packages, please remove this.
+* The function returns a list with a single `MultiAssayExperiment`. Perhaps the
+function should return only a `MultiAssayExperiment` object.
+* Do not use `cat` in the vignette.
+
+## R
+
+* The use of `base::*` is not needed.
+* Consider separating analytical / graphical functions into a different
+package to potentially avoid namespace collisions and keep the focus of the
+package.
+* Use `is.*` for S3 classes.
+* Avoid copy and append method inside of `for` loops in `R/curatedTBData.R`.
+* Do not use `cat` inside a function unless you are creating a `show` method.
+* Consider using the `metadata` before querying rather than operating on the
+result of the `Hub` query.
+* You might don't need to create a `sampleMap` when `primary` and `colname`
+names are the same, simply use the constructor function.
+* Avoid creating methods for classes outside of the package (e.g.,
+`subset_curatedTBData` for `SummarizedExperiment` and `MultiAssayExperiment`).
+You can create a plain function that uses the expected names
+(`annotationColName`) inside the downloaded data object in the package.
+* 'AUC' case should be consistent in both `combine_auc` and `get_mean_AUC`.
+
+## tests
+
+* Looks good.
+* Consider adding more tests to `combine_auc`, `get_mean_AUC`.
+```r
+> covr::package_coverage()
+curatedTBData Coverage: 35.52%
+R/combine_auc.R: 0.00%
+R/get_mean_AUC.R: 0.00%
+R/heatmap_auc.R: 4.80%
+R/boxplotTBSig.R: 8.33%
+R/combineObjects.R: 76.71%
+R/subset_curatedTBData.R: 77.78%
+R/curatedTBData.R: 80.46%
+```

@@ -1,0 +1,68 @@
+# ODER #2270
+
+## DESCRIPTION
+
+* update or remove field version in `Depends: R (>= 2.10)`
+
+## NAMESPACE
+
+* Internal functions should not be exported (`.file_cache`) or remove the
+leading period.
+
+## vignettes
+
+* Provide a more descriptive title. Note that keyword, "workflows", are for
+workflow packages.
+* Consider wrapping text to a limit of 80 column width.
+* Do not provide code that does not work. `ODER` is not in Bioconductor so
+`BiocManager::install("ODER")` will fail.
+* Use `GenomeInfoDb::genome` instead of the one in `rtracklayer::genome`.
+* Why reference the `dasper` package? Wrong package?
+* Please move the code for your reference out of the main vignette ("Code for
+creating the vignette"). If you'd like to keep it, perhaps include it in
+`inst/scripts` or on your computer.
+
+## R
+
+* Keep the code within the 80 column width limit.
+* Remove `dontshow` section from `R/annotatER.R`. Examples run in sequence so
+you can run that code in a previous/current example and use the created object.
+* Avoid using `exists` and ensure that the object exists based on above
+comment.
+* Some datasets need more descriptive names, "*_example" is not very helpful.
+It is good practice to include study origin in the name, if possible.
+* Use `message` instead of `print`.
+* Avoid `1:n` sequence generation use `seq_len`/ `seq_along`
+* Address `NOTE`s in `BiocCheck::BiocCheck()`
+* Avoid nested `for` loops if possible.
+* Do not use hardcoded values in code, e.g., `mcols(gtf)[["type"]]`. Add an
+argument that lets the user specify the relevant column in the gtf file.
+* Consider using the native R pipe operator `|>`.
+* `ODER:::` (with triple colons) in same package code is rarely needed see
+`R/ODER.R`.
+* `file.exists` does not make sense for a URL in `.file_cache`. The use of
+`BiocFileCache` is a bit awkward. It seems to only work for URLs and errors
+out for non-existent files.
+
+## dev/
+
+* These files are mostly for the developer's reference and are not meant
+to be part of the package.
+
+## tests/ `covr::package_coverage`
+
+* Please provide more coverage for your main function (`ODER`).
+```
+    > package_coverage()
+    ODER Coverage: 66.38%
+    R/ODER.R: 0.00%
+    R/optimise-ERs.R: 33.12%
+    R/get_expressed_genes.R: 85.29%
+    R/refine-ERs.R: 85.71%
+    R/annotatER.R: 86.61%
+    R/rutils.R: 92.16%
+    R/get_count_matrix.R: 93.75%
+    R/get-coverage.R: 97.22%
+    R/get-ers.R: 100.00%
+    R/plot-ERs.R: 100.00%
+```
