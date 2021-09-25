@@ -1,0 +1,7 @@
+# lineagespot #2314
+
+* Please explain how you leverage and integrate with the Bioconductor
+ecosystem in `lineagespot`.
+* See https://bioconductor.org/developers/how-to/commonMethodsAndClasses/
+* Consider submission to CRAN.
+
