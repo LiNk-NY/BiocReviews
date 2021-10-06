@@ -1,0 +1,68 @@
+# BOBaFIT #2345
+
+## DESCRIPTION
+
+* (optional) Ensure that the DESCRIPTION file fits within an 80-character
+width limit.
+* Only specify version requirements for packages where you are using a feature
+that is not available in the older version of the package, otherwise it is
+not necessary.
+* R depends version should be either removed or set to `4.1.0`
+
+## NAMESPACE
+
+* Please use a more descriptive name for `PlotCluster`.
+* Consider using the native pipe `|>` to avoid the `tidyr` dependency.
+
+## vignettes
+
+* Please restrict the vignette to 80 character width (in `vim` this can be
+done with `gqq`).
+* Check for typos, e.g., in the `abstract:`.
+* Perhaps you could use that data that is already in Bioconductor such as from
+`curatedTCGAData`, `GenomicDataCommons`, `TCGAbiolinks` and others?
+* Use a more descriptive argument name (`perc`) for the
+`computeNormalChromosome` function.
+* Please use a `GRanges` or `GRangesList` representation for
+`computeNormalChromosomes` and `DRrefit` to avoid manual calculations such as
+those for `width`.
+* Separate analysis and graphing functionality. `computeNormalChromosomes`
+and `DRrefit` should only perform the computations and not graph. Those should
+be a separate functions.
+
+## R
+
+* Please add a description to the `computeNormalChromosomes` documentation.
+* Add a `verbose` argument to `computeNormalChromosomes` and `DRrefit`.
+* Do not use `cat` or `print` and use `message`.
+* Resolve these errors from the example:
+```r
+Error in as.vector(x, "character") :
+  cannot coerce type 'closure' to vector of type 'character'
+In addition: Warning messages:
+1: In max(DiffLev[, 5], na.rm = TRUE) :
+  no non-missing arguments to max; returning -Inf
+2: In matrix(c(results), nrow = 2, ncol = 26) :
+  data length [51] is not a sub-multiple or multiple of the number of rows [2]
+3: In matrix(c(results), nrow = 2, ncol = 26, dimnames = list(c("Number_clusters",  :
+  data length [51] is not a sub-multiple or multiple of the number of rows [2]
+```
+* PlotCluster seems to cycle through all the samples. Is this intended?
+I am not sure this can easily be interpreted / displayed.
+* Please follow our [package guidelines][1] and avoid `1:n` sequences. Use the
+more robust `seq_len(n)` or `seq_along(x)`.
+* Avoid the copy and append method in `DRrefit`, this can provide significant
+performance drawbacks.
+* Do not save files for the user. Please remove the `png` & `dev.off()`
+function calls from the function and allow the user to choose their own
+file and graphics format.
+
+## tests
+
+* Please add unit tests to the package.
+
+## /
+
+* Remove the intermediate `.md` file from the vignettes folder.
+
+[1]: http://contributions.bioconductor.org/

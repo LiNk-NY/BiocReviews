@@ -1,0 +1,18 @@
+# MSstatsLiP #2359
+
+## DESCRIPTION
+
+* Can you make a comment in the `Description` field about how this package
+relates to `MSstatsTMTPTM`? Does this package replace it? Does the
+functionality overlap?
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Consider modifying the code chunk options when loading the required packages
+in the vignette to reduce the amount of noise, e.g.,
+(`{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}`)
+
