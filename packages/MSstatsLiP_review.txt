@@ -15,4 +15,75 @@ functionality overlap?
 * Consider modifying the code chunk options when loading the required packages
 in the vignette to reduce the amount of noise, e.g.,
 (`{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}`)
+* Consider saving intermediate objects e.g.,
+`lip <- MSstatsLiP_Summarized[["LiP"]]`, to help improve readability.
+* Remove commented code.
+* Format the code for readability and so it does not exceed 80 character
+widths.
+
+## R
+
+* List all the possible inputs in the `model_type` argument (and others) as
+a character vector. Then, within the function, use `match.arg` to select
+one from the inputs.
+* Avoid inefficient code such as splitting `model.data` into two `data.frame`s
+then binding them into one `data.frame` rather than just using adding the
+result of `adj.pvalue < adj.pvalue.cutoff & abs(log2FC) >= FC.cutoff` to the
+`data.frame` (`BarcodePlotLiP`).
+* Avoid using `ifelse` if you are using `TRUE` and `FALSE` as the results
+because you can simplify to, e.g.,
+`combined_df$NTERMINUS <- combined_df$start == 1` in `calculateTripticity`
+* Consider using the name of the element in `data` as the `model_type` input
+so that you can simply pass that input for subsetting `data`, i.e.,
+`data[[model_type]]` in `BarcodePlotLiP`.
+* Do not save files for the user and do not use the current working directory
+as default. If anything use the `tempdir()` folder. Memory is limited on the
+Bioconductor builders.
+* Remove the `pdf` function call from `BarcodePlotLiP` and only output the
+plot from `ggplot`.
+* If you want to plot, plot to the graphics device as the output of the
+function.
+* Avoid nested for loops wherever possible.
+* Do not create a log by default in the users working directory. Consider
+setting the path to the `tempfile` or not creating one unless the users
+provides a path for it.
+* Consider using `messages` instead of saving a text file as a log.
+* Consider combining similar calls so that there is less repitition, e.g.,
+`Trp.model` can be set to `NULL` if `Trp.model` does not have any rows.
+* Combine checks and/or create a helper function for `.locateCheck`.
+* Please do not use `print` within a function, use `message` instead.
+
+* Minor: Use `seq_along` instead of `seq(length())`.
+* Why not use `is.character()` rather than `identical(typeof(), "character")`
+on `fasta_file` in `calculateTripticity`?
+* Also, you already ask the user to run `tidyFasta()` on the file so why
+do it again yourself?
+* Double evaluation of a logical is not necessary within an `if()`, e.g.,
+`if (use_log_file == TRUE)` can be simplified to `if (use_log_file)`.
+* `if (nrow(x))` is equivalent to `if (nrow(x) != 0)`
+
+
+## covr
+
+* You have good coverage in some functions. Please consider adding more test
+to functions that have 0 coverage.
+
+```r
+> covr::package_coverage()
+MSstatsLiP Coverage: 38.75%
+R/BarcodePlotLiP.R: 0.00%
+R/PCAPlotLiP.R: 0.00%
+R/SkylinetoMSstatsLiPFormat.R: 0.00%
+R/SpectronauttoMSstatsLiPFormat.R: 0.00%
+src/model_adjustment.cpp: 0.00%
+R/locatePTM.R: 19.59%
+R/utils_checks.R: 39.44%
+R/dataSummarizationLiP.R: 62.50%
+R/correlationPlotLiP.R: 76.74%
+R/groupComparisonPlotsLiP.R: 82.35%
+R/groupComparisonLiP.R: 86.49%
+R/trypticHistogramLiP.R: 94.23%
+R/calculateTrypticity.R: 96.77%
+R/dataProcessPlotsLiP.R: 100.00%
+```
 
