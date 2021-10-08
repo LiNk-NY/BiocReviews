@@ -1,0 +1,22 @@
+# GeoDiff #2377
+
+* Please explain how do you make use of the established Bioconductor
+infrastructure in your package.
+* `Biobase` is not a modern Bioconductor package and has been supplanted by
+`SummarizedExperiment`.
+* Based on the files reviewed, it seems that `CRAN` would be more appropriate.
+
+## DESCRIPTION
+
+* Please wrap your `Description` field with a limit of 80 characters so that it
+is legible.
+* Add `URL` and `BugReports` fields.
+* Update the R dependency version to `R (>= 4.1.0)`.
+
+## NAMESPACE
+
+* Consider using the native pipe `|>` rather than `magrittr`'s.
+* Consider suggesting `NanoStringNCTools` if you are only using one function
+from the package.
+
+
