@@ -1,0 +1,54 @@
+# TargetDecoy #2331
+
+* Nicely formatted and cleanly written.
+* Consider removing the shiny app component of the package and making that
+a standalone package.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Exported functions are minimal. Consider using more descriptive names for
+your functions.
+
+## vignettes
+
+* No need to track the timing of your vignette, the build report will do that
+for you. Also you can run `time R CMD build TargetDecoy`.
+* Please don't jump the gun and advertise the package as installable from
+Bioconductor.
+* It would be good to have runnable examples of the plots rather than just
+images.
+* Consider separating the shiny code from the package to keep functionality
+modular.
+* Can the functions return a single plot as arranged by `grid.arrange` or
+perhaps have one function return one plot?
+* `Sys.time` sections are not needed and could be removed.
+
+## R
+
+* Your function should stick to the default value `log10 = TRUE` in the body
+and test for deviations e.g., `stopifnot(is.logical(log10))` etc. rather
+than testing if `missing` or `NULL`.
+* Combine similar errors for `decoy` and `score`, e.g.,
+`stop("Column(s) not found:", ...)` in `app.R`
+* It's good that you have something like `.check_args`.
+* Make sure your default value for `log10` is consistent throught your
+functions `app.R` vs `evalTargetDecoys()`.
+
+## tests
+
+* Coverage looks good:
+
+```r
+> covr::package_coverage()
+TargetDecoy Coverage: 57.41%
+R/app.R: 15.95%
+R/Scores.R: 97.92%
+R/createPPlotObjects.R: 100.00%
+R/evalTargetDecoys.R: 100.00%
+R/plots.R: 100.00%
+R/utils.R: 100.00%
+```
