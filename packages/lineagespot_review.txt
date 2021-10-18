@@ -5,3 +5,51 @@ ecosystem in `lineagespot`.
 * See https://bioconductor.org/developers/how-to/commonMethodsAndClasses/
 * Consider submission to CRAN.
 
+# lineagespot #2314
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* (optional) Consider shortening the function to `report_lineage` (verbs may
+be easier to remember).
+* Looks good.
+
+## vignettes
+
+* The timings in the vignette are not necessary. This information will be part
+of the build report and can be acheived outside of R using `time R CMD check`.
+* The `Installation` instructions will have to change. Once the package is
+accepted, we will add it to the devel version of Bioconductor. The submission
+process was not completed in time for the release.
+* Use the less ambiguous assignment operator `<-` instead of `=` in all code.
+* Please keep the text within the 80 character width limit (in vim you can use
+`gqq` or `gq` after highlighting several lines)
+
+### Minor
+* `eval = TRUE` is not necessary when it is the default.
+
+## R
+
+* Please clarify the documentation regarding function arguments (e.g.,
+`vcf_table`) by explicitly stating the type expected; in this case the output
+of `merge_vcf`).
+* Include more function input checks to ensure robust code, e.g., checking
+that `vcf_table` is of a certain class or file (as this is not clear).
+* Avoid writing files for the user in `lineagespot_hits` within the
+`print.out` condition and simply return the table without saving a file. The
+user can choose to save a file if they wish and in the format of their
+choosing.
+* Remove the `print.out` argument from lineagespot and related functions.
+Writing to files for the user is not a desirable side effect.
+* It is not necessary to use the `base::` qualifier for default functions.
+
+## tests
+
+* We highly recommend adding unit tests to increase robustness of the code.
+
+
+
+
