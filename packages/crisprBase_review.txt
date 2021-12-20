@@ -1,0 +1,38 @@
+# crisprBase #2398
+
+## DESCRIPTION
+
+* Please run `BiocCheck::BiocCheck()`.
+* Remove `LazyData` field from the `DESCRIPTION` or set to `FALSE`.
+* Include `BugReports` and `URL` fields.
+
+## NAMESPACE
+
+* Where possible, avoid using generic names e.g., `info` and `name`.
+Presumably, `info` could be renamed to `metadata`.
+
+## vignettes
+
+* Provide an `Installation` section.
+
+## R
+
+* Remove the `if (require(GenomicRanges))` code. `GenomicRanges` should be
+available for the examples. Otherwise, use `library(GenomicRanges)` if not
+available.
+* Avoid mentioning `@` in `setValidity` errors. These are not meant to be
+used by end-users.
+* Examples should show how data was loaded avoid lazy loading.
+
+## tests
+
+* Coverage looks good.
+```
+> covr::package_coverage()
+crisprBase Coverage: 70.09%
+R/CrisprNuclease-class.R: 46.58%
+R/utils.R: 52.86%
+R/AllGenerics.R: 61.90%
+R/Nuclease-class.R: 74.07%
+R/arithmetics.R: 92.38%
+```

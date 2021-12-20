@@ -1,0 +1,58 @@
+# MuData #2453
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Please use lowercase for function names i.e., readH5AD, etc.
+(Sentence case functions are commonly used for class constructors)
+* Based on the number of functions imported, consider depending on `rhdf5`.
+
+## vignettes
+
+* Do not use `BiocManager::install('MuData')` until the package has been
+accepted into Bioconductor.
+* Make sure that the temporary GitHub repo location is correct.
+* For legibility and maintenance, stick to the 80 character width limit.
+* Avoid using non-standard notation with `H5IdComponent` objects e.g.,
+`h5&'mod'`, etc. Use `h5ls` instead to show the structure of the file.
+* Replace instances where you use `assays`
+(`assays(acc_b[["RNASeq2GeneNorm"]])[[1]][1:5,1:3])`)  with `assay`
+(`assay(acc_b, "RNASeq2GeneNorm")`)
+* Avoid using `print(class(...))` and simply use `class(...)`.
+
+## R
+
+* If `backed = TRUE` and the user does not have `HDF5Array` error and allow
+the user to install the package rather than changing the argument to `FALSE`.
+* Any reason why `ReadH5AD` is changing the class of the original object?
+In the example for `ReadH5AD`,  the original object is a `SummarizedExperiment`
+but when it's read in, it becomes a `SingleCellExperiment`. Any user would
+expect it to be the same class.
+```r
+WriteH5AD(miniACC[[1]], "miniacc.h5ad")
+sce <- ReadH5AD("miniacc.h5ad")
+```
+* The data format should not change the class memberships, this also happens
+with the `ReadH5MU` function on the `MultiAssayExperiment` where everything
+becomes a `SingleCellExperiment`.
+* It is recommended to keep the order of the assays the same as the original
+`MultiAssayExperiment` after saving and reading.
+* Avoid creating methods for classes that are not your own. Create plain
+functions for writing classes (`WriteH5MU`) similar to `write_data_frame` and
+`write_matrix`. This will avoid cluttering of the class's namespace.
+* Preserve the metadata from the original object e.g., `metadata(miniACC)`
+
+## tests
+
+* Consider increasing coverage to your main functions.
+
+```r
+> covr::package_coverage()
+MuData Coverage: 63.26%
+R/read_h5mu.R: 54.97%
+R/write_h5mu.R: 68.08%
+R/utils.R: 71.74%
+```
