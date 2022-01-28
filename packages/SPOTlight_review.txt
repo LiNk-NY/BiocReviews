@@ -1,0 +1,65 @@
+# SPOTlight #2488
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Functions that start with a period are not meant to be exported. Please
+rename the functions or unexport.
+
+## vignettes
+
+* Images should be in the vignettes folder unless they're used by R in some
+other way (re: `schematic.png`).
+* Consider simplifying the examples with `lapply` e.g, filtering by
+`mean.AUC`, with exported functions, especially if you use the same code
+in the package examples.
+* `Suggest` the `colorBlindness` package if you are using their palette.
+
+Minor:
+
+* Perhaps only present the data accession interface provided by `TENxVisiumData`
+and remove the `query` instructions in the 'Loading the data' section.
+* Note that `sce$age` and `sce$free_annotation` are inherited from
+`SummarizedExperiment` and could be used for the subset examples. Subsetting
+with the `subset` is not very common (AFAICT) and it would help users to
+provide both methods.
+
+## R
+
+* `setMethod` for class "matrix" looks awkward in `plotCorrelationMatrix`.
+Perhaps use a plain function?
+* Please make these functions more robust and consider creating plain functions
+rather than S4 methods on generic S3 classes like `character`. A file with
+different case breaks `plotImage`:
+```r
+> newpath
+[1] "/home/user/bioc/SPOTlight/inst/extdata/SPOTlight.PNG"
+> plotImage(newpath)
+Error in .local(x, ...) : 'x' should be of file type JPG, JPEG or PNG
+```
+* Avoid creating methods for classes outside of the package's `NAMESPACE`; see:
+http://contributions.bioconductor.org/r-code.html?q=methods#methods-development
+* Note that you can use `requireNamespace` to check if a package is installed
+and then throw an error if the package is not available (`.test_installed`).
+* Why check if `methods` is installed? Isn't it always? (`plotTopicProfiles`)
+
+## code coverage
+
+* Looks good.
+
+```r
+> covr::package_coverage()
+SPOTlight Coverage: 91.19%
+R/plotSpatialScatterpie.R: 53.33%
+R/plotImage.R: 82.50%
+R/SPOTlight.R: 90.32%
+R/utils.R: 95.76%
+R/data.R: 98.41%
+R/AllGenerics.R: 100.00%
+R/plotCorrelationMatrix.R: 100.00%
+R/plotInteractions.R: 100.00%
+R/plotTopicProfiles.R: 100.00%
+```
