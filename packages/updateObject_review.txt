@@ -1,0 +1,43 @@
+# updateObject #2507
+
+Looks good overall. The package presents two facets. User-level and power-user
+serialized object updates. The package should emphasize the user-level aspect
+which is the typical use-case. I am not a big fan of the `git` commands but I can
+see that they are necessary for the core team in order to manage large numbers
+of packages that may not be available on one's computer.
+
+## DESCRIPTION
+
+* Add at least 2 more sentences to the Description. Perhaps mention that it is
+still experimental?
+
+## NAMESPACE
+
+* Looks good.
+* There is a mixture of snake_case and camelCase functions. Is there a
+distinction between them? They are not mentioned in the vignette.
+
+## vignette
+
+* Looks good.
+* As in the note above, more information about the snake_case functions would
+be helpful.
+* Perhaps the vignette should have an example that is not dependent on a
+git clone. Currently it errors because of it.
+* There should be more emphasis on updating source packages rather
+than Git clones, as that is the typical use-case.
+
+## R
+
+* I wonder if some of these functions like `bump_pkg_version`, `get_descpath`,
+`.infer_pkgname_from_path` should go in a general use Bioconductor package,
+e.g., `BiocUtils` / `biocthis`. There are all functions that are re-written
+throughout packages.
+* The `git` push command should have arguments for remotes and branches, e.g.,
+`git push origin main`.
+* Looks good overall.
+
+## tests
+
+* Add unit tests.
+
