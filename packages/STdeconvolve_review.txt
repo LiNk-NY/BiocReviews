@@ -1,0 +1,47 @@
+# STdeconvolve #2530
+
+* Please use existing Bioconductor interfaces to spatial transcriptomics data,
+e.g. support for `SpatialExperiment` and use of `TENxVisiumData` in the
+vignette.
+
+## DESCRIPTION
+
+* Update the `Description` field to be at least three sentences.
+* Include a `BugReports` and `URL` field pointing to at least the appropriate
+locations on GitHub
+* Update the R version to the one noted in `BiocCheck`
+* Wrap text in the `Description` field so that it is within 80 character-width.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes/
+
+* Consider using `BiocStyle` for the vignette.
+* Please keep text within the 80 character limit for easier review and
+arguably maintenance (in `vim` use <keys>g</keys><keys>q</keys><keys>q</keys>).
+* It would be good to demonstrate the use a 10x Visium dataset (possibly from
+`TENxVisiumData`) to demonstrate the functionality and to interface with the
+`SpatialExperiment` package.
+* The vignette(s) in the package should be as extensive as those in
+https://jef.works/STdeconvolve/ but not less. This means porting the Visium
+examples with the suggestions above.
+
+## R
+
+* As mentioned, provide support for `SpatialExperiment` inputs to your
+functions.
+* `matrix(unlist(read.table(...)))` looks a little awkward, consider using
+`as.matrix` on the `data.frame`.
+* Remove commented code if not used.
+* Use the NOT operator (`!`) to check for `FALSE` instead of `if (x == FALSE)`.
+* Include options in the arguments, e.g., `type = c("t", "b")` and use
+`match.arg` in the body of the function.
+* Do not use `;` in R code.
+* Check class membership using `is(x, 'classname')`
+
+* Minor: `is.matrix(x) == TRUE` is redundant and should simply be
+`is.matrix(x)`.
+* You can use `as.integer(verbose)` to convert and reduce cyclomatic
+complexity.

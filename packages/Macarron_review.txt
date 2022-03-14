@@ -1,0 +1,40 @@
+# Macarron #2546
+
+## DESCRIPTION
+
+* Ensure the package name in the `Description` field is updated to the new
+name.
+* Consider wrapping text in the `Description` field to an 80 char width limit.
+
+## NAMESPACE
+
+* The main function's letter case should match that of the package.
+* Consider using a more descriptive name for `makeSumExp`
+
+## vignettes/
+
+* Update all mentions of `MACARRoN` to `Macarron` to avoid confusion and for
+consistency.
+* Consider using `BiocStyle` for the vignette output
+* The installation of CRAN dependencies section is not necessary, those should
+be automatically obtained when using `BiocManager` or even `devtools` and
+`dependencies = TRUE` to include `Suggests`.
+* Is there a way to include the CMD line usage (`### Options` section) in the
+vignette from R? This would avoid stale documentation in the vignette.
+
+## R
+
+* Use the default argument inputs as preferred column names rather than taking
+the first element in `se`, e.g. in `calAVA`, `metadata_variable`.
+* Documentation of `metadata_variable` says column 2 but code is
+`names(colData(se))[1]` is this right?
+* Use variable names instead of indices wherever possible.
+* Update documentation in `R/calQval.R` to reflect the name change `Macarron`.
+* It is generally discouraged to write files for the user (e.g. in
+`decorateID`). The user can simply save the `tax_df` in the format of their
+choosing.
+* Avoid code duplication where possible, e.g., both `makeDisMat` and
+`Macarron` have code with `.getCorMat` and similar code in both `findMacMod`
+and `Macarron`. It's harder to maintain duplicated code.
+* Minor: Avoid messages like `'Summarized experiment created'`. This is what
+the user expects when using `makeSumEx`.
