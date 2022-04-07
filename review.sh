@@ -12,8 +12,8 @@ source ~/.bash_aliases
 
 cd $BIOC
 
-buildr $pkgname
-checkr ${pkgname}_*
+buildd $pkgname
+checkd ${pkgname}_*
 
 if [ $? -ne 0 ]; then
     echo "Check failed, fix issues and try again"
