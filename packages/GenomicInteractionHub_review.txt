@@ -1,0 +1,52 @@
+# GenomicInteractionHub #2561
+
+Good package. Nicely put together. My only reservation is the "Hub" naming.
+It can cause a bit of confusion as to the purpose of the package based
+on the name alone. Others may have a different opinion.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+* Consider spelling out some function names so that they are more descriptive
+(e.g., `enrichAna`, `annoHubs`).
+
+## vignettes
+
+* You can chunk options such as:
+````
+```{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}
+
+````
+to avoid startup message outputs from loading packages.
+
+* The `annoHub` name is a but confusing given that we have the `AnnotationHub`
+package. Consider using a different name, e.g., `hubAnnotate`.
+
+## R
+
+* Make the return conditions (`length(all_gene_id)<minGeneNum`) clear in the
+`enrichAna` documentation when `NULL` is returned.
+* Minor: Use `is.numeric` instead of `is(x, "numeric")`.
+Consider validating the `seq` argument against `seqnames(g)` in
+`createRandomHubs`.
+
+Coverage looks great!
+
+```r
+covr::package_coverage()
+GenomicInteractionHub Coverage: 97.85%
+R/enrichAna.R: 95.56%
+R/annoHubs.R: 100.00%
+R/createRandomHubs.R: 100.00%
+R/detectHubs.R: 100.00%
+```
+
+## Other
+
+* Optional: Consider beefing up the README.md a bit more to make use of the
+GitHub 'landing page' so to speak.
+
