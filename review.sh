@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # 1 - a package folder for building and checking
-
 pkgname=$1
 
 BIOC="$HOME/bioc"
@@ -20,7 +19,7 @@ if [ $? -ne 0 ]; then
     exit 2
 fi
 
-time Rdev CMD BiocCheck ${pkgname}_*
+time bioccheck $pkgname
 
 shopt -u expand_aliases
 

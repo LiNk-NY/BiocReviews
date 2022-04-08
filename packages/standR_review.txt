@@ -1,0 +1,75 @@
+# standR #2574
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Please keep the text within the 80 character width limit. It's easier to
+read and maintain.
+* There is probably no reason to keep the link of the resource shown in the
+vignette since the main avenue for users is to obtain the data via
+`ExperimentHub`
+* Consider using the native pipe operator to avoid additional dependencies
+(`|>`)
+
+## R
+
+* Use selective importing via `@importFrom SummarizedExperiment function` or
+namespace import with `@import SummarizedExperiment` to avoid repeated double
+colon imports in `addQCstat.R`.
+* Update examples to use `ExperimentHub` in `R/geomx_import_data.R`.
+* Use S3 class membership checks, e.g., `is.data.frame` vs
+`is(x, "data.frame")`
+* Fix typos in error messages (`geomxNorm` in `R/normalisation.R`)
+* Provide the options on a new line with proper spacing in `geomxNorm`
+* Use the proper class name `SpatialExperiment` in the `@return` of `geomxNorm`
+* Avoid using abbreviated arguments as they're harder to remember and
+recognize e.g., `rl` in `plotPCA`
+* Your `plotPCA` method conflicts with the implementation in `scater` for
+`SingleCellExperiment`. How is yours different and is it necessary?
+https://code.bioconductor.org/search/search?q=setMethod%5C%28%5C%22plotPCA%5C%22
+Consider using a different name.
+* `metadata` and `colData` are different concepts in Bioconductor. Consider
+renaming `plotMetadata`.
+* The downside of using non-descriptive names is that they can be confused
+with others e.g., `RLE` is also run-length encoding. Consider renaming
+`plotRLE`.
+* Address the warnings in the examples for `computeClusterEvalStats`.
+* Use the names of assays instead of the indices as arguments. It is more
+descriptive and less likely to cause mistakes (e.g., 2 vs "logcounts" in
+`computeClusterEvalStats`), especially when the workflow provides a consistent
+name to use.
+* Add `mclustcomp` to the `Imports` field if you are using them in
+`computeClusterEvalStats` rather than in the `Suggests`.
+* Minor: `if (hasNegProbe == TRUE)` is equivalent to `if (hasNegProbe)`
+
+## tests
+
+* Coverage looks good:
+```r
+standR Coverage: 79.30%
+R/plotMetadata.R: 10.00%
+R/geomx_import_data.R: 34.44%
+R/utils.R: 73.33%
+R/plotDR.R: 76.67%
+R/plotRLE.R: 79.31%
+R/batchCorrection.R: 85.98%
+R/plotLibQC.R: 87.76%
+R/pcaOtherPlotting.R: 89.80%
+R/sumBatchCorEval.R: 95.00%
+R/addQCstat.R: 95.45%
+R/normalisation.R: 97.96%
+R/plotGeneQCs.R: 100.00%
+```
+
+## NEWS.md
+
+* Theres a typo in the file.
+
+
