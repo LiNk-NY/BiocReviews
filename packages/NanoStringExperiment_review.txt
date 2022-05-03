@@ -1,0 +1,69 @@
+# NanoStringExperiment #2602
+
+* The package needs reconsideration of design. For increased usability,
+it must disentangle the re-use of methods from both `Biobase` and
+`SummarizedExperiment`, as well as, reduce the number of methods that are not
+used in the package but are created perhaps as placeholders. It is recommended
+that the `SummarizedExperiment` class and interface be used to achieve the
+design goals.
+
+## DESCRIPTION
+
+* Update the `Description` to say `NanoStringExperiment` inherits from
+`SummarizedExperiment`.
+* Update the R version dependency to `4.2`. See BiocCheck.
+* Include `BugReports` and `URL` links to GitHub.
+
+## NAMESPACE
+
+* Why the use of `Biobase`? If your data class inherits from
+`SummarizedExperiment` then you likely do not need Biobase because the former
+supercedes the latter.
+
+## vignettes
+
+* Consider using `output: BiocStyle::html_vignette` for Bioconductor styling
+of the vignette.
+* The arguments in the main function are not consistent with the
+`SummarizedExperiment` interface.
+* Mixing of interfaces is not recommended. Why `assays` over `exprs`?
+* There is a `colData` extractor and a `phenoData` argument. What is the
+difference between these in your class? It may only increase confusion among
+users.
+
+## R
+
+* Isn't `dimLabels` the same as `dimnames`? I don't see why this was chosen
+over the other.
+* Please make sure that the consistency of methods is being adhered to. For
+example, a user would expect the `exprs` method to return the matrix in the
+object and not the assay named "exprs" in the data. The change in behaviour
+would likely lead to confusion.
+* It is not adviseable to pull data from the metadata if you have
+control of the class. It may be better to create a
+`protocolData`/`phenotypeCols` slot in your class rather than checking the
+metadata for it.
+* Why rename the `metadata` to `experimentData`?
+* Avoid creating generics and methods instead of plain function for the
+constructor function. The plan function should be able to handle all types of
+input and make a call to the internal `.NanoStringExperiment` function.
+* Some `signature` arguments refer to an `object` class. Should this be
+`NanoStringExperiment`?
+
+## tests
+
+* Please add unit tests to the package:
+
+```r
+covr::package_coverage()
+NanoStringExperiment Coverage: 0.00%
+R/NanoStringExperiment-accessors.R: 0.00%
+R/NanoStringExperiment-apply.R: 0.00%
+R/NanoStringExperiment-class.R: 0.00%
+R/NanoStringExperiment-munge.R: 0.00%
+R/NanoStringExperiment-normalize.R: 0.00%
+R/NanoStringExperiment-qc.R: 0.00%
+R/NanoStringExperiment-subset.R: 0.00%
+R/NanoStringExperiment-summary.R: 0.00%
+```
+
