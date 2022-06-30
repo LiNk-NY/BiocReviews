@@ -1,0 +1,32 @@
+# iSEEhex #2686
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* The `exportMethods` with the `.function` names seem a bit strange. The dot
+is usually reserved for unexported functions but it looks like this is
+convention in `iSEE`.
+
+## vignettes/
+
+* Consider preserving the aspect ratio (see screenshot) when plotting.
+On widescreen, the plots are wider than they are tall.
+
+## R/
+
+* Document slots with the `@slots` tag.
+* Optional. Use `@describeIn` to document methods.
+
+## tests/
+
+* Package coverage looks good.
+
+```r
+covr::package_coverage()
+iSEEhex Coverage: 61.62%
+R/ReducedDimensionHexPlot.R: 61.62%
+```
+

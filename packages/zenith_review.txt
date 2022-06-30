@@ -1,0 +1,31 @@
+# zenith #2630
+
+* Respond to the comments appropriately, i.e., add `recount` and `kableExtra`
+to the `Suggests` field in the `DESCRIPTION`
+* (Optional) Use `<-` assignment operator instead of `=` for clarity.
+* Consider wrapping text to a max of 80 character width for readability and
+maintenance.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Consider using camelCase naming consistently, e.g., for `zenith_gsa`.
+
+## vignettes
+
+* If possible, avoid examples with legacy data structures such as
+`ExpressionSet` in `zenith.Rmd`.
+* Remove `knitr::knit_exit` calls from the vignette. If you have extra code,
+you can include it under `/inst/scripts` etc.
+
+## R
+
+* Remove or uncomment commented code, e.g., `aggregate_GO_offspring`
+* Avoid nested `lapply` where possible, esp. if the subsequent procedure is to
+`unlist`.
+* It's more straightforward to create a plain function rather than a method for
+an external class (`recodeToList,GeneSetCollection-method`).
+

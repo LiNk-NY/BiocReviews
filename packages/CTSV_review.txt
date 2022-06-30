@@ -1,0 +1,56 @@
+# CTSV #2663
+
+Ideally, the package would accept mainly `SpatialExperiment` inputs as well as
+matrix inputs for the counts and spatial coordinates information.
+
+## DESCRIPTION
+
+* (Optional) Wrap the text in the Description to a max of 80 character-width
+* Add BugReports and URL fields
+* Update the R depends field to R `>= 4.2.0` (see BiocCheck).
+
+## NAMESPACE
+
+* The main function should be in the same case as the package i.e.,
+`CTSV::CTSV`.
+
+## vignettes
+
+* Consider using Bioconductor `BiocStyle::html_document` vignette generator
+* For readability and maintenance, keep the max character width at 80.
+* Explain what RCTD is before using the acronym.
+* Avoid using non-standard interfaces to `SpatialExperiment`. Promote good
+practice by using `assay(spe)`.
+* Remove all the superfluous `print` functions.
+
+## R
+
+* The input checks in `ctsv` are redundant and verbose. Please combine
+conditions, e.g., `if (missing(spe) || !is(spe, "SpatialExperiment"))`
+* Avoid using emphatic language, e.g., the exclamation point `!`, in messages.
+* Avoid formalities ('please') in the messages and only provide the
+information necessary for the user, e.g.,
+`"The threshold limit must be between 0 and 1"`.
+* Use the standard interface (`assay`) and avoid the use of `@`.
+
+## /
+
+* Remove the `build` folder from the package, it inteferes with the
+installation:
+
+```r
+Warning in file(con, "w") :
+  cannot open file '00LOCK-CTSV/00new/CTSV/doc/index.html': No such file or directory
+Error in file(con, "w") : cannot open the connection
+ERROR: installing vignettes failed
+```
+
+## tests
+
+* Consider improving function coverage:
+
+```r
+covr::package_coverage()
+CTSV Coverage: 26.26%
+R/CTSV.R: 26.26%
+```
