@@ -30,3 +30,7 @@ functions that can be part of the utility functions in the package.
 ## R
 
 * Looks good. Consider removing or re-enabling the `_molecules` code.
+
+## tests
+
+* Consider adding unit tests
