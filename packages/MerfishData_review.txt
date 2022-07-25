@@ -1,0 +1,32 @@
+# MerfishData #2725
+
+## DESCRIPTION
+
+* Looks good.
+* `LazyData` field should be set to `false` or removed.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+*  Looks good.
+* The `cdat$z` cleaning process is a bit verbose but it looks helpful for
+users.
+* Remove commented lines in the ileum vignette.
+* Consider notifying the appropriate maintainer about:
+```r
+Warning messages:
+1: In seq.default(len = max(length(dim(x)), 1)) :
+  partial argument match of 'len' to 'length.out'
+2: In seq.default(along = dims) :
+  partial argument match of 'along' to 'along.with'
+```
+* Minor: Fix typo in "Cell metdata"
+* The cell metadata section in the ileum vignette has a couple of helper
+functions that can be part of the utility functions in the package.
+
+## R
+
+* Looks good. Consider removing or re-enabling the `_molecules` code.

@@ -1,0 +1,46 @@
+# MicrobiomeBenchmarkData
+
+## DESCRIPTION
+
+- [x] Looks good.
+- [ ] There is a typo in the `Description`.
+
+## NAMESPACE
+
+- [ ] Avoid generic names such as `getDataset` and use a name like
+`getBenchmarkData`
+- [ ] You can use the base pipe operator (`|>`) instead of importing the one from
+`magrittr`.
+- [ ] For packages where you import only one function, you may want to consider
+putting them in the `Suggests` field.
+
+## vignettes
+
+- [ ] Include a description of what the vignette does and what the code is doing
+(`datasets.Rmd`).
+- [ ] Consider using `BiocStyle` in the vignettes.
+- [ ] Use template code for the installation section from any Bioconductor landing
+page, i.e., use `require` or `requireNamespace`.
+- [ ] Perhaps `getDataset` should return an object that can be used, e.g.,
+`data.frame` with additional metadata
+- [ ] `removeCache()` with `n` returns:
+```
+Error in BiocFileCache::removebfc(cache, ask = interactive()) :
+  object 'doit' not found
+```
+
+## R
+
+- [ ] It looks like you may only want to use `bfcrpath` with `exact = TRUE`
+instead of the series of `if else` statements in `.getResourcePath`.
+- [ ] `sampleMetadata` does not need to be documented and exported.
+
+## tests
+
+- [x] Package coverage looks good
+
+```r
+covr::package_coverage()
+#' MicrobiomeBenchmarkData Coverage: 74.23%
+#' R/MicrobiomeBenchmarkData.R: 74.23%
+```
