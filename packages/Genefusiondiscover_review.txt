@@ -1,0 +1,45 @@
+# Genefusiondiscover #2739
+
+## DESCRIPTION
+
+* (optional) Consider a shorter package name with all lowercase letters
+* Consider adding a `URL:` field for the GitHub location of the package
+* Include `sessioninfo` in the `Suggests: ` field (used in the vignette).
+
+## NAMESPACE
+
+* Perhaps use snake_case exclusively instead of both snake_case and camelCase
+for function names
+
+## vignettes
+
+* We strongly encourage the use of `BiocStyle::html_document` rather than PDF
+format vignettes.
+* Avoid the use of `devtools` in the vignette. Use `BiocManager::install` even
+for GitHub packages (until the package is accepted). Refer to the code in
+Bioconductor landing pages.
+
+## R
+
+* Perhaps do `as.data.frame(bam[['chr2:42169353-42332548']])` instead of
+building the `data.frame` manually in `EML4_ALK_detection`.
+* ALK_sequence and breakPosition look quite similar, perhaps they are sharing
+the same embedded helper function?
+* It seems like fun1-3 are all operating on the same vector, it may be better
+to create a single data processing function that unites those three steps;
+otherwise, there are three fragmented anonymous functions that are run
+back-to-back.
+
+## inst
+
+* Remove the `inst/doc` folder and contents from the package
+
+## tests
+
+* Coverage looks good but can be better.
+
+```r
+> covr::package_coverage()
+Genefusiondiscover Coverage: 77.50%
+R/Genefusiondiscover_functions.R: 77.50%
+```
