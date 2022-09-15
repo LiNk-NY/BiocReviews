@@ -1,0 +1,29 @@
+# 2757 HiContactsData
+
+## DESCRIPTION
+
+* Looks good.
+* Consider using `BiocStyle`.
+
+## NAMESPACE
+
+* `HiContactsDataFiles` may not be necessary, see below.
+
+## R
+
+* It would be better to encode the data from the conditional statements into a
+`data.frame`. It can contain several columns, e.g., `sample`, `format`,
+`AHID`, `genome`, `condition` and `description`.
+* You can then use the inputs from the function to subset the `data.frame` and
+get the `AHID`.
+* You can add a `dry.run` argument to allow the user to see the `data.frame`
+from `HiContactsDataFiles` when it is `FALSE`.
+* Please do not use `rm -rf` command in the code. We cannot accept a package
+that does this. You may not need the extension for the function that reads
+it in, e.g. in `rhdf5`.
+
+## vignettes
+
+* Show the `library(HiContactsData)` call in the vignette, you can remove
+the noise with `message=FALSE,warning=FALSE,include=TRUE,results="hide"`
+in the chunk options.
