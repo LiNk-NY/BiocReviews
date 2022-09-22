@@ -1,0 +1,103 @@
+# HiContacts #2757
+
+You've put a lot of work into the package. It may be best to divide the
+package into two based on the functionality provided. One package could host
+all the visualization functionality and the other the computational work.
+This would allow users to choose the needed functionality and avoid the
+high number of dependencies. The design of the class is good but may need some
+pruning of slots and methods.
+
+## DESCRIPTION
+
+* The data package should be in the `Suggests` field.
+* Consider doing a `pkgndep` analysis to reduce the number of dependencies in
+the package.
+
+## NAMESPACE
+
+* Avoid exporting internal symbols such as `.summary`. Objects that start with
+a `.` (dot) are usually meant to be unexported.
+* You likely do not need to import `HiContactsData`.
+
+## vignettes
+
+* Looks good.
+* The subset operations seem a little unweildy but perhaps manageable for new
+users; consider creating a helper function to facilitate the operation.
+* There is a mix of camelCase and snake_case use. Is there a difference
+between uses? Otherwise, it's best to keep the function names consistently
+named.
+* Remove any empty sections in the vignette.
+
+## R
+
+* Keep a consistent representation, i.e., `GenomicRanges` thoughout
+(`virtual4C`). The `tibble` may be useful for plotting but other tools might
+make more use of a `GRanges` object.
+* Include a description in the documentation for all functions and avoid using
+acronyms for function names (e.g., `APA`).
+* Parallelized functions must use one core by default. These functions get run
+on the BBS and they cannot be greedy with the resource. The BBS builds
+multiple packages at a time.
+* Avoid the use of `@` in code (e.g., `APA`). Create a standard interface with
+replacement methods.
+* There are multiple versions of `APA`, e.g., `APA_`, `APA2`. It is not clear
+what their purpose is.
+* You really don't need to use `%>% <- tidyr::%>%`, use the native `|>` pipe.
+* Where possible avoid using numeric indices, e.g., `contacts_list[[1]]` and
+use more robust named indices.
+Minor:
+* Consider reducing the cyclomatic complexity of `R/checks.R` by removing
+conditions that are redundant for example, `grepl(' x ', focus(contacts))`
+already returns `TRUE` and `FALSE` in `is_centered`.
+* Your inputs should match the slot types in the constructor function, e.g.,
+`metadata = list()`, `features = SimpleList()`, etc.
+* Document and export generics and methods.
+* The `path` generic clashes with the `path` generic in `BiocIO` consider
+using a different name. Avoid relying on an element in the metadata as the
+metadata usually does not have a structure or checks and create a more formal
+slot for the class.
+* `scores` is too similar to `score` in `BiocGenerics`, consider using the
+latter.
+* `features` usually refers to row wise annotations, to avoid confusion either
+use a different name or consider using something like `rowData`/`rowRanges`.
+The extractor returns a `SimpleList` but the replacement method accepts
+`GRangesOrGInteractions`? This is not consistent.
+* The data documentation belongs in the `HiContactsData` package.
+* Avoid function names with numbers e.g., `getCounts2`. Is there a
+`getCounts1`?
+* Set verbose to `FALSE` by default.
+
+---
+
+Thanks for making these changes. The package looks good.
+
+Although it may seem convenient, the package is subject to changes in any of the 187 packages required for `HiContacts`.
+IMO, this should be given more consideration but ultimately you will maintain the package.
+
+```r
+> pkgndep::pkgndep("HiContacts")
+'HiContacts', version 0.99.10
+- 187 packages are required for installing 'HiContacts'.
+- 203 packages are required if installing packages listed in all fields in DESCRIPTION.
+# ...
+```
+
+## tests
+
+* Package coverage looks good. :+1:
+
+```r
+> package_coverage("HiContacts")
+HiContacts Coverage: 80.06%
+R/utils.R: 55.33%
+R/arithmetics.R: 71.69%
+R/contacts.R: 76.07%
+R/parse.R: 77.89%
+R/checks.R: 88.57%
+R/plotting.R: 88.89%
+R/cistrans.R: 96.00%
+R/Ps.R: 98.17%
+R/4C.R: 100.00%
+R/data.R: 100.00%
+```
