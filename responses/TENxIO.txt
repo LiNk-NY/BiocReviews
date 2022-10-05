@@ -1,0 +1,109 @@
+> ### Required
+> * [x]  Please be more precise about which 10x H5 files are supported. I tried a few examples and encountered problems. For example:
+>
+> ```r
+> suppressPackageStartupMessages(library(DropletUtils))
+> suppressPackageStartupMessages(library(DropletTestFiles))
+> suppressPackageStartupMessages(library(TENxIO))
+>
+> path <- getTestFile(
+>   "tenx-3.1.0-5k_pbmc_protein_v3/1.0.0/filtered.h5",
+>   prefix = TRUE)
+> #> snapshotDate(): 2022-10-03
+> #> see ?DropletTestFiles and browseVignettes('DropletTestFiles') for documentation
+> #> loading from cache
+>
+
+I've added support for files without 'interval' information.
+You can now read this in with:
+
+```r
+import(TENxH5(path))
+```
+
+> * [x]  Related to the above, the lack of support for importing version 2 _TENxH5_ files (which are used in the vignette) seems like it should be addressed prior to an initial release; is it realistic to add support for these prior to the next release?
+
+Support for version 2 is added. It will import a plain `SingleCellExperiment`.
+
+> Session info
+> * [x]  What about other 10x file types, such as those from Visium (where currently a user would typically import using `SpatialExperiment::read10xVisium()`)? Is it intended that **TENxIO** is used for these files?
+
+
+I will let Dario @drighelli or Helena @HelenaLC comment here. They are
+welcomed to contribute to the package. I would rather not duplicate code
+already in SpatialExperiment and it is a good idea to separate the I/O
+operations specific to the technology from the data structure implementation.
+
+> * [x]  In light of the above, I think the package name might need some
+adjustment to better reflect the package's scope (i.e. what types of 10x
+Genomics files the package supports). This package documentation and vignette
+also needs to review/compare this package to other packages with similar
+functionality or scope (e.g., **DropletUtils**,
+`SpatialExperiment::read10xVisium()`, there may be others).
+
+I have added a note in the `Introduction` detailing the scope of the package.
+
+
+> * [x]  `R CMD check` errors for me (macOS Intel). The specific error is a lack of support for S3 VFD in **Rhdf5lib** (see below). This may be specific to my system but have you checked **TENxIO** on this platform? In any case, I think this should be handled gracefully by the underlying function (and its tests).
+>
+> ```r
+> suppressPackageStartupMessages(library(TENxIO))
+>
+> pbmc_url <-
+>   "https://raw.githubusercontent.com/waldronlab/TENxIO/devel/inst/extdata/10k_pbmc_ATACv2_f_bc_ex.h5"
+>
+> remoteh5 <- TENxFile(pbmc_url)
+> #> Error in H5Pset_fapl_ros3(fapl, s3credentials): Rhdf5lib was not compiled with support for the S3 VFD
+>
+> Rhdf5lib::pkgconfig()
+> #> "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/Rhdf5lib/lib/libhdf5_cpp.a" "/Library/Frameworks/R.framework/Versions/4.2/Resources/library/Rhdf5lib/lib/libhdf5.a" -L"/Library/Frameworks/R.framework/Versions/4.2/Resources/library/Rhdf5lib/lib" -lsz -laec -lz -ldl -lm
+> ```
+
+I do not have access to a Mac. I think the BBS is configured properly with
+this support. Once accepted, I will take a look at the build report.
+Thanks for bringing this up.
+
+> * [x]  Please use a smaller `.h5` file in the vignette and documentation (rather than `EH1039`). I think it's a bit unreasonable to require a 3.9 GB download to run the example on `TENxFile` man page (and also used in the vignette).
+
+The builders should have it in memory but I have made this chunk `eval=FALSE`
+and added a note for anyone running this that it is a big file.
+
+> * [x]  Please clarify the return value of the `import,TENxMTX-method`; it currently returns a _SummarizedExperiment_, but the `?TENxMTX` and `?TENxIO` documentation seems to imply it will return a bare _dgCMatrix_.
+> * [x]  `import()` on a _TENxMTX_ produces notes `as(<dgTMatrix>, "dgCMatrix") is deprecated since Matrix 1.5-0; do as(., "CsparseMatrix") instead`; please address this by following the recommended fix of the **Matrix** authors.
+> * [x]  `import,TENxFileList-method` will likely fail for older 10x tarballs (version 2) because the file names in 10x tarballs vary with version (e.g., `features.tsv.gz` (v3) vs. `genes.tsv.gz` (v2)). This should be gracefully handled or support added for older versions..
+> * [ ]  `BiocCheck::BiocCheck()` recommends `Avoid system() ; use system2()`.
+> * [ ]  Please add an 'Introduction' section to the vignette.
+>
+> ### Recommended
+> * [ ]  Strongly recommend testing **TENxIO** functionality using some of the example files included in **DropletTestFiles** (perhaps adding additional example files as necessary, e.g., from the 10x multiome or ATAC-seq kits). For example, see how these are implemeted as ['long tests'](https://contributions.bioconductor.org/long-tests.html) in **DropletUtils**.
+> * [ ]  What does this warning mean and should it be occurring?
+>
+> ```r
+> suppressPackageStartupMessages(library(TENxIO))
+>
+> hub <- ExperimentHub::ExperimentHub()
+> #> snapshotDate(): 2022-10-03
+> fname <- hub[["EH1039"]]
+> #> see ?TENxBrainData and browseVignettes('TENxBrainData') for documentation
+> #> loading from cache
+> TENxFile(fname, extension = "h5", group = "mm10", version = "2")
+> #> Warning: 'group' not in known 10X groups: matrix, outs
+> #> TENxH5 object
+> #> resource: /Users/Peter/Library/Caches/org.R-project.R/R/ExperimentHub/48e4b14df09_1039
+> #> projection: SingleCellExperiment
+> #> dim: 27998 1306127
+> #> rownames: ENSMUSG00000051951 ENSMUSG00000089699 ... ENSMUSG00000096730 ENSMUSG00000095742
+> #> rowData names(3): ID Symbol Type
+> #>   Type: ENSMUSG00000025900 ENSMUSG00000025902 ... ENSMUSG00000102343 ENSMUSG00000109048
+> #> colnames: AAACCTGAGATAGGAG-1 AAACCTGAGCGGCTTC-1 ... TTTGTCAGTTAAAGTG-133 TTTGTCATCTGAAAGA-133
+> ```
+>
+> Session info
+> * [ ]  In the vignette there's a note, "Future versions of the package could support alternative representations to _SingleCellExperiment_"; what does this mean?
+> * [ ]  Recommend running `spelling::spell_check_package()`.
+> * [ ]  Initially, I didn't have the **RaggedExperiment** package installed, and so when trying `import(tfr)` (from the vignette) I received the error: `Error: Install 'RaggedExperiment' to use 'import'`; you might consider providing instructions for installing this package using `BiocManager::install()` (I'm not sure if Bioconductor has a standardised approach to notify users of such installation issues?)
+> * [ ]  Why `roi` instead of `which` for `TENxFragments()`? My understanding is that this argument gets passed to the `which` argument of the _ScanBamParam_ object, so it might make sense to use the same argument name.
+> * [ ]  `help("TENxH5-class", "TENxIO")` refers to `x` as a _SummarizedExperiment_ object but it's a _TENxH5_ object isn't it?
+> * [ ]  In `DESCRIPTION`, `Collate` should be `Collates`.
+
+
