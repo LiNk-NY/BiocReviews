@@ -1,0 +1,24 @@
+# GeoTcgaData #2862
+
+After a cursory review, it seems that the package does not integrate well with
+Bioconductor. It uses `data.frame` as the common output formats, it does
+not depend on any Bioconductor packages, e.g., `SummarizedExperiment`, and it
+does not follow Bioconductor Package Guidelines
+<https://contributions.bioconductor.org/>. Suggesting Bioconductor
+packages is not enough to merit Bioconductor inclusion. If you would like the
+package to be reconsidered, please make use of common Bioconductor classes
+seen at
+<https://contributions.bioconductor.org/important-bioconductor-package-development-features.html#reusebioc>
+
+## DESCRIPTION
+
+* Remove `LazyData` field
+* Looks good.
+
+## NAMESPACE
+
+* Use the native pipe instead of `magrittr`'s `%>%`.
+* Consider avoiding the vague term "diff" in function names.
+* Avoid vague names e.g., `rep1` and `rep2`
+* Avoid class names in functions e.g., `*_matrix`, `*_vector` instead make
+clear the return value in the documentation.

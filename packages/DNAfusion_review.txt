@@ -1,0 +1,35 @@
+# DNAfusion #2759
+
+## DESCRIPTION
+
+* Looks good.
+* Are `usethis` and `devtools` needed in the `Suggests`?
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Avoid the code duplication and assign the output of `EML4_ALK_detection` to a
+variable(s) and re-use.
+
+## R
+
+* Avoid using numeric indices and use named indices, e.g., `3` in
+`index_helper`.
+* Return an empty `GAlignments()` instead of the message "No EML4-ALK was
+detected" in `EML4_ALK_detection` and check any downstream results with
+`isEmpty()`.
+* Optional. Minor. Consider using `BiocBaseUtils` for type checking e.g., with
+`isScalarCharacter`.
+
+## test
+
+* It's great that you have tests. 100% coverage is quite feasible, I think.
+
+```r
+> covr::package_coverage()
+DNAfusion Coverage: 87.07%
+R/DNAfusion_functions.R: 87.07%
+```

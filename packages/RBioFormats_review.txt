@@ -1,0 +1,65 @@
+# RBioFormats #2793
+
+* Overall, the package looks to be in good shape. 
+* The classes exported are primarily S4. I don't really understand the need for
+S3 method definitions. Can you please clarify?
+
+## DESCRIPTION
+
+* Consider adding a URL pointing to the GitHub repository landing page.
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes/
+
+* Include an installation section with the `BiocManager` code needed to
+install the package from Bioconductor.
+* Have you considered using `xml2`? If so, are there any advantages to using
+`XML`?
+* Avoid mentioning the GitHub package in the vignette once the package
+has been accepted to Bioconductor.
+* Remove the `html` product from the folder.
+* Minor. It's more natural to use `library` instead of `require` in the
+vignette.
+* Minor. For readability and maintenance, consider staying within the 80-width
+character limit in the vignette.
+
+## R
+
+* I am not sure what is `print.AnnotatedImage` needed for when there is a `show`
+method?
+* Consider using `setAs` rather than `as.Image.AnnotatedImage` coercion.
+* It may be better to have explicit arguments in the constructor function, e.g.,
+`AnnotatedImage(Image = Image())` and have the validity checks be part of the
+function.
+* There may be more value to using the `setClass` generator function rather than
+`new` within the constructor function. See https://stackoverflow.com/a/16248773
+* Use the `metadata` and `metadata<-` generics in `S4Vectors` and avoid creating
+a `metadata<-` generic
+* Consider adding robustness in terms of internet connectivity to `.bioformats_jar_url`
+
+## tests
+
+* Most functions have some coverage, consider adding coverage to those with 0%.
+
+```r
+> covr::package_coverage()
+RBioFormats Coverage: 60.00%
+R/read.metadata.R: 0.00%
+R/read.omexml.R: 0.00%
+R/zzz.R: 5.26%
+R/ImageMetadata.R: 5.71%
+R/AnnotatedImage.R: 16.67%
+R/utils.R: 16.67%
+R/metadataAccessors.R: 51.28%
+R/read.image.R: 87.50%
+R/write.image.R: 91.30%
+R/mockFile.R: 100.00%
+```
+
+## /
+
+* Move or remove the `misc` directory from the top level

@@ -1,0 +1,88 @@
+# BiocFHIR #2836
+
+* This package is highly valuable for importing FHIR bundles. 
+* I wonder if working with nested JSON data could benefit from 
+`rjsoncons::jmespath` operations. Are there consistent structures
+in the JSON files to merit the use of `rjsoncons`?
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes/
+
+* Add an Installation section to the main vignette.
+* Consider using the following chunk options for the vignettes when loading
+packages with `library`:
+`{r,include=TRUE,results="hide",message=FALSE,warning=FALSE}`
+* I'm getting an error when running the following from the `D_linking.Rmd` vignette:
+```r
+> g = make_condition_graph(allin)
+Error in process_Condition(x$Condition) : 
+  inherits(Condition, "BiocFHIR.Condition") is not TRUE
+some bundles had no Condition component
+```
+as well as:
+```r
+> g = add_procedures(g, allin)
+Error in process_Procedure(x$Procedure) : 
+  inherits(Procedure, "BiocFHIR.Procedure") is not TRUE
+some bundles had no Procedure component
+```
+though it seems that `g` is created despite the error.
+
+## R
+
+* See the error:  
+```r
+>  FHIRtabs()
+Error in vapply(zns, "[", 1, character(1)) : 
+  values must be type 'double',
+ but FUN(X[[1]]) result is type 'character'
+```
+This means that arguments in both vapply calls (in `app.R`) are in incorrect
+order:
+```r
+fn <- vapply(zns, "[", 1, character(1))
+ln <- vapply(zns, "[", 2, character(1))
+```
+compared to 
+```r
+fn <- vapply(zns, "[", character(1), 1)
+ln <- vapply(zns, "[", character(1), 2)
+```
+* Avoid changing the working directory and use the `exdir` argument in `unzip`
+for `make_test_json_set`
+* Avoid using both `<-` and `->` in `process_CarePlan`
+* Are files cleared for public use? Should names be anonymized? 
+* Can the `ResourceTypes` and `retention_schemas` be sourced from some
+specification file? How will `schemas.R` be updated when these fields change?
+* Minor. Consider using `BiocBaseUtils::selectSome`.
+
+## tests
+
+* Increase package coverage:
+
+```r
+> covr::package_coverage()
+BiocFHIR Coverage: 13.44%
+R/app.R: 0.00%
+R/graphit.R: 0.00%
+R/make_test_json_set.R: 0.00%
+R/process_CarePlan.R: 0.00%
+R/process_Claim.R: 0.00%
+R/process_Condition.R: 0.00%
+R/process_Observation.R: 0.00%
+R/processOthers.R: 0.00%
+R/process_Patient.R: 0.00%
+R/schemas.R: 75.00%
+R/use_json.R: 87.50%
+```
+
+## / 
+
+* Remove the `docs` folder

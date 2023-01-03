@@ -1,0 +1,49 @@
+# CaDrA #2850
+
+Unfortunately, I do not see a strong use case of Bioconductor in the package.
+The `ExpressionSet` class has been superseded by `SummarizedExperiment` for
+many years now. Many of the exported functions in the package return a `list`
+or `data.frame` which do not integrate well with the rest of Bioconductor.  We
+recommend using `SummarizedExperiment` as the main representation for input
+and output objects.
+
+## DESCRIPTION
+
+* Looks good.
+* Consider using an easier-to-type package name without mixed case, e.g.,
+'cadra' or 'CADRA'.
+
+## NAMESPACE
+
+* Avoid exporting the `%>%` pipe and use the native `|>` pipe.
+
+## vignettes
+
+* Consider moving vignettes that reproduce manuscript figures into their own
+repository rather than the `CaDrA` package
+* The vignettes should exhibit the functionality of the package with a small
+example dataset
+* Consider updating `Biobase` to `SummarizedExperiment`. New users are more
+likely to be familiar with the latter.
+* Remove `devtools::load_all` function calls
+
+## R
+
+* `custom_genescore_mat` and others do not take an `ExpressionSet` as input
+but rather a `matrix`. It would be better if the function could take both.
+* Avoid ambiguous abbreviations, e.g., `ES` in arguments stands for
+ExpressionSet but some functions have `ES` for enrichment score.
+* Consider reducing the cyclomatic complexity of some functions. The top 6
+as reported by `cyclocomp` are:
+```r
+      candidate_search revealer_genescore_mat                  CaDrA
+                    72                     57                     47
+    revealer_genescore   custom_genescore_mat      ks_gene_score_mat
+                    43                     41                     35
+```
+
+## tests
+
+* Please add unit tests
+
+
