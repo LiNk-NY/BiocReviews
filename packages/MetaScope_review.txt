@@ -1,0 +1,47 @@
+# MetaScope #2844
+
+## DESCRIPTION
+
+* Looks good.
+* How does this package enhance `BiocParallel`?
+
+## NAMESPACE
+
+* Looks good. Perhaps `extractReads` can be `extract_reads`? To agree with the
+rest of the exported functions in the package.
+* Consider using the native pipe operator (`|>`) and avoid the `magrittr`
+dependency.
+
+## vignettes
+
+* (optional) Consider wrapping text to the 80 column width limit.
+* Consider using `tempfile()` as the default temporary directory argument in
+the `download_refseq`, `demultiplex` functions and working within that
+directory.  This will avoid creating the temporary directory within the
+vignette.
+
+## R
+
+* It looks like you should load `align_details` within the `align_target`
+function. Please refer to this section for loading data used by a function
+within a package:
+http://contributions.bioconductor.org/data.html?q=data#exported-data-and-the-data-directory
+and remove the `globalVariables` function call.
+* Are `samtools` calls portable to other systems (in `merge_bam_files`)?
+* (optional) Consider separating the `%<>%` operations to make the code more
+readable and remove the `magrittr` dependency.
+* Avoid saving serialized instances of classes, e.g. `saveRDS` in `create_MAE`
+which can become invalid whenever the class gets updated. Instead only return
+the `MultiAssayExperiment` object from the function.
+* Consider an option for adjusting the verbosity of functions like
+`demultiplex` and others.
+* Looks good.
+
+## tests
+
+* We highly recommend adding unit tests to the package (covr results 0%).
+
+## /
+
+* How is `index.md` different from the `README.md`?
+
