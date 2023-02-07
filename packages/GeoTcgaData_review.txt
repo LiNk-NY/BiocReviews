@@ -22,3 +22,59 @@ seen at
 * Avoid vague names e.g., `rep1` and `rep2`
 * Avoid class names in functions e.g., `*_matrix`, `*_vector` instead make
 clear the return value in the documentation.
+
+---
+
+# GeoTcgaData #2862
+
+* Update the version so that it is greater than the last known version on CRAN
+(`1.1.1`)
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Avoid long function names like `differential_RNA_SummarizedExperiment` and
+`methydifferential_SummarizedExperiment`. The name of the compatible class
+does not need to be in the function name.
+* Avoid using `sink` and use standard functions to suppress messages, e.g.,
+`suppressMessages` etc., if necessary.
+
+## /
+
+* Remove the `docs` folder from the package. It gets populated when the package
+is built.
+* Include only one `.gitignore` in the base folder
+* Remove `cran-comments.md`
+
+## vignettes
+
+* Avoid using `eval=FALSE` in the vignettes. Any package submitted to
+Bioconductor should have a runnable vignette.
+
+## R
+
+* Provide a proper description and full documentation of arguments for all
+functions, including `arrayDiff`.
+* Describe in detail, where the data come from in `R/data.R`. If possible,
+use more descriptive names.
+* `Merge_methy_tcga` should take `data.frame`s as inputs rather than files. If
+files are absolutely necessary, include a precise description of the files
+and the directory structure. You could also provide a helper function to read
+in the methylation files from a directory which could then serve as the input
+to the merge operation.
+* Avoid the using `sink` and remove the `quiet` function. Use
+`utils::capture.output`, if needed.
+* Create a single `methydifferential` / `differential_RNA` function that
+handles `matrix`, `data.frame`, and `SummarizedExperiment` inputs.
+* Avoid functions that work with directory inputs. Interoperable functions
+should operate on the base data representations i.e., `DataFrame`, `matrix`,
+etc. (see `tcga_cli_deal`)
+* Remove commented code.
+* See our Data section at https://contributions.bioconductor.org/data.html?q=Data#exported-data-and-the-data-directory
+for `id_conversion`
+* Make sure datasets in the package have proper type conversion. That is
+columns like `entrez_id`, `gene_len`, `start`, `end` etc. are numeric.
+
