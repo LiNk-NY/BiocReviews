@@ -1,0 +1,52 @@
+# HERON #2880
+
+## DESCRIPTION
+
+* Include `BugReports` and `URL` fields
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Avoid using `;` in R code.
+* Is the data using the legacy `ExpressionSet` data structure? `pData` is an
+old interface.
+
+## R
+
+* If possible, avoid acronyms `CCT` and opt for descriptive names.
+* Reduce the cyclomatic complexity in functions such as `CCT`, `findBlocksT`,
+if possible. See the `cyclocomp` package.
+* Data looks good.
+* Remove all `;` from the R code. It is not necessary when there adequate
+space (e.g., `findEpitopeSegments`).
+* Avoid the 'copy and append' method when using `for` loops in
+`getClusterSegments` and other functions. We recommend the 'allocate and fill'
+method. For example:
+```r
+result <- vector("numeric", length = 10)
+for (i in seq_along(result))
+    result[i] <- ...
+```
+* Avoid `1:n` sequence generation, use `seq_along` or `seq_len`
+* Remove exclamation points in error messages, e.g., `!`.
+* Avoid code repetition in `wilkMin/Max*Meta` functions. It seems that they
+can be combined into a single function with `n` and `min/max` parameters.
+
+## tests
+
+* We highly recommend improving the coverage of tests:
+```r
+> covr::package_coverage()
+HERON Coverage: 23.64%
+R/CCT.R: 0.00%
+R/meta.R: 0.00%
+R/preprocess.R: 0.00%
+R/stat.R: 0.00%
+R/epitope_finding.R: 19.65%
+R/multilevel.R: 47.54%
+R/misc.R: 67.53%
+R/epitope.R: 91.26%
+```

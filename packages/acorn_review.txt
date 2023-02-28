@@ -1,0 +1,55 @@
+# acorn #2853
+
+* The package does not integrate with formal Bioconductor classes. The main
+representation in use is the `data.frame`. I am concerned with fragile
+operations that use numeric indices on said `data.frame`s. The interfaces
+to the functions are minimal and can be grouped to reduce code repetition.
+
+## DESCRIPTION
+
+* Please include `BugReports` and `URL` fields pointing to GitHub issue and
+repo links.
+* (Optional) Include additional details in the `Description` field.
+* `Imports` field seems to be missing.
+
+## NAMESPACE
+
+* Include `importFrom` packages in the `DESCRIPTION` `Imports` field.
+* Remove `exportPattern("^[[:alpha:]]+")`
+* Perhaps the `extract`/`calculate` prefixes are a bit redundant? Could these
+be improved?
+
+## vignettes
+
+* Vignette sections should be in title case.
+* Organize the vignette by higher level sections (domains).
+* Ideally, include a description in each section. Describe where the data are
+coming from, what does the functionality provide?, what are the benefits of
+using the functions?, etc.
+* Include `sessionInfo()` at the end of the vignette.
+
+## R
+
+* Use `message` instead of `cat` in `annotateCpG`.
+* Using `paste` inside `cat` / `message` etc. is redundant.
+* Validate inputs in `annotateCpG` and other functions.
+* Make sure to return computable results rather than simply `cat` the result
+(e.g., in `calculateDeletionInsertionratio`).
+* Use camelCase uniformly (e.g., `calculateDeletionInsertionRatio` vs
+`calculateDeletionInsertionratio`)
+* Avoid using numeric indices on the data and use names instead.
+* It seems `calculate*` functions return plots rather than statistics? The
+name does not match what the function is doing.
+* Avoid repetitive code and combine functions that have similar operations
+(e.g., `calculateDeletionLengths`, `calculateInsertionLengths`, etc.)
+* The character vector in `extractAutosomes` only works for data that has
+`chr1` annotations.
+* Consider using standard Bioconductor representations e.g., `GRanges` in
+`GenomicRanges`
+* `readDNV` seems to be a thin wrapper to `read.delim`, consider removing it.
+
+## tests
+
+* We highly encourage the use of unit tests to ensure the robustness of the
+code.
+
