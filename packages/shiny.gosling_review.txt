@@ -1,0 +1,11 @@
+# shiny.gosling #2907
+
+* It doesn't look like the package is making use of Bioconductor
+infrastructure or data visualization packages.
+
+## DESCRIPTION
+
+* Consider importing data from our reference genome packages.
+* Consider using data viz packages like `trackViewer`.
+* Remove `BiocManager` and `BiocCheck` from the DESCRIPTION file. They are not
+needed for package installation.

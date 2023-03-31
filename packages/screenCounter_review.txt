@@ -1,0 +1,62 @@
+# screenCounter #2940
+
+The package looks good to go. Not many changes are required.
+Thank you for your submission.
+
+## DESCRIPTION
+
+* Looks good.
+* Add `BugReports` and `URL` fields.
+* Consider adding ORCiD identifier to the `Authors@R` field.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Looks good.
+
+## R
+
+* Probably no need to depreacate arguments in the function but you may have
+had previous use internally.
+* Default `BiocParallel` params look good.
+
+## tests
+
+* Coverage overall looks good:
+```r
+> covr::package_coverage()
+screenCounter Coverage: 83.66%
+inst/include/byteme/GzipFileReader.hpp: 0.00%
+inst/include/kaori/handlers/CombinatorialBarcodesPairedEnd.hpp: 56.32%
+inst/include/kaori/ScanTemplate.hpp: 70.83%
+src/count_single_barcodes.cpp: 70.83%
+inst/include/kaori/SimpleSingleMatch.hpp: 71.29%
+src/count_dual_barcodes.cpp: 71.43%
+src/count_combo_barcodes_single.cpp: 73.33%
+src/count_combo_barcodes_paired.cpp: 75.86%
+inst/include/kaori/MismatchTrie.hpp: 82.64%
+inst/include/kaori/handlers/DualBarcodes.hpp: 85.07%
+inst/include/byteme/SomeFileReader.hpp: 85.71%
+R/countComboBarcodes.R: 90.00%
+R/countSingleBarcodes.R: 90.00%
+inst/include/byteme/RawFileReader.hpp: 90.48%
+inst/include/kaori/FastqReader.hpp: 91.57%
+src/utils.cpp: 92.31%
+R/countDualBarcodes.R: 92.65%
+inst/include/kaori/process_data.hpp: 93.18%
+inst/include/kaori/BarcodePool.hpp: 93.33%
+R/parseBarcodeTemplate.R: 93.75%
+inst/include/kaori/handlers/CombinatorialBarcodesSingleEnd.hpp: 94.12%
+R/combineComboCounts.R: 94.12%
+inst/include/kaori/utils.hpp: 94.20%
+inst/include/kaori/BarcodeSearch.hpp: 95.56%
+inst/include/byteme/Reader.hpp: 100.00%
+inst/include/kaori/handlers/DualBarcodesWithDiagnostics.hpp: 100.00%
+inst/include/kaori/handlers/SingleBarcodeSingleEnd.hpp: 100.00%
+R/countPairedComboBarcodes.R: 100.00%
+src/utils.h: 100.00%
+```
+
