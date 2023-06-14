@@ -1,0 +1,63 @@
+# curatedPCaData #3047
+
+* Please separate the analysis functionality from the infrastructure. The
+package should only deliver the data to the user and demonstrate how to
+obtain the data from `ExperimentHub`.
+* The package has extensive efforts to work with the metadata but these
+can be avoided by strategically using metadata from the `ExperimentHub`
+resources.
+
+## DESCRIPTION
+
+* Looks good.
+* The `BiocGenerics` Suggests: seems out of place.
+* The CC license is not good for software consider using a different license.
+
+## NAMESPACE
+
+* Avoid importing `testthat` and the `expect_s4_class` function. To test for
+S4 class, use the name of the class, e.g., `is(X, "KnownS4Class")`
+
+## vignettes
+
+* Consider restricting the text to 80 column width. It makes it easier to
+review and maintain.
+* The demos in the vignettes should show the user how to obtain the data,
+it does not necessarily need to show the user how to analyze it. The latter
+would be more appropriate in a separate workflow package.
+* Remove the analysis vignette as it is out of the scope of the package.
+* Consider using `MatchedAssayExperiment` instead of intersecting `colnames`
+and `"sample_names"` in the `colData` (Decipher vs BCR section).
+* Consider using `$` to access `colData` columns, e.g., `mae_ren$sample_type`
+* Consider using `TCGAutils::TCGAprimaryTumors` for subsetting for primary
+tumor samples with TCGA data.
+* The Oncoprint example looks complicated for a new user. If you are working
+with TCGA data consider using `TCGAutils::oncoPrintTCGA`, otherwise consider
+adding a helper function.
+* Reduce the amount of code in the `overview.Rmd` vignette. Pre-processing
+with `eval(parse(...))` is usually not the way to go. It seems that more
+needs to be done at the dataset and package level to avoid the juggling
+of `metadata` in the vignette. Add helper functions in the package to extract
+and create a single row for each of your summaries of interests, for example,
+`gleasons(mae_object)` would return one row as given by the pre-processing
+step in the vignette.
+* Consider using `*.bib` reference file rather than hard-coding references in
+the vignette.
+* Use single backticks to enclose code nouns, e.g. `colData` and
+`MultiAssayExperiment`
+
+## R
+
+* Use a more descriptive argument than `slots` in `getPCa`
+* Consider refactoring the logic in `wrapperSortonco`. It may be safer and
+more robust to apply a function recursively instead.
+
+## tests
+
+* Consider increasing the coverage:
+```r
+> covr::package_coverage()
+curatedPCaData Coverage: 24.14%
+R/wrappers.R: 0.00%
+R/getpca.R: 76.92%
+```
