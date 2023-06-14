@@ -1,0 +1,44 @@
+# demuxSNP #2952
+
+## DESCRIPTION
+
+* Add a `BugReports` and `URL` fields pointing to the GitHub repository
+* Looks good.
+
+## NAMESPACE
+
+* Looks good and minimal.
+
+## vignettes
+
+* (optional) Consider wrapping text to 80 column width.
+* It may be better to run through the workflow itself rather than have an
+examplar workflow steps that have `eval=FALSE` (Workflow section).
+Alternatively, you could summarize the workflow steps conceptually as bullet
+points.
+* Everything else looks good.
+
+## R
+
+* Perhaps the test in `add_snps` can be a bit more semantically explicit?
+`identical(mat, round(mat))` does this mean that the values in the matrix
+should be whole numbers?
+* Consider using more descriptive names in `data.R`.
+* Consider using the "allocate and fill" rather than the "copy and append"
+method in the `for` loop in the `reassign` function. This most often will
+improve performace.
+
+## NEWS.md
+
+* Make sure you can parse the NEWS.md file with `utils::news` (use `*` instead
+of `+`).
+
+## README.md
+
+* Consider adding more content to the `README.md`
+
+## tests
+
+* Coverage looks good.
+
+

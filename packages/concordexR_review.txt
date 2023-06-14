@@ -1,0 +1,33 @@
+# concordexR #3006
+
+## DESCRIPTION
+
+* Looks good
+
+## NAMESPACE
+
+* Looks good
+
+## vignettes
+
+* (optional) Wrap text at the 80 column width limit for dev readability
+* Resolve warning in vignette: partial match of 'val' to 'value' in
+`x_by_out$val` and `y_by_out$val`
+* Looks good.
+* Remove GitHub code chunk from overview vignette.
+* What is the advantage of creating a method for "ANY" versus a plain function
+that accepts a `matrix`?
+
+## tests
+
+* Coverage looks good. Consider increasing coverage for `R/plot.R`.
+
+```r
+> covr::package_coverage()
+concordexR Coverage: 96.15%
+R/plot.R: 37.50%
+R/AllGenerics.R: 100.00%
+R/concordex.R: 100.00%
+R/utils.R: 100.00%
+```
+

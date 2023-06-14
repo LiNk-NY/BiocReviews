@@ -1,0 +1,52 @@
+# HiBED #2965
+
+The package needs to make use of existing Bioconductor data representations
+such as `SummarizedExperiment`. Currently it only uses matrix. The
+implementation code needs revision and unit test coverage should be increased.
+
+## DESCRIPTION
+
+* Add a `BugReports` field.
+* Consider adding your ORCiD ID.
+
+## NAMESPACE
+
+* Looks good.
+* Consider renaming the main function to the name of the package (i.e.,
+`HiBED()`)
+
+## vignettes
+
+* Consider including only one `data("HiBED_Libraries")` call in the vignette.
+That is, evaluate the `data` call in line 33 and remove from 46.
+* Remove the redundant use of `print`.
+* Organize your vignette to include `Installation` and `Loading packages`
+sections.
+
+## R
+
+* Remove the `.onLoad` function.
+* Add a `@usage` section to the `HiBED_Libraries` documentation as
+`@usage data("HiBED_Libraries")`
+* Please format the code so that it fits the 80 character width limit and
+remove uncommented code.
+* Run `BiocCheck` and adjust the syntax accordingly.
+* Consider using native pipes `|>` rather than `%>%` to avoid the dependency.
+* Avoid evaluating large chunks of code within the `message` function
+* Include the data type in the argument documentation as there are instances
+where `h` is character (see line 138 in `HiBED_deconvolution.R`)
+* Avoid using data from the `.GlobalEnv` and follow our recommendations in
+https://contributions.bioconductor.org
+
+## tests
+
+* We strongly recommend that you increase coverage
+
+```r
+> covr::package_coverage()
+HiBED Coverage: 1.37%
+R/zzz.R: 0.00%
+R/HiBED_deconvolution.R: 1.39%
+```
+
+

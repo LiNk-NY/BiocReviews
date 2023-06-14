@@ -1,0 +1,43 @@
+# CuratedAtlasQueryR #2991
+
+## DESCRIPTION
+
+* Consider checking for typos (Should "agnency" be "agency"?)
+* Consider including an ORCiD identifier at least for the maintainer.
+* Looks good
+
+## NAMESPACE
+
+* Consider combining `get_*metadata` into a single function with an
+`unharmonized = TRUE/FALSE` option.
+* Looks good.
+* Minor: Consider using camelCase vs snake_case for exported functions.
+
+## vignettes
+
+* Remove GitHub installation section after acceptance.
+* Provide a short explain with regards to how the data is hosted and from what
+project it originates.
+* Is it possible to avoid the `eval=FALSE` in the metadata chunk and others?
+* Is realized data cached?
+* Include a `sessionInfo()` section
+
+## R
+
+* Consider using a single `assert_that` call and separate expressions with
+commas `,`.
+* Perhaps use `force(data)` in `get_SingleCellExperiment`?
+* Looks good.
+
+## tests
+
+* Coverage looks good
+
+## dev
+
+* Consider moving this folder into the `inst` directory
+
+## /
+
+* `tissue_label.csv` seems out of place, perhaps move it into `inst/extdata`?
+
