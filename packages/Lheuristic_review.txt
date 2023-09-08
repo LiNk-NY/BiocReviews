@@ -1,0 +1,36 @@
+# Lheuristic #3039
+
+* The package does not seem to use Bioconductor infrastructure. Please note
+how you will integrate with the existing infrastructure either with
+`SummarizedExperiment` or other integrative represetations.
+
+## DESCRIPTION
+
+* Add `URL` and `BugReports` fields.
+
+## NAMESPACE
+
+* Perhaps the plot* function names can be more descriptive as to what type of
+  plot is used.
+
+## vignettes
+
+* Remove commented code in vignette chunks.
+* Remove built HTML vignettes from the folder.
+* For readability, the text width should not exceed 80 columns.
+* Consider using a Bioconductor package to download expression and methylation
+  data, e.g., `GenomicDataCommons`, `TCGAbiolinks`, `curatedTCGAData`, etc.
+* Also consider using `MultiAssayExperiment` (disclaimer I am the maintainer)
+to correlate accross assays and avoid subsetting each individual assay.
+* Use `nrow` and `ncol` instead of `dim[n]`
+* Avoid saving plots to `pdf`. Only display the plots and allow users to
+choose their graphics format with the respective function of their choosing
+e.g., `ggsave`, `png`, `pdf` etc.
+
+## R
+
+* `unlist(list(...))` seem to have no effect on the input in `distCorrs`. If
+you want to remove names, perhaps use `unname`.
+* When checking both `nrow` and `ncol` use `dim` instead in `matDistCorr`.
+
+[on hold...]
