@@ -1,0 +1,52 @@
+# crisprShiny #3091
+
+## DESCRIPTION
+
+* Consider wrapping text to a max 80 character width limit.
+* Remove the `StagedInstal` field from the `DESCRIPTION` (see
+https://blog.r-project.org/2019/02/14/staged-install/ for details)
+* Update R version to `4.3.0`
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Should the main function run the app itself, i.e., `crisprShiny`?
+* Indicate that using the `criprShiny` modules is for developer use.
+
+## R
+
+* Consider formatting the code with `styler` or other syntax guide for
+arguments and function body delimiters `{`.
+* It seems that `.filterTemplate` is not used in the code. Consider removing
+it.
+* Add the `shiny` package to the `Depends` field.
+* `.renderTssAnnotationTab()` has an "add plot" comment. Please resolve.
+* Remove commented code in `.enzymeAnnotationDataTable`
+* Ideally the tooltip annotation data should be treated as data and not text
+in a `switch` call (`interface_tooltips.R`).
+
+## tests
+
+* Resolve the issue with the test:
+
+```r
+> covr::package_coverage()
+Error: Failure in `/tmp/RtmpgxoZxh/R_LIBS4b94575f2ce6/crisprShiny/crisprShiny-tests/testthat.Rout.fail`
+setup.*\\.[rR]$", env = env, wrap = FALSE)
+  8. │             └─base::lapply(...)
+  9. │               └─testthat (local) FUN(X[[i]], ...)
+ 10. │                 └─testthat::source_file(path, env = env, chdir = chdir, wrap = wrap)
+ 11. │                   ├─base::withCallingHandlers(...)
+ 12. │                   └─base::eval(exprs, env)
+ 13. │                     └─base::eval(exprs, env)
+ 14. │                       └─utils::data("txdb_human", package = "crisprDesignData") at crisprShiny-tests/testthat/setup.R:4:0
+ 15. │                         └─base::find.package(package, lib.loc, verbose = verbose)
+ 16. │                           └─base::stop(packageNotFoundError(bad, lib.loc, sys.call()))
+ 17. └─testthat (local) `<fn>`(`<pckgNtFE>`)
+ 18.   └─rlang::abort(...)
+```
+which means that `crisprDesignData` should be added to the `Imports` or
+`Suggests`.

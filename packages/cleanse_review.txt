@@ -1,0 +1,34 @@
+# cleanse #3114
+
+* The package does not seem to provide a cohesive central representation and
+straddles the line between the tidyverse and the S4 SummarizedExperiment class
+leading to inefficiencies due to multiple data copies.
+* Consider depending on `tidySummarizedExperiment` and / or providing solely
+the function(s) that convert the data to tidy (wide) format.
+* The exported S3 operations are not needed once the data is in the wide
+format `tibble`.
+* The package should adhere to the tidyverse semantics and avoid using
+arguments like `axis`.
+
+## DESCRIPTION
+
+* Avoid specifying versions for all packages in `Imports`, is is not
+necessary.
+
+## NAMESPACE
+
+* I am not sure that providing S3 methods for `SummarizedExperiment`
+(as implemented) is the right direction.
+* Avoid using `%>%` and use the native `|>`
+
+## R
+
+* It seems to me like the package should only provide ways to convert a
+`SummarizedExperiment` into the tidy data class.
+* Once converted, the package's S3 methods are not needed.
+* It is less memory efficient to operate with both tidyverse and
+`SummarizedExperiment` versions of the data.
+* See the `tidySummarizedExperiment` implementation and consider depending on
+their interface.
+* Remove package startup messages.
+
