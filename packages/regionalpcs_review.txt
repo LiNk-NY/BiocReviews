@@ -1,0 +1,30 @@
+# regionalpcs
+
+* The package looks sound. It should use Bioconductor functionality such
+as `TxDb.*` and `GenomicFeatures`. You can also download methylation data from
+a number of packages that provide it (e.g., `curatedTCGAData` (disclaimer: my
+package), `GenomicDataCommons`, `RTCGA.methylation`, `TCGAbiolinks`, etc.)
+
+## DESCRIPTION
+
+* Looks good
+
+## NAMESPACE
+
+* Minimal number of exports, good.
+* Avoid using magrittr pipe `%>%` and use the native pipe `|>`.
+
+## vignettes
+
+* Add `author:` in yaml header
+* First part of the vignette seems to be closer to a workflow. Can it be
+reduced just to highlight the package functionality?
+
+## R
+
+* Use `match.arg` in `compute_regional_pcs` (and others) and use `c("gd",
+"mp")` as the default `pc_method` argument.
+* Use Bioconductor infrastructure instead of providing your own data. There
+are packages that allow you to download promoter regions and methylation data
+and possibly avoid using `liftOver`.
+
