@@ -1,0 +1,37 @@
+# pgxRpi
+
+* The package does not make use of Bioconductor infrastructure (e.g., `GRanges`,
+`RaggedExperiment`, etc.) and copies code from the `copynumber` package.
+Has this been cleared with the maintainer of `copynumber`?
+
+## DESCRIPTION
+
+* Wrap Description to 80 line width.
+
+## NAMESPACE
+
+* Minimal number of exports, looks good.
+
+## vignettes
+
+* How can users discover filters, sample and individual identifiers?
+* Is the package's main aim to provide an API to the data? There are examples
+of analyses and plotting which may be more appropriate in another package(s).
+* The `cnv_matrix` has combined data in the column names, is there a way
+to resolve this and have uniform names / data? For example, some columns are
+`X.67000000.68000000.DEL` and others are `X1.1400000.2400000.DUP`.
+* It looks like there are multiple copies of the data in `freq_pgxfreq`.
+Consider only providing either both "NCIT:C4038", "pgx:icdom-85003" or just
+"total".
+* Why not use a Bioconductor representation for `freq_pgxfreq` such as
+`GRanges` or `RaggedExperiment`?
+
+## R
+
+* Remove copy-and-append code in `transform_id`. It seems that you simply want
+to do `paste(..., collapse = ",")`.
+* Rename the data to have more specific names (e.g., `hg19` is too broad).
+* It looks like there is code copied and pasted from the `copynumber` package.
+* Reduce code repetition by creating helper functions, e.g., for obtaining
+`remain.id` from multiple URLs. This will also reduce the cyclomatic
+complexity of the software.
