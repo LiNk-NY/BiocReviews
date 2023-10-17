@@ -4,7 +4,7 @@
 
 pkgname=$1
 
-BIOC="$HOME/bioc"
+BIOC="$HOME/reviews"
 
 PKGLOC=$BIOC/$pkgname
 
@@ -25,5 +25,5 @@ if [ ! -e "$biocfile" ] ; then
     touch $biocfile
 fi 
 
-R_LIBS_USER=$HOME/R/bioc-devel RLOC=$HOME/src/svn/r-devel/R/bin RCOMP=$HOME/.cache/Nvim-Rd /usr/bin/vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R R/*\.r
+R_LIBS_USER=$HOME/R/bioc-devel RLOC=$HOME/src/svn/r-4-3/R/bin RCOMP=$HOME/.cache/Nvim-Rd /usr/bin/vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R
 
