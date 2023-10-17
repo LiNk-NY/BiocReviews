@@ -1,0 +1,42 @@
+# CTexploreR #3138
+
+## DESCRIPTION
+
+* Looks good.
+* Include `leukemiaAtlas` and other packages that are required to load
+`ExperimentHub` resources in `Suggests`.
+
+## NAMESPACE
+
+* Consider using `MatrixGenerics::rowMaxs` instead of `Biobase::rowMax`.
+
+## R
+
+* Use `match.arg` in `CCLE_expression` and others to select default arguments
+and to show the user the entire list of possibilities as the default argument.
+For example, `match.arg` will select the first option by default:
+
+```r
+test <- function(units = c("TMP", "log_TPM")) {
+    match.arg(units)
+}
+```
+
+* Functions like `CTdata::CCLE_data()` should work. Currently, there is an
+error `Conflict (HTTP 409)` when running the function.
+* Use default values in arguments e.g., `nt_up = 1000` in
+`normal_tissues_methylation`
+* Minor. Consider using `values.only` instead of `return` to avoid clashing
+symbols in `CCLE_expression()` and other functions.
+* Minor. Reduce logic `ifelse(condition, TRUE, FALSE)` to `condition` in
+`CT_correlated_genes()`.
+* Minor. The `cells` argument in `testis_expression` can use
+`match.arg(several.ok = TRUE, ...)` to allow the selection of multiple
+`germ_cells` and/or `somatic_cells`. There could also be a `switch` call to
+resolve the choices of `germ_cells` and `somatic_cells` that would return the
+appropriate group vector.
+
+## tests
+
+* Unable to run `covr::package_coverage()` due to installation errors.
+
