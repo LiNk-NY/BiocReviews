@@ -1,0 +1,38 @@
+# igvShiny #3155
+
+## DESCRIPTION
+
+* Include `URL`, and `BugReports` fields
+* Wrap `Description` field text to 80 width (and fix typos).
+* R dependency should be `R (>= 4.4.0)`.
+* Include a more descriptive `Title:`.
+
+## NAMESPACE
+
+* Avoid long function names with dots (`.`). Dots in function names should
+generally be used for S3 methods.
+* Have you considered using `RCurl::url.exists`?
+
+## vignettes
+
+* Looks good.
+* Consider reducing the complexity of the examples by adding a folder argument
+for predetermined files in `parseAndValidateGenomeSpec`.
+* Minor: Wrap the text to 80 column-width.
+
+## R
+
+* `common.always.available.stock.genomes` along with `basic.offerings` should
+be a package constant rather than a function.
+* Would it be easier to add the `genomes.json` file to the package rather
+than host it on AWS?
+* Consider increasing package coverage and using `shinytest2`
+```r
+> covr::package_coverage()
+igvShiny Coverage: 20.53%
+R/igvShiny.R: 0.00%
+R/GWASTrack.R: 59.68%
+R/genomeSpec.R: 88.73%
+R/test_igvShiny_package.R: 100.00%
+```
+
