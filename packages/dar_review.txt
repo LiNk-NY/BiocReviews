@@ -1,0 +1,9 @@
+# dar #3158
+
+* Ideally, the package should use infrastructure that works well with the rest
+of Bioconductor such as `mia`, `TreeSummarizedExperiment`, etc. rather than
+`phyloseq`. It looks like the vignettes suggest the opposite.
+
+## DESCRIPTION
+
+
