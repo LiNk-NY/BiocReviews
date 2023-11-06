@@ -1,9 +1,72 @@
 # dar #3158
 
 * Ideally, the package should use infrastructure that works well with the rest
-of Bioconductor such as `mia`, `TreeSummarizedExperiment`, etc. rather than
-`phyloseq`. It looks like the vignettes suggest the opposite.
+of Bioconductor such as `mia`, `TreeSummarizedExperiment`,
+`SummarizedExperiment`, etc. rather than `phyloseq`. It looks like the
+vignettes suggest the opposite. Please consider evolving the package into more
+modern microbiome infrastructure with input from the community.
 
 ## DESCRIPTION
 
+* Consider avoiding the `magrritr` dependency and using the base R pipe (`|>`).
+* R version dependency should be `4.4.0` or higher
+* Consider removing either the `readr` or the `data.table` dependency as they
+are both typically used for the same operation (read-in).
 
+## NAMESPACE
+
+* Avoid re-exporting functions such as `%>%` and `:=`. Based on the vignettes,
+you can use `|>` and `:=` is not used in the user-facing code.
+* `required_deps` seems to be an internal function and does not need to be
+exported.
+
+## vignettes
+
+* The `subset` and `filter` operations are a bit unconventional. This may be a
+challenge for the user who wants to perform multiple subsets and filters with
+their data. Please consider using `SummarizedExperiment`'s method for
+`subset`ting. You may also want to take a look at the filtering for
+`SummarizedExperiment` provided by the `tidyomics` group.
+* Consider providing conversion vignettes from older formats such as
+`phyloseq` into newer ones such as `TreeSummarizedExperiment`.
+
+## R
+
+* Avoid recommending unconventional package installation methods, e.g.,
+`pak::pkg_install`.
+* Avoid setting a seed within a function (`run_aldex`).
+* Consider using a more descriptive class name for `recipe`. Also consider
+following Bioconductor convention and using sentence case for all class names,
+e.g., `SummarizedExperiment`.
+* Generally, methods and generics are not needed if they are defined for a
+single class. A plain function would accomplish the same with less code to
+maintain.
+* Please use the data name in the documentation `R/data.R` rather than `NA`.
+
+## tests
+
+* Consider increasing package coverage:
+
+```r
+> covr::package_coverage()
+dar Coverage: 20.73%
+R/ancom.R: 0.00%
+R/deseq2.R: 0.00%
+R/lefse.R: 0.00%
+R/maaslin2.R: 0.00%
+R/phyloseq_qc.R: 0.00%
+R/plot_methods.R: 0.00%
+R/rarefaction.R: 0.00%
+R/subset_taxa.R: 0.00%
+R/wilcox.R: 0.00%
+R/corncob.R: 1.35%
+R/aldex2.R: 1.56%
+R/filter_taxa.R: 6.76%
+R/recipe-class.R: 18.78%
+R/metagenomeseq.R: 27.55%
+R/misc.R: 41.67%
+R/steps_and_checks.R: 47.83%
+R/bake.R: 56.94%
+R/read_data.R: 98.49%
+R/pkg_check.R: 100.00%
+```
