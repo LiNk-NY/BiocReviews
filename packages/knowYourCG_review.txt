@@ -1,0 +1,45 @@
+# knowYourCG #3197
+
+## DESCRIPTION
+
+* Remove the `Authors` field, the `Authors@R` is sufficient.
+* Add `BugReports` and `URL` fields
+* Usually data packages are listed in the `Suggests` field. Why is
+`sesameData` a hard dependency?
+* The R version dependency should be `4.4.0` or greater.
+
+## NAMESPACE
+
+* Consider avoiding prefixes such as `KYCG_` in function names. The full
+address of a function already contains this information, i.e.,
+`knowYourCG::KYCG_annoProbes`. Is there potential for function name
+clobbering? Perhaps use more descriptive names.
+* Use the native `|>` pipe rather than importing `%>%` from `dplyr`.
+
+## vignettes
+
+* It seems like the `sesameDataCache()` automatically downloads all 91 EH
+resources. Is there a way to __only__ download the necessary datasets or are
+all datasets needed?
+* Is there a reason for the subsetting in `vignettes/KYCG.Rmd:L#220`? Perhaps
+save the set of names into a vector. Ideally, the returned data should have
+those as the first few variables in the data.
+* Consider using `SummarizedExperiment` as the main representation for the
+`betas` input and allow compatibility for `matrix` class inputs as well.
+
+
+## R
+
+* Use more descriptive argument names rather than `query` which seems to
+be a different input depending on the function.
+* Consider moving plotting functionality to a separate package. This would
+reduce the dependency heaviness of `knowYourCG`.
+
+## tests
+
+* There was an error in running `covr::package_coverage` but this may have
+been due to not downloading all 91 resources to my machine.
+
+
+
+
