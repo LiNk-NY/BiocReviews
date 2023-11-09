@@ -1,0 +1,39 @@
+# AlphaMissenseR #3221
+
+## DESCRIPTION && NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Should `sql_template` be exported or should the template be copied and
+pasted into the vignette? It is good to avoid using `:::` in the vignette.
+* Would it make sense to provide a `clear_cache` wrapper function for
+removing resources that can be identified as incompatible with newer versions
+of DuckDb? It may not be necessary if new users of the package are
+already on newer versions of DuckDb.
+* Minor: It would be good to have the file size info shown when downloading.
+
+## R
+
+* Consider using `BiocBaseUtils` for type checking of arguments.
+* Looks good.
+
+## tests
+
+Consider increasing coverage for some files. Overall, they look good.
+
+```r
+> covr::package_coverage()
+AlphaMissenseR Coverage: 44.08%
+R/AlphaFold.R: 0.00%
+R/alphamissense_connection.R: 0.00%
+R/am_aa.R: 0.00%
+R/zzz.R: 0.00%
+R/AlphaMissense.R: 57.69%
+R/GenomicRanges.R: 72.22%
+R/template.R: 85.71%
+R/db.R: 91.58%
+R/utilities.R: 91.67%
+```
+
