@@ -1,0 +1,50 @@
+# transmogR #3277
+
+Overall, a solid package with good re-use of Bioconductor functionality
+(GRanges, etc.).
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Consider separating plotting functionality into another package.
+
+## vignettes
+
+* The `## Installation` code example should only install `transmogR`. The
+other packages are assumed to be available (when added to the `Suggests` field
+in the `DESCRIPTION`)
+* Looks good.
+
+## R
+
+* Consider using a default empty mask in the method function signature, i.e.,
+`mask = GRanges()` rather than using `if missing(mask) ...` in `genomogrify.R`
+* Remove old code from methods e.g., in the `indelcator`
+XString,GRanges-method: `cl <- class((x))`.
+* Avoid class checks in S4 methods, they are not necessary
+(owl,XStringSet,GRanges-method).
+* Consider conditionally importing packages for plotting e.g., `ComplexUpset`
+by including it in the `Suggests`. See https://contributions.bioconductor.org/
+for details.
+
+## tests
+
+* Coverage looks excellent:
+
+```r
+> covr::package_coverage()
+transmogR Coverage: 97.28%
+R/genomogrify.R: 90.74%
+R/parY.R: 94.12%
+R/helpers.R: 94.83%
+R/sjFromExons.R: 97.44%
+R/transmogrify.R: 98.82%
+R/indelcator.R: 100.00%
+R/overlapsByVar.R: 100.00%
+R/owl.R: 100.00%
+R/upsetVarByCol.R: 100.00%
+R/varTypes.R: 100.00%
+```

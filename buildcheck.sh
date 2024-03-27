@@ -3,13 +3,13 @@
 # 1 - a package folder for building and checking
 pkgname=$1
 
-BIOC="$HOME/bioc"
+REVIEWS="$HOME/reviews/"
 
 shopt -s expand_aliases
 
 source ~/.bash_aliases
 
-cd $BIOC
+cd $REVIEWS
 
 buildd $pkgname
 checkd ${pkgname}_*

@@ -1,0 +1,51 @@
+# UCSC.utils
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* It seems like there are some struggles to get the data in the format required;
+consider using `jsonlite::fromJSON` which will provide a `data.frame` for each
+chromosome e.g., in:
+
+```r
+UCSC.utils:::.API_query(
+    "getData/track",
+    query = list(genome = "mm9", track = "cytoBandIdeo"),
+    api.url = UCSC.utils::UCSC.api.url()
+) |>
+    httr::content(as = "text", encode = "UTF-8") |>
+    jsonlite::fromJSON()
+```
+
+## vignettes
+
+* Looks good.
+
+## R
+
+Consider using `httr::stop_for_status` to check for errors. There may be
+conditions that are not exactly errors e.g., codes <300.
+* Note that both `httpcache` and `httr2` provide caching mechanisms. Where the
+former would be easier to use.
+
+## tests
+
+* Coverage looks good.
+
+```r
+> covr::package_coverage(type="all")
+UCSC.utils Coverage: 90.06%
+R/zzz.R: 0.00%
+R/00utils.R: 20.00%
+R/UCSC.api.url.R: 77.78%
+R/REST_API.R: 84.31%
+R/fetch_UCSC_track_data.R: 84.62%
+R/UCSC_dbselect.R: 87.50%
+R/list_UCSC_genomes.R: 94.37%
+R/get_UCSC_chrom_sizes.R: 95.45%
+R/list_UCSC_tracks.R: 98.77%
+```
+

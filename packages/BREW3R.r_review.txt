@@ -1,0 +1,51 @@
+# BREW3R.r
+
+* Overall, the package looks good. It looks like the range operations
+rely heavily on the `tidyverse` which is not really designed for that in
+mind. Consider using methods in `GenomicRanges` that may help
+the code be more robust.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Minor: Consider using the native pipe over `dplyr::'%>%'`.
+
+## vignettes
+
+* Keep the text at a max 80 character width. IMO, it is easier to review and
+maintain.
+* Avoid mentioning `devtools` in the vignette. Simply use `BiocManager` with
+a `username/repo` character input.
+* Consider adding `mustWork = TRUE` argument to `system.file` calls
+* Consider providing a `verbose = FALSE` default to the `extend_granges`
+function. Prioritize informative text and remove text e.g., "Extend last
+exons.", "Extending them.", etc.
+* Load `GenomicRanges` in the vignette and void using `GenomicRanges::`
+qualifiers.
+* Use `runValue` on the `Rle` to extract the character strand value,
+e.g.,  `runValue(strand(gene_after[1]))` and add one to the output i.e.,
+`(x == "+") + 1` instead of using `if ... else` (seen in plotting chunks).
+
+## R
+
+* Consider using `@importFrom GenomicRanges ...` to import functions such as
+`strand`, `start()<-`, etc.
+* Consider reducing the cyclomatic complexity of the `extend_granges` function
+currently it is at a value of 16: `cyclocomp::cyclocomp(extend_granges)`
+* Have you considered using `intra-range` methods from `GenomicRanges`, e.g.,
+`flank`, `resize`, `shift` etc. It seems like those could be useful and robust
+operations.
+
+## tests
+
+Coverage looks good:
+
+```r
+covr::package_coverage()
+BREW3R.r Coverage: 89.71%
+R/extend_granges.R: 76.29%
+R/helpers.R: 92.23%
+```
