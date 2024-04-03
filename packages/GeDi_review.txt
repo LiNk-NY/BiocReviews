@@ -1,0 +1,65 @@
+# GeDi
+
+* Overall, the package provides _a lot_ of functionality for the user. One
+issue may be the maintenance of the package that depends on a lot of other
+packages; therefore, causing the package to be fragile to issues in any of the
+dependencies. There is some reliance on `for` loops which may lead to
+performance issues.  Ensure that the `for` loops for the most part are using
+the allocate and fill method, where possible, rather than growing a vector.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes/
+
+* Consider letting users specify the column names that correspond to
+"Genesets" and "Genes" as part of the main function, rather than having the
+user rename the columns in their data.
+* Note that in the `Additional Information` section, the support site should
+be used for user experience questions and GitHub for bug reports.
+* Minor. Consider wrapping text to 80 column width for readability.
+
+## R
+
+* Use double `||` within `if` statements to ensure that a single logical is
+evaluated.
+* Remove or update code that is commented out.
+* The work is extensive and perhaps using shiny modules would have helped in
+avoiding a monolithic `app.R` file. Consider this for future development.
+* Please refer to https://contributions.bioconductor.org/data.html?q=data#exported-data-and-the-data-directory
+for examples on how to load exported data inside a function (for
+`macrophage_topGO_example`).
+* There are potential performance improvements possible for `checkInclusion`
+e.g., by using all the combinations of comparisons (with `combn`) across all
+elements and identifying subsets that way.
+* Consider using caching for files e.g., in `getId` caching the `species.txt`
+file
+
+## tests
+
+* Coverage looks good.
+
+```r
+> covr::package_coverage(type = "all")
+GeDi Coverage: 96.82%
+R/utils.R: 79.41%
+R/download_PPI.R: 82.61%
+R/go_Similarity.R: 94.12%
+R/meetmin_Scoring.R: 95.00%
+R/kappa_Scoring.R: 95.24%
+R/jaccard_Scoring.R: 95.45%
+R/sorensen_dice_Scoring.R: 95.45%
+R/pMM_Scoring.R: 98.00%
+R/clustering.R: 99.15%
+R/gs_Graph.R: 99.32%
+R/app.R: 100.00%
+R/clustering_wordcloud.R: 100.00%
+R/distance_dendro.R: 100.00%
+R/distance_heatmap.R: 100.00%
+R/gs_histogram.R: 100.00%
+```

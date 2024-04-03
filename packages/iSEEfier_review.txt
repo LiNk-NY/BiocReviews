@@ -1,0 +1,48 @@
+# iSEEfier
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Minor: Consider wrapping text to fit an 80 character column width.
+* It looks good.
+
+## R
+
+* The documentation text and even code goes past the 80 column width and makes
+it hard to read and review.
+* Combine multiple `stopifnot` calls into one, e.g.,
+```r
+stopifnot(is.character(collection), identical(length(collection), 1L))
+```
+* Consider using `BiocBaseUtils` for checking assertions with e.g.,
+`isScalarCharacter` instead of the example above.
+* Tell the user what package needs to be installed in the error message in
+`iSEEnrich`.
+
+## tests
+
+* Looks good:
+
+```r
+> covr::package_coverage(type = "all")
+iSEEfier Coverage: 98.91%
+R/utils.R: 98.51%
+R/iSEEinit.R: 99.13%
+R/iSEEnrich.R: 100.00%
+```
+
+## BiocCheck results
+
+* Consider resolving some of the notes. Overall, it looks good.
+
+```r
+─ BiocCheck results ──
+0 ERRORS | 0 WARNINGS | 6 NOTES
+```

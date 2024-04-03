@@ -1,0 +1,84 @@
+# pwalign
+
+* Overall, the package is great for pairwise alignment and calculating
+string distance matrices. The code seems to be robust but some unit tests
+can still increase the coverage. It seems that the `useMpi` functionality is
+in question. I mostly provided minor notes given that this code is
+established and ported over from `Biostrings`.
+
+## DESCRIPTION
+
+* Note that `LazyLoad` field is now ignored. The replacement `LazyData` should
+be set to `false` or not included. Users should use `data(...)` to load a
+dataset rather than have them in the `.GlobalEnv`.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Consider converting the `Rnw` file to `Rmd`.
+* Looks good.
+
+## R
+
+* `RTobjs` does not seem to be used anywhere, consider its removal.
+* __Minor__: Consider reducing cyclomatic complexity by simply coercing type
+rather than checking and coercing, e.g. in
+`mismatchSummary,AlignedXStringSet0-method` (and others),
+
+```r
+weight <- as.integer(weight)
+
+## instead of
+
+if (!is.integer(weight))
+    weight <- as.integer(weight)
+
+```
+* Minor: To avoid repetition, perhaps use a default
+`compareStrings,ANY,ANY-method` to coerce both `pattern` and `subject` inputs
+to character and dispatch to the `compareStrings,character,character-method`
+
+```r
+setMethod("compareStrings",
+          signature = c(pattern = "ANY", subject = "ANY"),
+          function(pattern, subject) {
+              compareStrings(as.character(pattern), as.character(subject))
+          })
+```
+* It looks like `useMpi` is disabled. Will it work again or should it be
+removed?
+* The arguments should list all possible options e.g., in `stringDist` the
+default `method` argument should be the vector of possibilities i.e.,
+`c("levenshtein", "hamming", "quality", "substitutionMatrix")` and `match.arg`
+will ensure that one of them is selected
+* Consider promoting functions from `Biostrings` to exported functions rather
+than using `:::` (in `R/utils.R`).
+
+## tests
+
+* Consider increasing the coverage of some files like
+`AlignedXStringSet-class.R`:
+
+```r
+> covr::package_coverage(type = "all")
+pwalign Coverage: 76.46%
+R/AlignedXStringSet-class.R: 0.00%
+R/align-utils.R: 38.89%
+R/PairwiseAlignmentsSingleSubject-class.R: 39.22%
+R/pairwiseAlignment.R: 49.49%
+R/zzz.R: 50.00%
+R/00datacache.R: 66.67%
+R/stringDist.R: 71.76%
+R/PairwiseAlignments-class.R: 72.22%
+R/PairwiseAlignments-io.R: 86.01%
+R/substitution_matrices.R: 87.76%
+src/align_pairwiseAlignment.c: 89.47%
+src/align_utils.c: 99.48%
+R/InDel-class.R: 100.00%
+src/R_init_pairwiseAlignment.c: 100.00%
+```
+
+
