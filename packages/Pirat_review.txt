@@ -1,0 +1,96 @@
+# Pirat #3308
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+* There seems to be a shiny app provided as part of the package. Consider
+moving that functionality to a dedicated shiny package.
+
+## vignettes
+
+* Avoid using 1:N notation and use `seq_len` or `seq` instead in the
+"transcriptomic integration" section.
+
+* Minor: `which` is not needed for subsetting when a logical vector would work
+the same, e.g., in "samples-wise correlations" section. If there are NAs, use
+`na.rm = TRUE` with `colSums`, etc.
+* Minor: Consider wrapping text to a max character limit of 80 columns. It is
+easier to review and read.
+
+## R
+
+* Add a description to all fields in the data documentation (`@format` field
+in `R/doc-data.R`)
+* Remove or fix commented code in the `estimate_gamma()`,
+`impute_block_llk_reset()`, `impute_block_llk_reset_PG()` functions, etc.
+* It seems like `mcar` is not an override for `gamma_1` to be 0 as it is in a
+multiple or `|` statement. Provide a more accurate description in the
+documentation for `estimate_gamma`.
+* Separate plots and calculation functions e.g., in `estimate_psi_df`
+* Rename `install_Pirat` to more accurately reflect the intention of the
+function.
+* Move the shiny app to another package. Not all users may want to use
+the shiny functionality.
+* Use more descriptive argument names e.g., `ARG_VALUE_1` does not help the
+user.
+* Avoid using `cat` in functions that are not `print` or `show` methods, e.g.,
+in `pipeline_llkimpute`.
+* Provide the full list options in the argument as a character vector and use
+`match.arg` in the body of the function, e.g., for `extension` argument in
+`pipeline_llkimpute`, set it to `extension = c("a", "b", "c")`. This way the
+user can see the full list of options in the usage section of the
+documentation.
+* Avoid using 1:N notation and use `seq_len` or `seq` for `for` loops; see
+`get_indexes_embedded_prots`
+* Consider moving plotting functions to another package. The package currently
+has basilisk / python deps, shiny, and ggplot. This would render the package
+fragile if any of those components begin to fail.
+* Avoid nested for loops where possible; see `split_large_pg`.
+* AFAIK, `basilisk` and `reticulate` operate differently yet you use them both.
+Can you explain why both are needed?
+* Resolve the following `R CMD check NOTE`:
+
+```r
+* checking R code for possible problems ... NOTE
+estimate_gamma: no visible global function definition for ‘lm’
+estimate_psi_df: no visible binding for global variable ‘var’
+estimate_psi_df: no visible binding for global variable ‘x’
+mod_Pirat_server : <anonymous>: no visible global function definition
+  for ‘observe’
+plot_pep_correlations: no visible global function definition for ‘cor’
+plot_pep_correlations: no visible binding for global variable ‘group’
+remove_NA_pep_reset: no visible global function definition for
+  ‘remove_pep_from_idx’
+Undefined global functions or variables:
+  cor group lm observe remove_pep_from_idx var x
+Consider adding
+  importFrom("stats", "cor", "lm", "var")
+to your NAMESPACE file.
+```
+
+## /
+
+* Add `.github` folder to `.Rbuildignore`
+
+## tests
+
+* Increase coverage where needed:
+
+```r
+> covr::package_coverage(type = "all")
+Pirat Coverage: 68.83%
+R/mod_Pirat.R: 0.00%
+R/reset_data.R: 0.00%
+R/split_funcs.R: 48.28%
+R/plots.R: 63.46%
+R/pirat_utils.R: 82.29%
+R/pipeline_impute.R: 92.78%
+R/estimate_funcs.R: 93.88%
+R/install.R: 100.00%
+R/SE.R: 100.00%
+R/utils.R: 100.00%
+```
