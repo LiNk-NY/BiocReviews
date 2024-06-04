@@ -1,0 +1,11 @@
+# SCIntRuler #3295
+
+## DESCRIPTION
+
+
+* The import of `devtools` looks questionable. Otherwise, it looks good.
+
+## NAMESPACE
+
+* Remove `exportPattern` function call.
+* Consider using the native pipe `|>` rather than `magrittr::'%>%'`
