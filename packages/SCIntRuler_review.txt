@@ -1,7 +1,11 @@
 # SCIntRuler #3295
 
-## DESCRIPTION
+The package makes use of the `Seurat` representation and does not integrate
+with Bioconductor other than providing a serialized `SummarizedExperiment`
+dataset and conversion functions from SCE to Seurat.  Please re-evaluate the
+need for a Bioconductor submission.
 
+## DESCRIPTION
 
 * The import of `devtools` looks questionable. Otherwise, it looks good.
 
@@ -9,3 +13,17 @@
 
 * Remove `exportPattern` function call.
 * Consider using the native pipe `|>` rather than `magrittr::'%>%'`
+
+## vignette
+
+* Add a more descriptive `VignetteIndexEntry`
+* Optional. Consider wrapping text to 80 character width for readability.
+* Use `eval=FALSE` for the Installation code chunk and uncomment code.
+* No need to explicitly install dependencies in the Installation code chunk.
+They will be installed along with your package.
+* Remove the `devtools` reference.
+* Load the data with `data("sim_data_sce", package = "SCIntRuler")` and avoid
+`SCIntRuler::sim_data_sce`
+* Remove commented code.
+* Run spell check on the vignette.
+
