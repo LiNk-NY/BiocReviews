@@ -1,0 +1,29 @@
+# PepSetTest #3417
+
+## DESCRIPTION
+
+* Add `BugReports` and `URL` fields.
+* Include your ORCID ID or remove the comment argument.
+
+## NAMESPACE
+
+* Consider using the native pipe `|>` rather than `%>%` in `magrittr`
+* Looks good.
+
+## vignette
+
+* Consider wrapping the text to 80 character width for readability.
+* Optional. Consider using `BiocStyle::html_document`
+* Optional. Use `bibliography:` in the yaml header and include an
+`inst/REFERENCES.bib` file to cite your publication and direct users to
+`citation(package = "PepSetTest")`.
+* Promote safe coding practices and use `seq_along(group)` rather than
+`1:length(group)`
+* Consider simplifying the code in example 3 (`contrasts_res`) to make it more
+reader friendly or use helper functions.
+
+## R
+
+* Avoid using `sapply` and use `vapply` or `lapply`
+* Avoid using `eval(parse())`
+
