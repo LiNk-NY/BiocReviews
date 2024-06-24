@@ -1,5 +1,10 @@
 # PepSetTest #3417
 
+The main data representations in the package are matrices and data.frames.
+There are a couple of functions that allow `SummarizedExperiment` inputs.
+Should most functions support a `SummarizedExperiment` representation,
+especially those that require a mapping `data.frame`?
+
 ## DESCRIPTION
 
 * Add `BugReports` and `URL` fields.
@@ -25,5 +30,9 @@ reader friendly or use helper functions.
 ## R
 
 * Avoid using `sapply` and use `vapply` or `lapply`
-* Avoid using `eval(parse())`
+* Avoid using `eval(parse())` and use `switch` instead.
+* Reconsider the sequence of calls in `CompPepSetTest` and
+`EnframeContrastsRes`, i.e., `result %>% filter(!is.na(get(stats)))`. Your
+intention seems different than the code, perhaps use `.[[stats]]` or
+`.data[[stats]]`.
 
