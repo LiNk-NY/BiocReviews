@@ -1,0 +1,23 @@
+# eoPredData #3458
+
+## DESCRIPTION
+
+* Include a more descriptive `Title` field. What is `eoPred`?
+
+## NAMESPACE
+
+* Looks OK.
+
+## vignettes
+
+* Remove timing code from the vignette. The BBS will provide timings.
+* The vignette mentions `minfi` but the code displayed installs `mixOmics`. Is
+that correct?
+* Note that `rmarkdown` / `knitr` can also handle references by adding
+`bibliography: filename.bib` in the yaml header. That would avoid the
+`RefManageR` code.
+* Consider adding a retrieval or `.onLoad` function to the package that helps
+the users access data resources by name. See the `HubPub` vignette section
+2.1.2.4.
+* Describe the data in the vignette.
+
