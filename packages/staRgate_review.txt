@@ -1,0 +1,126 @@
+# staRgate #3485
+
+## DESCRIPTION
+
+* Looks good.
+* Consider avoiding the `magrittr` dependency in favor of the native pipe
+(`|>`).
+
+## NAMESPACE
+
+* Consider using the native pipe.
+* Looks good.
+
+## vignettes
+
+* Consider using `BiocStyle::html_document` as the output function.
+* Consider wrapping the lines to a limit of 80 character width. This makes it
+easier to review and, IMO, maintian.
+* Remove version specific code from the `Installation` section. You do not
+want to update this code at every release.
+* Remove GitHub installation instructions.
+* Remove installation instructions for specific packages and only keep the
+`library("package")` calls instead. `Import`'ed and `Suggest`'ed packages are
+usually installed with your package.
+* Use `r Biocpkg("flowCore"}` etc. for referring to Bioconductor or `r
+CRANpkg("openCyto")` for CRAN packages
+* Consider hiding (`echo = FALSE`) the `theme_set` code related to plotting.
+* Optional. Please encourage good practices and use `<-` instead of `=` for
+assignment.
+* Avoid using `@` to access slots and create an accessor function (e.g. in
+`chk_cm@spillover`).
+* Avoid too much conditional code as it complicates the workflow for the user,
+e.g., when resolving inconsistencies in naming conventions in the `Import FCS`
+section
+* Consider reducing the amount of repetitive code in the vignette. Please make
+it easy for the user to use your software (see `Extract intensity matrix`
+section).
+
+## R
+
+* Keep move the roxygen block(s) above the function and not in the body (see
+`getBiexpTransformGS`).
+* Is the standard that all input files be `csv`? Perhaps the inputs to these
+functions can be matrices instead. What if names differ, is your code robust
+enough to handle column name changes?
+* Consider reducing the cyclomatic complexity in the code by reducing the
+number of "check inputs" and consider using an S4 class with validity checks.
+* Avoid nested `ifelse` and use `case_when` with `mutate`.
+* Minor: Consider using the shorter `is.data.frame()`, `is.numeric()`
+functions instead of `inherits(...)`
+
+## tests
+
+# stageR #432
+
+I agree with Michael @lawremi, I don't see why you wouldn't be able to
+extend `SummarizedExperiment` for the `stageR` class. You would benefit
+from the already established structure.
+
+## DESCRIPTION
+
+* Please indicate the appropriate packages in the
+imports and suggests field. If you require packages
+for the vignette examples but not for the code
+in the package, put them under the suggests field.
+If you are using external functions for the code in your package
+use the imports field. If you are building on top of other
+functions outside of your package, indicate them in the
+depends field.
+
+## NAMESPACE
+
+* It seems like your accessor functions don't need to be prepended
+with 'get'. It is a matter of preference but my suggestion would be
+to remove 'get' and leave just the camelCase nouns.
+
+## Formatting
+
+* Please make sure you're formatting your code to not exceed 80 column
+widths. This makes it harder to read and to maintain.
+
+## R
+
+* Please follow the packages guidelines as listed in Bioconductor.org
+* Avoid using, `1:length(x)` sequence generation, the `=` for setting
+variables, sapply for looping.
+* Don't repeat yourself, create helper functions when you need to run
+similar operations under different 'methods', e.g. `.stageWiseTest`
+* Use accessor functions to extract data within your class,
+avoid using `@`
+* Avoid using numeric indices for accessing data vectors, use more robust
+names for extracting columns, e.g., `df[, "var1"]` vs. `df[, 1]`
+* Define methods for your class so that you don't need to check for
+S4 class membership because it will only dispatch to that class
+(`.getResults`)
+* You don't need to create an off function for your show method, just
+include the function as part of the `setMethod` call
+
+## vignettes
+
+* Please include your dataset generation script under `inst/extdata`,
+no need to include it in R (`constructDTUDataset.R`)
+* Load data appropriately using `system.file` in your example.
+* Avoid downloading data in the vignette
+* Don't install packages programatically in the vignette, just provide
+the library calls. Users will donwload them on their own.
+* Use `require` to check availability of packages rather than
+`installed.packages()`
+* Use meaningful variable names in the vignette, L, v, and d are not very
+illustrative.
+
+## tests
+
+Please increase the package coverage in `R/getDensityGates.R`:
+
+```r
+> covr::package_coverage(type="all")
+staRgate Coverage: 81.35%
+R/getDensityGates.R: 52.63%
+R/getPerc.R: 74.40%
+R/getGatedDat.R: 84.38%
+R/internal.R: 98.41%
+R/getBiexpTransformGS.R: 100.00%
+R/getCompGS.R: 100.00%
+```
+

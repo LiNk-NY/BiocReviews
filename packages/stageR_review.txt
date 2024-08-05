@@ -13,13 +13,13 @@ in the package, put them under the suggests field.
 If you are using external functions for the code in your package
 use the imports field. If you are building on top of other
 functions outside of your package, indicate them in the
-depends field. 
+depends field.
 
 ## NAMESPACE
 
 * It seems like your accessor functions don't need to be prepended
 with 'get'. It is a matter of preference but my suggestion would be
-to remove 'get' and leave just the camelCase nouns. 
+to remove 'get' and leave just the camelCase nouns.
 
 ## Formatting
 
