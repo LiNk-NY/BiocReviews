@@ -1,0 +1,64 @@
+# chevreul #3332
+
+* Overall the package contains a lot of functionality and as a consequence,
+dependencies. It would be better to split the package into possibly two or
+three separate packages that minimize the number of dependencies in each.
+* Consider the `alabaster` framework for exporting `SingleCellExperiment`
+and other objects in a language-agnostic format.
+
+## DESCRIPTION
+
+* Is it possible to cut down some of the dependencies? The number of imports
+can make the package fragile.
+* You may also want to split the package into separate packages (e.g., shiny
+and visualization packages)
+
+## NAMESPACE
+
+* Looks good.
+* Consider removing the `%>%` dependency.
+* Use more descriptive function names, e.g., `plot_feature`, `plot_readcount`,
+`plot_var`, etc.
+
+## vignettes
+
+* Use more descriptive titles in the vignette / index entry.
+* Remove `Sys.time` calls from vignette. These will be provided by the BBS.
+* (optional) Consider wrapping text longer than 80 column width.
+* Although a good reminder, it is not necessary to display
+`BiocManager::valid()` for the user.
+* The `human_gene_transcript_sce()` function in `chevreuldata` does not seem to
+be working. I get some "resource removed" errors.
+* The code is a bit unclear. You take the `chevreul_sce` and reconstruct
+another `SingleCellExperiment`?
+* The code for creating the vignette is not needed. Please remove.
+* Avoid static images of plots and provide the code needed to plot. Consider
+moving plotting functionality into a separate package.
+* Include code to reproduce plots and analyses. Do not use static images.
+
+## R
+
+* Properly reference data objects in `transcripts_to_genes` etc. as detailed
+in: https://contributions.bioconductor.org/data.html?q=data#exported-data-and-the-data-directory
+* Minimize the code repitition by extracting the common operations in both
+conditions, e.g. in `chevreul_app.R` where
+`featureType %in% c("transcript", "gene")`
+* Based on the `shiny` docs, `moduleServer()` is preferred over `callModule`.
+Please update accordingly.
+* Be more descriptive in the documentation, especially with inputs, e.g.,
+`object` argument in `find_all_markers` should be more specific than "an
+object".
+* Consider using the native pipe `|>` over the `magrittr` pipe.
+* Should the metadata of a SingleCellExperiment be saved as a JSON instead of
+CSV?
+* Consider using a GitHub Action to create a Docker / Containerized version of
+the app.
+* Isn't data such as `grch38` already available in Bioconductor? No need to
+re-export from your package.
+* Why not use `split` directly on a `SingleCellExperiment` rather than
+`splitByCol`?
+
+## tests
+
+* Unknown. Resource `EH9452` failed to load.
+
