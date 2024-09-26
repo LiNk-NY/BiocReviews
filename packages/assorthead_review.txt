@@ -1,0 +1,15 @@
+# assorthead #3494
+
+## DESCRIPTION
+
+*  Looks good.
+
+## vignettes
+
+* Looks good.
+
+## inst/fetch.R
+
+* Looks good.
+
+
