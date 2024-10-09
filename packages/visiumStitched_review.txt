@@ -1,0 +1,29 @@
+# visiumStitched #3501
+
+## DESCRIPTION
+
+* Looks good.
+* Consider removing the `LazyData: true` line. Any data should be loaded with
+`data(...)`.
+
+## NAMESPACE
+
+* Use more common names for functions, e.g., `spe_to_seurat` can `as.Seurat()`.
+* Consider renaming `build_spe` and avoid abbreviations.
+* Add `Seurat` to the `Suggests` field instead.
+
+## vignettes
+
+* Consider wrapping text to 80 characters for readability and ease of
+maintenance.
+* Remove `Sys.time()` calls from vignette. The BBS will provide this
+information in the report.
+* Remove installation instructions that use `remotes`. You should be using
+`BiocManager::install()` instead.
+* The interface is a bit awkward `build_spe`. It seems like `sample_info`
+requires a lot of user intervention.
+
+## R
+
+
+
