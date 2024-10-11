@@ -1,5 +1,9 @@
 # visiumStitched #3501
 
+* Overall the package is well put together. Increase robustness by using
+named indices rather than numeric ones. Consider migrating the code to
+other readers as this `SpatialExperiment` might change in the future.
+
 ## DESCRIPTION
 
 * Looks good.
@@ -22,8 +26,40 @@ information in the report.
 `BiocManager::install()` instead.
 * The interface is a bit awkward `build_spe`. It seems like `sample_info`
 requires a lot of user intervention.
+* Consider using other import tools as `read10xVisium` may be deprecated soon,
+e.g., `VisiumIO`, `SpatialExperimentIO` and others. Disclaimer: I maintain
+`VisiumIO`. Feel free to ask on the \#spatial Bioc slack channel.
+* Remove extra code in the Reproducibility section of the vignette e.g.,
+"extract R code", "wallclock" etc. Keep the session information.
 
 ## R
 
+* Perhaps reduce the complexity of the exampels so that they are easier to
+read and run.
+* Avoid saving `Rds` files from the examples. Use cached data in conjunction
+with `BiocFileCache`, if possible e.g., in `build_spe` and others.
+* Avoid using index subsetting where possible and use names instead, e.g.,
+`coords_xy[, 1]`.
+* Avoid creating folders for the user and assume that they are already
+available; error when not e.g., in `rescale_fiji_inputs`.
+* Add a package check to the `spe_to_seurat` function e.g., with
+`BiocBaseUtils::checkInstalled()`. Consider re-using previously written
+`spe_to_seurat` functions.
 
+## tests
 
+* Consider improving some unit test coverage:
+
+```r
+> covr::package_coverage(type = 'all')
+visiumStitched Coverage: 80.04%
+R/array_error_metrics.R: 0.00%
+R/build_spe.R: 78.08%
+R/add_array_coords.R: 79.31%
+R/prep_fiji_coords.R: 84.21%
+R/prep_fiji_image.R: 85.19%
+R/spe_to_seurat.R: 86.44%
+R/add_overlap_info.R: 89.29%
+R/rescale_fiji_inputs.R: 90.48%
+R/array_coord_utils.R: 94.29%
+```
