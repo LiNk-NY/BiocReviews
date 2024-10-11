@@ -1,0 +1,29 @@
+# MotifPeeker #3483
+
+## DESCRIPTION
+
+* Looks good.
+* Consider reducing the number of heavy / unnecessary imports (e.g., magrittr).
+
+## NAMESPACE
+
+* Should `bpapply` be exported?
+* Review exports and consider exporting only those relevant to the
+functionality of the package. At first glance, `pretty_number`, `trim_seqs`
+and `bpapply` seem to be unrelated to the package goal.
+
+## vignettes
+
+* Looks good
+* Remove the use of `remotes::install_github` in the vignette
+* Optional. Consider using `BiocStyle`
+
+## R
+
+* Avoid exporting `bpapply` and use as an internal helper.
+* Optional. Consider using `BiocBaseUtils::checkInstalled` instead of
+`check_dep`.
+* You can load `Suggest`ed packages in the examples rather than using
+`requireNamespace`
+
+
