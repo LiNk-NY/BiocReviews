@@ -1,5 +1,14 @@
 # MotifPeeker #3483
 
+* Overall the package has a lot of functionality. There is one common habit of
+returning invalid inputs rather than producing an error. In general, invalid
+inputs should be caught and not allowed. Make proper use of `stop` and
+`warning` in these scenarios. Do not lower the reliability of your functions
+with these type of `return()` calls.
+* There is a mix of analysis, plotting, and HTML reporting functionalities in
+the package. Consider separating these out into their own packages to reduce
+the number of dependencies for any one package.
+
 ## DESCRIPTION
 
 * Looks good.
@@ -17,6 +26,16 @@ and `bpapply` seem to be unrelated to the package goal.
 * Looks good
 * Remove the use of `remotes::install_github` in the vignette
 * Optional. Consider using `BiocStyle`
+* The package vignettes should run despite not having `MEME` suite installed.
+* Code chunks that use `MEME` should run conditionally.
+
+```r
+Quitting from lines 193-212 [run-motifpeeker] (MotifPeeker.Rmd)
+Error: processing vignette 'MotifPeeker.Rmd' failed with diagnostics:
+Cannot find MEME suite installation. If installed, try setting the path 'MEME_BIN' environment varaible, or use the 'meme_path' parameter in the MotifPeeker function call.
+For more information, see the memes pacakge documention-
+https://github.com/snystrom/memes#detecting-the-meme-suite
+```
 
 ## R
 
@@ -25,5 +44,45 @@ and `bpapply` seem to be unrelated to the package goal.
 `check_dep`.
 * You can load `Suggest`ed packages in the examples rather than using
 `requireNamespace`
+* Consider collecting all helper functions into a `utilities.R` file.
+* Combine conditions in `check_JASPAR` and return a warning or error when the
+ID fails the checks.
+* Avoid using system calls to `echo` in `messager` and use native R functions
+e.g., `message`. The `stop` function already concatenates inputs so the
+`stopper` helper function is not really needed.
+* Do not create directories for the user by default (in `denovo_motifs` and
+`find_motifs`). Remove the `tempdir()` default input and only create when the
+user provides an input to `out_dir`.
+* It is generally advisable to avoid saving files for the user unless the user
+explicitly provides an input for saving (in `denovo_motifs`).
+* Avoid verbose conditions e.g., in `download_button`, esp. if the inputs are
+the same. It looks like the condition could simply be handled with a switch
+call e.g., `switch(type, dir = download_dir, file = download_file)`
+* No need to use `paste` before the warning message in `filter_repeats`.
+* It seems like you should use a combination of `which` and `grepl` for
+identifying `good_motif_indices`.
+* Reconsider exporting helper functions such as `format_exptype`, `to_plotly`,
+and others. Export only the core functionality that other packages may use.
+* Remove `get_bpparam` function. Users who wish to use parallel functionality
+will know what settings to use for their systems.
+* Consider the native pipe `|>` operator rather than `%>%`.
+* Use singular `@return` roxygen tag rather than `@returns` e.g., in
+`link_JASPAR`.
+* The functions should provide the output to the user directly and optionally
+save a file on user input not by default (`markov_background_model`)
+* Avoid using `donttest` and run the `MotifPeeker` example. Use a small dataset
+to shorten the time it takes to run.
+* The `report` section in `MotifPeeker` is not necessary. Users wishing to time
+the function can use `system.time` themselves.
+* Avoid `return()`-ing inputs when checks fail and use `stop` or `warning`
+e.g., in `normalise_paths` and others. Invalid inputs should always fail.
+* Remove `donttest` in the examples. Use small example datasets to speed up
+the examples in `plot_enrichment_overall.R`.
+* Avoid using `cat` outside of `show` methods e.g., in `print_denovo_sections`.
+
+## tests
+
+* Unable to run `covr::package_coverage()` without `MEME` installed for the
+vignettes.
 
 
