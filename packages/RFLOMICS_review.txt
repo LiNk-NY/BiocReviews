@@ -1,0 +1,112 @@
+# RFLOMICS #3477
+
+* The functionality is extensive and the unit tests seem to be taking quite
+some time. Ensure that the testing code is performant.
+
+## DESCRIPTION
+
+* The list of `Imports` is quite extensive. Is it possible to reduce that
+number?
+* Consider including a `requirements.txt` file in the `inst/` package folder
+or base package directory for the python package requirements.
+* Consider wrapping text for the `Description` and `Authors@R` fields.
+
+## NAMESPACE
+
+* For packages with a long import list, consider using `Depends` in the
+`DESCRIPTION` file, e.g. for `ggplot2` and `dplyr`.
+
+# vignettes
+
+* Consider wrapping text to an 80 character limit for readability and
+maintenance.
+* Uncomment `generateReport` or remove the function if it is not ready in
+`RFLOMICS-command-line.Rmd`.
+
+# R
+
+* Remove commented code in `module_04_diff_analysis.R`.
+* Reduce code repetition where possible, e.g. in `R/module_03_data_explor.R`.
+* Avoid using `initialize` methods in `RFLOMICS-Class.R` for reasons listed
+here: https://stackoverflow.com/a/16248773/6558242
+* Do not use `{}` in setGeneric due to performance issues. See :
+https://adv-r.hadley.nz/s4.html#s4-generics
+* Make sure that the method signature matches the generic signature e.g.,
+include all arguments e.g., `...` in `resetRflomicsMAE` and others.
+* Ensure that functions and methods do not write to disk by default without
+the user's consent / prompt e.g., in  `generateReport`.
+* Use accessor functions in methods e.g., `colData(object)` instead of
+`object@colData` in the `getDesignMat,RflomicsMAE-method`. Use also
+`metadata()`, etc.
+* Reduce repetitive code by isolating common operations, e.g., :
+```r
+if (raw) {
+    object@metadata[["PCAlist"]][["raw"]] <-
+        PCA(t(pseudo), ncp = ncomp, graph = FALSE)
+} else {
+    object@metadata[["PCAlist"]][["norm"]] <-
+        PCA(t(pseudo), ncp = ncomp, graph = FALSE)
+}
+```
+becomes
+
+```r
+rawnorm <- if (raw) "raw" else "norm"
+metadata(object)[["PCAlist"]][[rawnorm]] <-
+    PCA(t(pseudo), ncp = ncomp, graph = FALSE)
+```
+in the `runOmicsPCA,RflomicsSE-method`.
+* Run spell checking on the text, e.g., `replicates` instead of `replicats`
+in the `checkExpDesignCompleteness,RflomicsSE-method`.
+* Consider using a lookup table `data.frame` or `list` for default values of
+`transformation`, `normFactors` and other values in
+`runCoExpression,RflomicsSE-method` rather than encoding them in a series of
+`ifelse` statements. This way it is easier to maintain and easier to review.
+* Consider supporting existing `MultiAssayExperiment` / `SummarizedExperiment`
+objects as inputs to your constructor function. The user should not need to
+deconstruct and re-construct the object for your constructor function.
+
+* When running the app, I get an error message:
+```
+partial match of 'val' to 'value'
+```
+* After dismissing the prompt, I was lost after pressing the `load ecoseed
+data` example in the app. The app did not respond after making selections.
+
+## tests
+
+* Consider increasing coverage in relevant files:
+
+```r
+RFLOMICS Coverage: 22.17%
+R/coverPage.R: 0.00%
+R/module_00_common.R: 0.00%
+R/module_01_load_data.R: 0.00%
+R/module_02_set_stat_model.R: 0.00%
+R/module_03_data_explor.R: 0.00%
+R/module_04_diff_analysis.R: 0.00%
+R/module_05_coexp_analysis.R: 0.00%
+R/module_06_annot_enrichment.R: 0.00%
+R/module_07_data_integration.R: 0.00%
+R/runRFLOMICS.R: 0.00%
+R/server.R: 0.00%
+R/ui.R: 0.00%
+R/RFLOMICS-Methods_00_Common.R: 22.64%
+R/RFLOMICS-Methods_01_load_data.R: 31.39%
+R/RFLOMICS-Methods_06_annot_enrichment.R: 34.35%
+R/utils_07_integration.R: 36.43%
+R/utils_00_common.R: 40.48%
+R/utils_06_annot_enrichment.R: 42.50%
+R/RFLOMICS-Methods_04_diff_analysis.R: 50.71%
+R/utils_01_load_data.R: 51.59%
+R/utils_04_diff_analysis.R: 53.73%
+R/utils_05_coexp_analysis.R: 53.73%
+R/RFLOMICS-Methods_07_Integration.R: 54.94%
+R/RFLOMICS-Methods_05_coexp_analysis.R: 60.98%
+R/RFLOMICS-Methods_03_data_explor.R: 64.78%
+R/RFLOMICS-Generics.R: 72.41%
+R/utils_03_data_explor.R: 72.60%
+R/RFLOMICS-Methods_02_set_stat_model.R: 80.00%
+R/utils_02_set_stat_model.R: 89.93%
+R/RFLOMICS-Class.R: 100.00%
+```
