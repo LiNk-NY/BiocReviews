@@ -1,0 +1,87 @@
+# BulkSignalR #3554
+
+* Please make a stronger case for inclusion in Bioconductor. The main
+classes used in the package are `data.frame` and your `S4` classes which do
+not inherit from Bioconductor infrastructure. Consider interoperability
+with Bioconductor matrix-type classes.
+* Note that S4 generics in the package must have an explicit list of arguments
+when created.
+* The examples should ke runnable and not wrapped in `if (FALSE)`
+
+## DESCRIPTION
+
+* Looks good.
+* Consider using `tools::R_user_dir` instead of `rappdirs` for package related
+directory locations.
+
+## NAMESPACE
+
+* Consider using more descriptive names e.g., `colA`, `colB`, `cmpName`,
+`stats`, `param` etc. are quite vague.
+* Reconsider the use of `Biobase::testBiocCConnection`. It is an old function.
+
+## vignettes
+
+* Include `package: BulkSignalR` in the YAML front matter and remove the
+package version note in the `Load packages` section
+* Remove any commented code from the vignette (`BulkSignalR-Differential.Rmd`)
+* Only use one worker for the vignette. Package runs will be done
+simultaneously and only one core is allowed per package. Users can, of course,
+modify this setting.
+* Avoid copy-and-pasting pre-computed code into the vignette. It is preferred
+that your functions run in the vignette.
+* Do not use static images in the vignette. Use evaluated code to generate
+plots.
+* Would it be possible to interface with spatial class objects for the
+`Spatial Transcriptomics` section of the vignette? It may be a more natural
+workflow than reading the pre-processed example data for the example. You may
+also want to consider using `VisiumIO` to import data (disclaimer: I am the
+maintainer of `VisiumIO`)
+* Remove `png` and `dev.off` calls from the vignette and use only the functions
+in your package. Do not use static images. If you are using figures from a
+paper, those should be kept in a separate repository.
+
+## R
+
+* Do not use `print` in the example code for `getComplexes`. The user should
+not want to see the body of the function.
+* Avoid using `get` and use `Sys.getenv` for environment variables with
+defaults in `getComplexes`.
+* Do not use `if (FALSE)` in examples (`BSRClusterComp-class.R`).
+* Use more descriptive slot names for the `BSRClusterComp` class.
+* Avoid conditionally defining generics (e.g., `colA`, `colA<-`, etc.) and use
+`setGeneric` directly. Also indicate the full list of arguments in the generic
+so that both the method and generic signatures match.
+* Use your own accessor and setter functions in `learnParameters` rather than
+`obj@SLOT`.
+* The internal functions e.g., `.getEmpiricalNull` should not require an
+extensive call since those names are present in `obj@param` already. Your own
+internal code should be user friendly (in the
+`learnParameters,BSRDataModel-method` :).
+* Avoid writing files for the user by default (`filename` argument in
+`learnParameters,BSRDataModel-method`).
+* For the allocate and fill method, create a list of finite length, e.g., in
+`BSRDataModel-class.R`:
+```
+ligands <- vector("list", length(ligands(sig)))
+```
+* Use `lengths` instead of `vapply(x, length, integer(1))`
+* Use the `as` method for S4 classes rather than `as.BSRDataModelComp` with
+`setAs`.
+* Avoid using a method to create a class. It is better to use a constructor
+function to generate a class e.g., `defineClusterComp,BSRDataModelComp-method`
+for creating a `BSRClusterComp` class; seen in
+`intialInference,BSRDataModelComp-method`, and others.
+* Consider separating the graphing functionality into its own package.
+* Avoid `assign` calls in the `.onLoad` function and simply set package
+constants within an R file, e.g.,
+```
+url <- "https://partage-dev.montp.inserm.fr:9192"
+```
+* Avoid overly verbose package startup messages in `.onAttach`.
+
+## tests
+
+* Include unit tests to increase robustness.
+
+
