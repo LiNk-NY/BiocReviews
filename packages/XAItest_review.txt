@@ -1,0 +1,66 @@
+# XAItest #3519
+
+* Please make a stronger case for submission to Bioconductor. The main
+data representation in the package is `data.frame` and many of the functions
+and classes use either a `data.frame` or a `list`. The use of S4 should be
+reconsidered given the type of classes that your class inherits from.
+
+## DESCRIPTION
+
+* Add `BugReports` and `URL` fields.
+* Add `xgboost`, `shapr` to the `Suggests` field in the `DESCRIPTION`
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Consider wrapping text within the 80 character width.
+* Use the citation feature of RMarkdown with following in the YAML front
+matter:
+```
+bibliography: ../inst/REFERENCES.bib
+```
+* Remove the reference to the `devel` version from the vignette. After
+acceptance, the vignette will be published to the release version.
+* Remove any commented code from the vignette.
+* It is strongly discouraged to use static images. Please run the function and
+show any graphical outputs for `mapPvalImportance(objXAI)`.
+* Consider moving the custom function creation to a different vignette.
+
+## R
+
+
+* S4 classes have the convention of starting with a capital letter.
+* The class constructor should usually be `.objXAI` rather than `contXAI`
+* Reconsider using S4 for your composed class. It seems to be more fitting as
+an S3.
+* Use `cat` for the `show` method.
+* Wrap text in the documentation and code to a limit of 80 character width.
+* Set the defaults `refPvalColumn` and `featImpColumns` to be the ones you are
+grepping for i.e., `adjpval` and let the user change it if the column names are
+different (e.g., `refPvalColumn = "adjpval"`).
+* Avoid the use of `sapply` and use either `lapply` or `vapply`.
+* Create class accessors and avoid using `objXAI@metricsTable` or use S3.
+* Avoid using `print` and use `message` instead for `verbose` outputs.
+* Check that `ggplot2` is installed if you will keep it in `Suggests` e.g.,
+with `BiocBaseUtils::checkInstalled`. Otherwise move it to the `Imports`
+field.
+* Rename `df` input of your main function `XAI.test` to be more descriptive as
+it also accepts `SummarizedExperiment`.
+
+## tests
+
+* Coverage looks good. Consider increasing the coverage for `plotModel.R`:
+```r
+> covr::package_coverage(type = "all")
+XAItest Coverage: 86.50%
+R/plotModel.R: 66.67%
+R/getFeatImpThresholds.R: 82.35%
+R/mapPvalImportance.R: 88.89%
+R/XAI.test.R: 89.01%
+R/modelsOverview.R: 93.75%
+R/allClasses.R: 100.00%
+```
+
