@@ -1,0 +1,60 @@
+# MetaboDynamics #3565
+
+* Please consider more integrative outputs, currently the package makes use of
+`list` and `data.frame` outputs. Reduce the number of nested for loops and
+increase robustness in the code by avoiding index subsetting where possible.
+* Clearly separate computational from graphical functions to allow flexibility
+for the user.
+
+## DESCRIPTION
+
+* Consider wrapping the `Description` field to 80 character width.
+* Note that your package when / if accepted to Bioconductor will have version
+constraints on packages by design; therefore, it is not necessary to provide a
+minimum version for packages in the `Imports` and `LinkingTo` fields. This is
+only necessary for CRAN packages that have non-backwards compatible changes.
+* CRAN dropped support for 32-bit architectures with the release of R `4.2.0`:
+https://cran.r-project.org/bin/windows/base/old/4.2.0/NEWS.R-4.2.0.html
+and thus Bioconductor only builds 64-bit binaries for Windows so the `Biarch`
+field in the `DESCRIPTION` is not relevant. Please remove.
+
+## NAMESPACE
+
+* Some function names are quite long, consider shortening them especially for
+extractor functions e.g., `extract_diagnostics_dynamics`.
+* `get_ORA_dataframes` could be renamed into something more descriptive of the
+data than the data class.
+
+## vignettes
+
+* Provide an informative title in the vignette. It should briefly describe
+what the package does.
+* Consider including `package: MetaboDynamics` in the YAML front matter to
+show the package version.
+* Use a more descriptive name for `data_sim`. The name should try to describe
+the type of data.
+* Remove `rm` calls from the vignette. These are handled automatically by R's
+`gc()`.
+* Remove commented code from the vignette.
+
+## R
+
+* Avoid `1:nrow(x)` sequence generation and use `seq_len()`.
+* Move helper function (e.g., `eu()`, `similarity()`) outside of the body of
+other functions.
+* Avoid nested `for` loops.
+* Avoid growing a vector e.g., `distances <- list()`. Use the allocate and
+fill method e.g., `distances <- vector("list", length = 4)`.
+* Remove `rm` calls from R code. They are not necessary.
+* Separate computation and graphical results of functions e.g., in
+`compare_dynamics`, `compare_metabolites`, etc.
+* Properly document `data` inputs. These can also accept `SummarizedExperiment`
+but it is not noted in the documentation for `extract_diagnostics_dynamics`.
+* Add checks to `data` inputs e.g., `metabolite` and `time` columns. The code
+currently assumes that these columns are present.
+* Remove commented R files `metabolites_modules.R` and `modules_compounds.R`.
+
+## tests
+
+* Include unit tests to increase robustness of code.
+
