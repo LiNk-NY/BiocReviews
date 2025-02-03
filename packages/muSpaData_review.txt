@@ -1,0 +1,27 @@
+# muSpaData #3682
+
+Overall, the package looks to be in good shape.
+Both datasets loaded without a problem.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## R/zzz.R
+
+* Looks good though it may be more preferrable to create a custom
+function rather than use `createHubAccessors`.
+
+## vignettes
+
+* Consider formatting text to not exceed 80-character width. It makes it easier
+to review and maintain.
+
+* Move `Wei22_full()` code example to a chunk with `eval=FALSE` in
+order to avoid loading it during BBS testing.
+
+
