@@ -22,3 +22,11 @@ bibliography: ../inst/REFERENCES.bib
 and keeping the `References` section empty at the end of the document.
 
 ## R
+
+* Consider providing the option for flat file formats, e.g., `txt`, `csv`,
+etc. for compatibility with other languages.
+* Looks good.
+
+## tests
+
+* Looks good 100%.
