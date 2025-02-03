@@ -1,0 +1,24 @@
+# miaDash #3637
+
+## DESCRIPTION
+
+* Looks good.
+* Consider moving `shiny` to the `Depends` field.
+
+## NAMESPACE
+
+* Depend on `shiny` to avoid all the `importFrom` directives.
+
+## vignettes
+
+* Should `miaDash` call `runApp`? What do you need to instantiate the app for?
+* Consider using the `bibliography` feature for RMarkdown documents by adding
+the following to the YAML front matter:
+
+```r
+bibliography: ../inst/REFERENCES.bib
+```
+
+and keeping the `References` section empty at the end of the document.
+
+## R
