@@ -1,0 +1,87 @@
+# SmartPhos #3609
+
+Overall, the package is nicely organized. The code could use some refinement
+to align more with Bioconductor standards. There are a few instances where
+code repetition can be reduced.
+
+## DESCRIPTION
+
+* Please remove all the version restrictions, e.g., `(>= X.Y.Z)` for packages.
+These are unnecessary because Bioconductor releases are constrained to
+concurrent Bioconductor versions. For CRAN, the most current versions are
+obtained by default.
+* Add a `BugReports` field to the `DESCRIPTION`.
+* Format the `Title`, `Description` and `biocViews` fields so that they fit
+within 80 column widths.
+* The `Description` field seems to be an abstract of a publication. Consider
+providing just three brief sentences to describe the objectives of the package.
+
+## NAMESPACE
+
+* Import only the generics for use in your package and not the methods, e.g.,
+`MultiAssayExperiment,assay-method`
+* (Optional) Consider using the native pipe (`|>`) instead of `%>%`.
+* Consider adding `ggplot2` to the `Depends` field rather than importing a
+large number of functions from the package.
+
+## vignettes
+
+* Keep the text within the 80 character limit for easier maintenance.
+* `SmartPhos.Rmd` looks good.
+* Does the vignette mention how to handle data with HDF5 backends? If not,
+consider mentioning `saveHDF5MultiAssayExperiment`.
+* Can you indicate to the user how to run the app within the
+`SmartPhos Explorer` vignette?
+
+## R
+
+* Consider using `styler` or similar to format the code so that it fits
+within 80 column widths.
+* Use `library(SummarizedExperiment)` in the examples rather than using `::`.
+* Use more descriptive argument names, e.g., instead of `color` use
+`colorByCol` or similar to indicate to users that a column name is used to
+generate the different colors and not an actual color (in `plotIntensity`).
+* Consider reducing repetitive code e.g., in `basic_visualizations.R` and
+use default values (`NA` in this case) when `annotationCol` is not provided.
+The function signature `plotHeatmap` should also use this default value as
+well.
+* Avoid `1:n` sequence generation in `generateInputTable_DIA()` /
+`funFisher()` and use `seq_len` or `seq_along`.
+* Are functions like `generateInputTable` and `generateInputTable_DIA` needed
+by the end user? Perhaps they should not be exported.
+* Avoid using `print` within a function and use `message`, ideally with a
+`verbose` argument in the function.
+* Please use more descriptive dataset names and avoid using standard names,
+e.g., `Homo_sapiens` (`R/dataset.R`).
+* Use more descriptive function names e.g., `plotBox` vs `IntensityBoxPlot`.
+* Include all possible options in the `gsaMethod` argument, i.e.,
+`geneSet = c("PAGE", "GSEA")` and use `match.arg(geneSet)` within the function.
+This allows users to see all the possible options in the function signature.
+* Use an error with `stop()` instead of `warning(...); return(NULL)` in
+`readOnePhos` and others.
+* See the data section for instructions on how to import data into a function:
+https://contributions.bioconductor.org/data.html?q=data#exported-data-and-the-data-directory
+For `data("swissProt")` in `readPhosphoExperimentDIA()`.
+* Reduce the amount of repetitive code e.g.,
+
+```r
+if (impute == "QRILC") {
+  imp <- DEP::impute(ppeSub, "QRILC")
+}
+else if (impute == "MLE") {
+  imp <- DEP::impute(ppeSub, "MLE")
+}
+else if (impute == "bpca") {
+  imp <- DEP::impute(ppeSub, "bpca")
+}
+else if (impute == "MinDet") {
+  imp <- DEP::impute(ppeSub, "MinDet")
+}
+```
+into
+
+```r
+imp <- DEP::impute(ppeSub, impute)
+```
+
+## tests

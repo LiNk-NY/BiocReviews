@@ -1,0 +1,29 @@
+# Lheuristic #3039
+
+* Overall, it looks good. It would be good to provide more flexibility for
+the user with their own `MultiAssayExperiment` which will likely have different
+names for their methylation and expression assays. Provide either a
+helper function to conform to the names required by your functions or
+make your functions receptive to their assay names.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Looks good.
+
+## R
+
+* Avoid hard coded assay names in `calcFreqs`. Either expose some arguments in
+the function or check that the `MultiAssayExperiment` has those assay names.
+Consider providing a helper function to convert names to the desired ones
+`c("methylation", "expression")`.
+* The above also applies to the `correlationSelection` funciton.
+* Consider using more descriptive names for `TCGAexp` and `TCGAmet`.
+
