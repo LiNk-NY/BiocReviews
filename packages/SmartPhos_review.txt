@@ -85,3 +85,23 @@ imp <- DEP::impute(ppeSub, impute)
 ```
 
 ## tests
+
+* Coverage looks good. Consider increasing coverage in R/enrichment.R
+
+```r
+> covr::package_coverage(type = "all")
+SmartPhos Coverage: 64.83%
+R/enrichment.R: 28.37%
+R/preprocess_proteome_phospho.R: 47.20%
+R/dataImport.R: 58.10%
+R/shinyApp.R: 60.00%
+R/time_series_clustering.R: 61.54%
+R/basic_visualizations.R: 81.31%
+R/helper.R: 85.08%
+R/normalization_correction.R: 94.07%
+R/differential_expression.R: 94.68%
+R/kinase_activity.R: 100.00%
+```
+Make sure that you are checking output from `R CMD build` and `R CMD check`.
+
+
