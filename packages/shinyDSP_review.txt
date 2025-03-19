@@ -1,0 +1,89 @@
+# shinyDSP #3629
+
+Overall, the package looks to be well organized. The package has
+quite a few dependencies and this may present challenges for
+maintenance.
+
+## DESCRIPTION
+
+* Wrap the text in the `Description` field to 80 max character width.
+
+## NAMESPACE
+
+* Audit the package dependencies and remove or put non-essential packages in
+the `Suggests` field.
+
+## vignettes
+
+* Use a more descriptive vignette title for "shinyDSP secondary vignette".
+* Why is `.PCAFunction` needed in the vignette? Should it be an internal
+helper function in the package?
+
+## R
+
+* Use `vapply` or `lapply` at these two places:
+```
+ℹ NOTE: Avoid sapply(); use vapply()
+Found in files:
+• R/util_heatmap.R (line 16, column 17)
+• R/util_heatmap.R (line 61, column 17)
+```
+* Resolve `R CMD check` `NOTE`s:
+```
+* checking dependencies in R code ... NOTE
+Namespace in Imports field not imported from: ‘svglite’
+  All declared Imports should be used.
+* checking R code for possible problems ... NOTE
+.columnSplit : <anonymous>: no visible binding for global variable ‘.’
+.data: no visible binding for global variable ‘.’
+.lcpmSubScaleTopGenes : <anonymous>: no visible binding for global
+  variable ‘Gene’
+.topTabDF: no visible binding for global variable ‘.’
+.volcano : <anonymous>: no visible binding for global variable ‘logFC’
+.volcano : <anonymous>: no visible binding for global variable
+  ‘adj.P.Val’
+.volcano : <anonymous>: no visible binding for global variable
+  ‘logFC_threshold’
+.volcano : <anonymous>: no visible binding for global variable
+  ‘pval_threshold’
+.volcano : <anonymous>: no visible binding for global variable
+  ‘Target.name’
+.volcanoFunction: no visible binding for global variable ‘logFC’
+.volcanoFunction: no visible binding for global variable ‘adj.P.Val’
+.volcanoFunction: no visible binding for global variable ‘deLab’
+Undefined global functions or variables:
+  . Gene Target.name adj.P.Val deLab logFC logFC_threshold
+  pval_threshold
+```
+
+## tests
+
+* Consider increasing the coverage:
+
+```r
+> covr::package_coverage(type="all")
+shinyDSP Coverage: 58.74%
+R/util_differential_gene_exp.R: 0.00%
+R/util_heatmap.R: 0.00%
+R/util_PCA_function.R: 0.00%
+R/util_table.R: 0.00%
+R/util_volcano_function.R: 0.00%
+R/util_volcano.R: 0.00%
+R/output_PCA_customization.R: 5.00%
+R/output_heatmap_nav_panel.R: 9.52%
+R/output_pca_nav_panel.R: 32.35%
+R/output_nav_panels.R: 77.27%
+R/interface_heatmap_nav_panel.R: 100.00%
+R/interface_pca_nav_panel.R: 100.00%
+R/interface_qc_nav_panel.R: 100.00%
+R/interface_setup_nav_panel.R: 100.00%
+R/interface_sidebar.R: 100.00%
+R/interface_table_nav_panel.R: 100.00%
+R/interface_volcano_nav_panel.R: 100.00%
+R/ShinyDSP.R: 100.00%
+R/util_PCA_by_CPM.R: 100.00%
+R/util_PCA_by_Q3.R: 100.00%
+R/util_PCA_by_RUV4.R: 100.00%
+R/util_process.R: 100.00%
+R/zzz.R: 100.00%
+```
