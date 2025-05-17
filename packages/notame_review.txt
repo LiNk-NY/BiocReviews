@@ -1,0 +1,56 @@
+# notame #3751
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* The package imports both `SummarizedExperiment` and `Biobase`. Is there a
+  reasoning for importing `Biobase` as it has been superseded  by the former?
+* Consider using the native pipe instead of importing `magrittr`.
+
+## vignettes
+
+* Provide a more descriptive titles and index entries in the vignettes.
+* Provide runnable examples in the vignette that will nagivate the user over
+the existing functionality.
+* The `read_from_excel` function gives the impression that a `data.frame` type
+  of output will be returned. Consider renaming it to `import*` or better yet,
+  use `BiocIO`.
+* The return from `read_from_excel` / `import*` could return a standard
+  Bioconductor class such as `SummarizedExperiment` rather than
+  `ExpressionSet`. This will avoid the user from constructing the
+  `SummarizedExperiment` in the following chunk (in `project_example.Rmd`).
+* Consider enhancing usability in `Data pretreatment` section. It looks quite
+  manual especially for the `prefix` argument in `visualizations`.
+* `visualizations` name is quite generic and should be more descriptive as to
+  what it is actually plotting.
+* Consider using `broom` or related packages and replace `perform_lm` which
+  does largely the same.
+* `join_rowData` and other methods has an S3 function naming convention but is
+  an S4 method. The method is not flexible and too specific (with hard coded
+  values). Consider using a plain function instead.
+* Can the logging be baked into the functionality e.g., as with
+  `futile.logger` etc.? It would avoid using functions like `init_log` and
+  `finish_log` explictly.
+* I am not sure what the use case for `write_to_excel` is for. Can you
+  elaborate? Why can't the user run their own `.xls` writer function?
+
+## R
+
+* Expose the `BPPARAM` argument in `perform_repeatability` and any other
+  function that uses `BiocParallel` to provide more control to the user. Make
+  sure that the default uses 1 or 2 cores.
+* Separate plotting functionality from saving functionality and allow the user
+  more freedom to choose output file formats (`save_batch_plots`).
+* Consider using more modern readers such as `readxl`. Is there a standard for
+  saving data in Excel? It may be better for users to provide their own
+  already-read-in data rather than trying to import it for them, i.e., they
+  would already have the `pheno_data`, `feature_data` and `exprs_` loaded.
+* Again, avoid using `ExpressionSet` terms as switching back and forth from
+  `SummarizedExperiment` to `ExpressionSet` can be confusing.
+* Avoid inheriting from `ExpressionSet` in `MetaboSet`. Use
+  `SummarizedExperiment` instead. Use `MetaboSet` as the name of the
+  constructor instead of the class generator. This is more intuitive for
+  users.
