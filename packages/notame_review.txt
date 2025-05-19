@@ -1,5 +1,12 @@
 # notame #3751
 
+* The package in general does too much in different domains. It should be more
+  focused on a specific domain. The package is a mix of import, manipulation,
+  analysis, imputation, and plotting. It would be better to separate these
+  into different packages to avoid fragility due to the numerous dependencies.
+  The file saving functionality should also be reconsidered so that users can
+  have more control over the output format and file names.
+
 ## DESCRIPTION
 
 * Looks good.
@@ -7,7 +14,7 @@
 ## NAMESPACE
 
 * The package imports both `SummarizedExperiment` and `Biobase`. Is there a
-  reasoning for importing `Biobase` as it has been superseded  by the former?
+  reasoning for importing `Biobase` as it has been superseded by the former?
 * Consider using the native pipe instead of importing `magrittr`.
 
 ## vignettes
@@ -31,19 +38,22 @@ the existing functionality.
 * `join_rowData` and other methods has an S3 function naming convention but is
   an S4 method. The method is not flexible and too specific (with hard coded
   values). Consider using a plain function instead.
-* Can the logging be baked into the functionality e.g., as with
-  `futile.logger` etc.? It would avoid using functions like `init_log` and
-  `finish_log` explictly.
+* Can the logging be baked into the functionality e.g., using `futile.logger`
+  directly? It would avoid using functions like `init_log` and `finish_log`
+  explictly.
 * I am not sure what the use case for `write_to_excel` is for. Can you
   elaborate? Why can't the user run their own `.xls` writer function?
 
 ## R
 
-* Expose the `BPPARAM` argument in `perform_repeatability` and any other
-  function that uses `BiocParallel` to provide more control to the user. Make
-  sure that the default uses 1 or 2 cores.
-* Separate plotting functionality from saving functionality and allow the user
-  more freedom to choose output file formats (`save_batch_plots`).
+* Expose the `BPPARAM` argument in `perform_repeatability`,
+  `summary_statistics`, `fold_change` and any other function that uses
+  `BiocParallel` to provide more control to the user. Make sure that the
+  default uses 1 or 2 cores.
+* Separate analytics, plotting, and saving functionality. Allow the user
+  more freedom to choose output file formats (`save_batch_plots`,
+  `save_dc_plots`, `mixomics_plsda`, etc.) and to run the analyses without
+  necessarily saving a plot.
 * Consider using more modern readers such as `readxl`. Is there a standard for
   saving data in Excel? It may be better for users to provide their own
   already-read-in data rather than trying to import it for them, i.e., they
@@ -54,3 +64,43 @@ the existing functionality.
   `SummarizedExperiment` instead. Use `MetaboSet` as the name of the
   constructor instead of the class generator. This is more intuitive for
   users.
+* Rename `example_set` documentation to be more specific.
+* Use a more specific function name than `merge_objects` to describe to the
+  user the purpose of the function and possibly, the types of inputs.
+* Make functions like `flag_quality` more usable by allowing the user to set
+  individual limits for each of the parameters rather than a hardcoded
+  expression as a default.
+* Re-consider creating `volcano_plot`, `manhattan_plot`, `mz_rt_plot`, `log*`,
+  `scale`, `exponential` and other generics.
+* It is not clear what an `object` signature refers to.  The function can be a
+  plain function that accepts a `data.frame` or `SummarizedExperiment` object,
+  if needed.
+* Remove the `.onAttach` message. This is assumed from GitHub packages. If
+  needed, consider modifying the `README.md` with the message.
+
+## tests
+
+* Coverage looks good:
+
+```r
+> covr::package_coverage(type = "all")
+notame Coverage: 71.42%
+R/drift_correction.R: 39.52%
+R/stats.R: 54.85%
+R/multivariate.R: 64.26%
+R/batch_correction.R: 65.44%
+R/utils.R: 67.78%
+R/transformations.R: 69.19%
+R/visualization_utils.R: 70.54%
+R/quality_metrics.R: 72.03%
+R/feature_clustering.R: 75.00%
+R/scatter.R: 75.85%
+R/merger.R: 78.98%
+R/class_constructor.R: 83.10%
+R/effect_heatmap.R: 84.25%
+R/effect_plots.R: 93.21%
+R/cluster_plots.R: 94.20%
+R/qc_visualizations.R: 96.67%
+R/logging.R: 100.00%
+```
+
