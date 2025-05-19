@@ -1,0 +1,55 @@
+# decemedip #3730
+
+## DESCRIPTION
+
+* Remove `R (>= 4.4.0)` or make the version `4.5.0` which is the current
+requirement for Bioc-devel.
+* Add `BugReports` and `URL` fields.
+* The versions for provided packages, e.g., `Rcpp`, `RcppParallel`, etc. are
+not necessary as Bioconductor users are expected to have the latest to install
+with Bioc-devel or the next release.
+
+## NAMESPACE
+
+* Looks good.
+* Consider using the native pipe `|>` rather than `%>%`
+
+## vignette
+
+* Remove commented code from the YAML header
+* Consider wrapping the text to a maximum of 80-character width (in `vim` you
+can do `gqq` on a highlighted block of text or per line)
+* Remove GitHub installation instructions and provide the standard installation
+instructions as seen on package landing pages.
+* Remove the `devtools::load_all` call from the vignette.
+* Use the `bibliography:` field in the RMarkdown YAML front matter and create
+an `../inst/REFERENCES.bib` file
+
+## R
+
+* Use only 1 core by default and allow the user to set the number of cores in
+the function or with a package option.
+* Use the `markdown` syntax in roxygen blocks e.g., `sample_bam_file`
+instead of `\code{sample_bam_file}`. You may replace these with a regex within
+RStudio's search an replace, e.g., `\\code\{(.*)\}` replace with ``\1``.
+* Avoid using `;` in the code and use a new line for code readability.
+* Load `hg19` and `hg38` data into an empty environment instead of into the
+`.GlobalEnv` (see https://contributions.bioconductor.org)
+* Fix the typos, e.g., "obejct" and "coloum"
+* Combine related error messages and their logical conditions, e.g.,
+`stop("Column 'n_cpgs_100bp' not in 'ref_cts' or 'ref_anc' ...")`
+* Avoid exclamation points (`!`) in error messages (e.g., in `R/decemedip.R`).
+* Use `assay(...)` instead of `assays()[[1]]`
+* Use more descriptive argument names (e.g., `X` in `makeReferencePanel` could
+be `betaMatrix` instead)
+* Recommended. Format your code to wrap at 80 character widths. Consider using
+`styler` or `air`.
+* Minor. Use single or double quotes in error messages instead of backticks.
+* Consider reducing the amount of repetitive code when checking inputs by
+combining checks or using a helper function to process these inputs and
+only report those that do not pass the checks (see `R/makeReferencePanel.R`).
+
+## tests
+
+* Unable to run `covr::package_coverage(type = "all")` within 10 minutes,
+possibly due to the examples.
