@@ -1,0 +1,28 @@
+# AWAggregatorData #3774
+
+## DESCRIPTION
+
+* Consider wrapping text in the `Description` and `biocViews` fields to ensure
+  it fits within 80 character width.
+* Add `URL` and `BugReports` fields to provide users with links to the
+  package's website and issue tracker.
+
+## NAMESPACE
+
+* Consider using a more descriptive function name.
+
+## vignettes
+
+* Please update the citation reference or remove that line from the vignette
+  until it is available.
+* Add chunk labels to all code chunks in the vignette to improve readability
+and debugging.
+
+## R
+
+* Use a more descriptive name for the `loadPretrainedModel` function.
+
+
+# AWAggregator
+
+

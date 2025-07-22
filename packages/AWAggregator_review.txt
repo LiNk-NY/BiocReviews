@@ -1,0 +1,55 @@
+# AWAggregator #3774
+
+## DESCRIPTION
+
+* Consider wrapping the `Description` field to fit within the 80 character
+  limit.
+
+## NAMESPACE
+
+* Avoid re-exporting `loadPretrainedModel` from `AWAggregatorData` and put the
+  package in the `Suggests` field instead.
+
+## vignettes
+
+* The vignette should fit the 80 character limit for readability and
+  maintenance.
+* Remove any text that does not have a full citation.
+* Remove the use `devtools` from the vignette.
+* Add chunk labels to the code chunks in the vignette.
+* Can you use the sample names from the data itself instead of creating the
+  `samples` character vector manually? This also applies to the `groups`
+  character vector.
+* Please provide more user friendly commands to use `getAttributes` and
+  `getAvgScaledErrorOfLog2FC`. For example,
+  `bind_rows(lapply(unique(benchmarkSet2$Replicate)` looks too complicated for
+  a new user to your package.
+
+## R
+
+* Format the code to fit within the 80 character limit for readability.
+* Consider renaming `fitModel`, `getAttributes` to more descriptive names.
+* The examples should not involve so much character vector generation or
+  manipulation. Use the sample names provided in the package instead, e.g.,
+  for the `getAttributes` example.
+* Remove `loadPretrainedModel` from the package as it is already in the data
+  package `AWAggregatorData`.
+* Please be more specific in the type of distance calculated in the
+  `getDisMetric` function documentation.
+
+## tests
+
+The coverage looks good.
+
+```r
+> covr::package_coverage(type = 'all')
+AWAggregator Coverage: 85.00%
+R/aggregateByAttributes.R: 61.29%
+R/convertPDFormat.R: 71.43%
+R/fitModel.R: 80.00%
+R/mergeTrainingSets.R: 86.49%
+R/getAvgScaledErrorOfLog2FC.R: 92.00%
+R/getAttributes.R: 100.00%
+R/getDistMetric.R: 100.00%
+R/loadPretrainedModel.R: 100.00%
+```

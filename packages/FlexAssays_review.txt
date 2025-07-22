@@ -1,0 +1,19 @@
+# FlexAssays #3795
+
+## DESCRIPTION
+
+* Looks good.
+* Set the R version to `>= 4.5.0` or remove the line
+
+## NAMESPACE
+
+* Functions such as `getAssays`, `getOneAssay`, `setOneAssay`, etc. already
+  have equivalents in the `SummarizedExperiment` API e.g., `assays` and
+  `assay`.
+
+## vignettes
+
+* Why should there be a limited set of supported classes for assays? Why not
+  allow any class that inherits from `Matrix` / `matrix` etc.?
+
+
