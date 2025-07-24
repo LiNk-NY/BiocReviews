@@ -1,0 +1,7 @@
+# Rega #3822
+
+Thank you for your submission. After a cursory review, it seems that the
+package, though in good shape, does not integrate with established Bioconductor
+data structures. Do you have plans to further integrate this package with
+other packages that leverage Bioconductor data structures?
+
