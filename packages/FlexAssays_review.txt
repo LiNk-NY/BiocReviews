@@ -37,13 +37,13 @@ for users who may expect a more traditional matrix-like interface.
   `invalid value in slotNames(fa1@data@listData$[[1]])`
 * I don't quite understand the purpose of adding an `assayClasses`
   restriction. Can you elaborate on that?
-* The vignette comparison between `FlexAssays` and `MultiAssayExperiment` is
-  a good idea, but it does show that there are some limitations in
-  understanding `MultiAssayExperiment`'s subsetting mechanisms. It would be
-  good to clarify that `MultiAssayExperiment` can use lists to subset within
-  individual assays in addition to vectors.
+* The vignette comparison between `FlexAssays` and `MultiAssayExperiment` is a
+  good idea, but it does not fully capture the differences in
+  `MultiAssayExperiment`'s subsetting mechanisms. It would be good to clarify
+  that `MultiAssayExperiment` can use lists to subset within individual assays
+  in addition to vectors.
 
-## R code
+## R
 
 * The `validFlexAssays` function is run when the object is created, there is
   no need to export it. It can also be run with `validObject`.
@@ -54,3 +54,21 @@ for users who may expect a more traditional matrix-like interface.
   only register the generic function with the `standardGeneric` call.
   Additional operations may cause performance issues.
 * No need to export `showFlexAssays` as the `show` method already calls it.
+
+## tests
+
+Coverage looks good. Consider increasing the coverage for
+`R/FlexAssays-class.R`:
+
+```r
+> covr::package_coverage(type = 'all')
+FlexAssays Coverage: 81.83%
+R/roxygen2-doc.R: 0.00%
+R/FlexAssays-class.R: 65.49%
+R/logical_map.R: 89.09%
+R/FlexAssays-subset.R: 90.24%
+R/utils.R: 95.24%
+R/FlexAssays-methods.R: 98.11%
+R/FlexAssays-development.R: 100.00%
+```
+
