@@ -1,5 +1,14 @@
 # FlexAssays #3795
 
+The concept of having a data object that behaves differently based on
+`rowFlex` and `colFlex` parameters is interesting. However, this approach
+can cause confusion for users, especially those working with serialized
+versions of the object. It may be better to have separate classes for
+these behaviors rather than one class with different behaviors.
+Overall, the interface is primarily a list combined with matrix-like
+operations, which is not a common pattern in R. This can lead to confusion
+for users who may expect a more traditional matrix-like interface.
+
 ## DESCRIPTION
 
 * Looks good.
@@ -13,7 +22,35 @@
 
 ## vignettes
 
-* Why should there be a limited set of supported classes for assays? Why not
-  allow any class that inherits from `Matrix` / `matrix` etc.?
+* Why should there be a limited set of supported classes for assays
+  ("assayClasses")? Why not allow any class that conforms to a set of
+  prescribed methods? How would `NULL` or `character(0)` assays be helpful?
+* I am not sure what you mean by "global row and column spaces". Can you
+  define this in the vignette when introduced so that it is clear to the
+  reader?
+* Can you show in the schematic the global row and column spaces?
+* `getAssays` is quite similar to `assays` in `SummarizedExperiment`. Why not
+  just use that? The same applies to `getOneAssay`, `setOneAssay`, etc.
+* What are the advantages of using a `SparseMatrix` over a plain `matrix` for
+  `rowMap` and `colMap`? Can you explain this in the vignette?
+* I was getting some errors when running `fa1$m3 <- m3` in the vignette:
+  `invalid value in slotNames(fa1@data@listData$[[1]])`
+* I don't quite understand the purpose of adding an `assayClasses`
+  restriction. Can you elaborate on that?
+* The vignette comparison between `FlexAssays` and `MultiAssayExperiment` is
+  a good idea, but it does show that there are some limitations in
+  understanding `MultiAssayExperiment`'s subsetting mechanisms. It would be
+  good to clarify that `MultiAssayExperiment` can use lists to subset within
+  individual assays in addition to vectors.
 
+## R code
 
+* The `validFlexAssays` function is run when the object is created, there is
+  no need to export it. It can also be run with `validObject`.
+* The `exampleFlexAssays` function is not required in the package.  Users can
+  generate a `FlexAssays` class object using the constructor and example code
+  from the documentation.
+* Your `setGeneric` call for `setRawAssays` are doing too much. They should
+  only register the generic function with the `standardGeneric` call.
+  Additional operations may cause performance issues.
+* No need to export `showFlexAssays` as the `show` method already calls it.
