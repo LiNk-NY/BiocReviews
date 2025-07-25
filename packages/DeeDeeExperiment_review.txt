@@ -1,0 +1,49 @@
+# DeeDeeExperiment #3861
+
+Overall, the package is in good shape. There are some parts of the package
+where modular functions can be implemented, for example, when pre-filling
+columns with `NA`, assigning values to matched indices, and other operations
+that are repeated multiple times throughout the package.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* (Optional) The S4 generics and methods follow a snake_case naming
+  convention, which is not consistent with Bioconductor's style guide. We
+  recommend using camelCase for S4 generics and methods.
+
+## R
+
+* The `DeeDeefy_*` functions seem to be conversion functions. These may have a
+  use outside of the package, e.g., similar to the `broom` package.
+* Avoid using nested `for` loops where possible. Use `mapply` or `lapply`
+  instead (`rename_dea` method).
+* Use both options in the method arguments, e.g., in `dea` set format to be
+  `c("minimal", "original")` instead of just "minimal". This will allow users
+  to see and choose format in the method signature. You can then use
+  `match.arg` in the body of the method.
+* It would be good to have a constructor function that works with empty
+  objects, e.g., `DeeDeeExperiment()` and prototype default values instead of
+  `NULL`.
+* Use `switch` to reduce the number of `if` statements in the `DeeDeeExperiment`
+  constructor and apply a `FUN` based on the `type` argument. E.g.,
+  `FUN <- switch(type, "topGO" = .DeeDeefy_topGOtableResult, ...)`
+* Minor. Consider using the generator function returned by `setClass` instead
+  of `new("DeeDeeExperiment", ...)`.
+
+## tests
+
+* Coverage looks good
+
+```r
+> covr::package_coverage(type = 'all')
+DeeDeeExperiment Coverage: 92.91%
+R/DeeDeeExperiment-internal-utils.R: 88.19%
+R/DeeDeeExperiment-methods.R: 94.58%
+R/DeeDeeExperiment.R: 96.77%
+R/AllGenerics.R: 100.00%
+R/validity.R: 100.00%
+```
