@@ -1,0 +1,65 @@
+# looking4clusters #3858
+
+## DESCRIPTION
+
+* Looks good.
+* Please mention that the package works with `SummarizedExperiment` and
+  `SingleCellExperiment` objects in the Description field.
+
+## NAMESPACE
+
+* Consider using a single `l4c` function to handle both `SingleCellExperiment`
+  and `Seurat` objects. You can use both helper functions `l4c_SCE` and
+  `l4c_Seurat` internally so they should not be exported. It is better to
+  keep the user API minimal and simple.
+* The `l4c` function name is a bit cryptic. Consider renaming it to something
+  more descriptive, like `looking4clusters`.
+* Both `create_l4c` and `l4c` seem to be constructor functions which might
+  cause confusion. Consider renaming them or using a different approach to
+  create the `looking4clusters` class.
+* Avoid using generic names like `display_html`.
+
+## vignettes
+
+* Remove mentions of GitHub from the vignette.
+* It seems that the constructor function `l4c` should handle cases where the
+  clustering operation is not performed rather than having two separate
+  functions `l4c` and `create_l4c`. This would simplify the usage and
+  documentation.
+
+## R
+
+* The operations in the `create.R` file can be simplified into two functions:
+    - create the `l4c` object with different inputs
+    - clustering algorithm, i.e., `running_all`
+* It seems that the helper functions `create_l4c` and `add_cluster` in `l4c`
+  should not be exported.
+* The option of not `adding` a group can be handled by the `l4c` constructor.
+* You may also want to allow users to `add_cluster` after the creation of the
+  `l4c` object, which would allow for more flexibility in the workflow but
+  it is not necessary.
+* Can you elaborate on the utility of the `display_html` function?
+* To check if a package is installed, see `BiocBaseUtils::checkInstalled()`
+* Avoid creating directories for the user without their explicit consent
+  (`create_l4c_directory`).
+
+## tests
+
+* The tests are good, consider increasing coverage for `utils.R`.
+
+```r
+> covr::package_coverage(type= "all")
+looking4clusters Coverage: 87.34%
+R/utils.R: 60.00%
+R/mds.R: 77.78%
+R/seurat.R: 83.33%
+R/pam_hclust.R: 85.71%
+R/kmeans.R: 86.49%
+R/SingleCellExperiment.R: 89.47%
+R/create.R: 90.82%
+R/tsne.R: 90.91%
+R/umap.R: 91.67%
+R/nmf.R: 95.00%
+R/pca.R: 100.00%
+```
+
