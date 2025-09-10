@@ -10,8 +10,31 @@
     - We use `open_input_files` internal function from XVector to create an
       external pointer to a file. AFAIK, there is no standard alternative
       to this function.
-- [ ] All man pages must have runnable examples. At present, `BiocCheck::BiocCheck()` reports an error for missing examples in at least 80% of man pages.
-- [ ] Include unit tests covering the core functionality of the package. `BiocCheck::BiocCheck()` notes that tests are missing.
+- [x] All man pages must have runnable examples. At present,
+  `BiocCheck::BiocCheck()` reports an error for missing examples in at least
+  80% of man pages.
+    - Most man pages have runnable examples. This may have been resolved
+      by an update to BiocCheck. We removed the `\dontrun{}` section from
+      the `GFFFile-class` doc page.
+- [ ] Include unit tests covering the core functionality of the package.
+  `BiocCheck::BiocCheck()` notes that tests are missing.
+    - Our covr report shows that we have coverage for most files except
+      a couple:
+
+```
+> covr::package_coverage(type = "all")
+Bioc.gff Coverage: 63.00%
+R/GFF-coercion.R: 0.00%
+R/metadataFromNCBI.R: 0.00%
+src/utils.c: 0.00%
+R/index.R: 15.62%
+R/readGFF.R: 61.19%
+R/GFFFile-class.R: 67.32%
+R/utilities.R: 73.20%
+src/readGFF.c: 76.12%
+src/R_init_Bioc_gff.c: 100.00%
+```
+
 - [ ] Provide a vignette *Introduction* section that motivates the inclusion of **Bioc.gff** in Bioconductor. Consider renaming the current `# Bioc.gff` section to `# Introduction`.
 
 ### Recommended
