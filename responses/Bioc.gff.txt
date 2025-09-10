@@ -1,0 +1,31 @@
+### Required
+
+- [x] Ensure that `R CMD build` completes without errors, warnings, or notes.
+  Currently there are 2 notes related to non-API calls in compiled code
+  (`R_GetConnection`, `R_ReadConnection`) and `:::` usage for internal
+  objects. These may be unavoidable, but please explain why. Bioconductor-core
+  packages may justify exceptions, but they should be held to a high standard.
+    - The note regarding the non-API calls is related to the current R version
+      and will be resolved in the next release of R as official entry points.
+    - We use `open_input_files` internal function from XVector to create an
+      external pointer to a file. AFAIK, there is no standard alternative
+      to this function.
+- [ ] All man pages must have runnable examples. At present, `BiocCheck::BiocCheck()` reports an error for missing examples in at least 80% of man pages.
+- [ ] Include unit tests covering the core functionality of the package. `BiocCheck::BiocCheck()` notes that tests are missing.
+- [ ] Provide a vignette *Introduction* section that motivates the inclusion of **Bioc.gff** in Bioconductor. Consider renaming the current `# Bioc.gff` section to `# Introduction`.
+
+### Recommended
+
+- [ ] Clarify the relationship between **Bioc.gff**, **rtracklayer**, and **BiocIO**. For example, is **Bioc.gff** intended as a lightweight alternative to **rtracklayer**, and does it function as a 'client' to **BiocIO**?
+    - Is **rtracklayer** going away?
+    - What's happening to the identical functionality defined in **rtracklayer**?
+- [ ] Update the vignette to clarify examples:
+    - Avoid confusing references to `source = "rtracklayer"` in example in section 4.1.1.
+    - Provide a simple example of reading remote GFF files from a URL rather than focusing on internal BBS usage with **BiocFileCache**.
+    - Add explanatory text explaining why a user might convert a *TxDb* object to GFF format.
+    - Consider documenting related file types (*GFF1File*, *GFF2File*, *GFF3File*, *GFFFile*, *GTFFile*) and clarify what *GVF* files are.
+- [ ] Reconsider documentation for the exported `?readGFF`, which is currently described as "a low-level function that should not be called by user code"—clarify intended audience and usage.
+- [ ] Include a `README` file if possible.
+- [ ] Review `:::` calls in R code and non-API calls in compiled code for compliance with Bioconductor standards, and provide alternatives if feasible.
+
+
