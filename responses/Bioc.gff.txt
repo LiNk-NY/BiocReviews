@@ -16,39 +16,61 @@
     - Most man pages have runnable examples. This may have been resolved
       by an update to BiocCheck. We removed the `\dontrun{}` section from
       the `GFFFile-class` doc page.
-- [ ] Include unit tests covering the core functionality of the package.
+- [x] Include unit tests covering the core functionality of the package.
   `BiocCheck::BiocCheck()` notes that tests are missing.
-    - Our covr report shows that we have coverage for most files except
-      a couple:
+    - Our `covr` report shows that we have majority coverage for most files
+      though it is still a work in progress.
 
 ```
 > covr::package_coverage(type = "all")
-Bioc.gff Coverage: 63.00%
-R/GFF-coercion.R: 0.00%
-R/metadataFromNCBI.R: 0.00%
-src/utils.c: 0.00%
-R/index.R: 15.62%
+Bioc.gff Coverage: 68.77%
+R/index.R: 21.88%
+R/GFF-coercion.R: 43.33%
 R/readGFF.R: 61.19%
 R/GFFFile-class.R: 67.32%
-R/utilities.R: 73.20%
 src/readGFF.c: 76.12%
+R/utilities.R: 78.35%
+R/metadataFromNCBI.R: 80.95%
+src/utils.c: 92.31%
 src/R_init_Bioc_gff.c: 100.00%
 ```
 
-- [ ] Provide a vignette *Introduction* section that motivates the inclusion of **Bioc.gff** in Bioconductor. Consider renaming the current `# Bioc.gff` section to `# Introduction`.
+- [x] Provide a vignette *Introduction* section that motivates the inclusion
+  of **Bioc.gff** in Bioconductor. Consider renaming the current `# Bioc.gff`
+  section to `# Introduction`.
+    - We have added an *Introduction* section and text to that motivates the
+      package's inclusion in Bioconductor.
 
 ### Recommended
 
-- [ ] Clarify the relationship between **Bioc.gff**, **rtracklayer**, and **BiocIO**. For example, is **Bioc.gff** intended as a lightweight alternative to **rtracklayer**, and does it function as a 'client' to **BiocIO**?
+- [x] Clarify the relationship between **Bioc.gff**, **rtracklayer**, and **BiocIO**. For example, is **Bioc.gff** intended as a lightweight alternative to **rtracklayer**, and does it function as a 'client' to **BiocIO**?
     - Is **rtracklayer** going away?
     - What's happening to the identical functionality defined in **rtracklayer**?
-- [ ] Update the vignette to clarify examples:
-    - Avoid confusing references to `source = "rtracklayer"` in example in section 4.1.1.
-    - Provide a simple example of reading remote GFF files from a URL rather than focusing on internal BBS usage with **BiocFileCache**.
-    - Add explanatory text explaining why a user might convert a *TxDb* object to GFF format.
-    - Consider documenting related file types (*GFF1File*, *GFF2File*, *GFF3File*, *GFFFile*, *GTFFile*) and clarify what *GVF* files are.
-- [ ] Reconsider documentation for the exported `?readGFF`, which is currently described as "a low-level function that should not be called by user code"—clarify intended audience and usage.
-- [ ] Include a `README` file if possible.
-- [ ] Review `:::` calls in R code and non-API calls in compiled code for compliance with Bioconductor standards, and provide alternatives if feasible.
-
+        - We have added a section in the vignette to clarify this
+          relationship.
+- [x] Update the vignette to clarify examples:
+    - Avoid confusing references to `source = "rtracklayer"` in example in
+      section 4.1.1.
+    - Provide a simple example of reading remote GFF files from a URL rather
+      than focusing on internal BBS usage with **BiocFileCache**.
+    - Add explanatory text explaining why a user might convert a *TxDb* object
+      to GFF format.
+    - Consider documenting related file types (*GFF1File*, *GFF2File*,
+      *GFF3File*, *GFFFile*, *GTFFile*) and clarify what *GVF* files are.
+        - We have updated the vignette to clarify these points.
+- [x] Reconsider documentation for the exported `?readGFF`, which is currently
+  described as "a low-level function that should not be called by user
+  code"—clarify intended audience and usage.
+    - We have updated the documentation to clarify that this function
+      is not intended for end users and that they should use `import()`
+      instead.
+- [x] Include a `README` file if possible.
+    - We have added a `README.md` file to the repository.
+- [x] Review `:::` calls in R code and non-API calls in compiled code for
+  compliance with Bioconductor standards, and provide alternatives if
+  feasible.
+    - The functions we use with `:::` are not exported but stable. The
+      alternative would be to copy the code into our package, which we would
+      like to avoid since the functionality is extensive and many of the
+      functions are not directly useful to end users.
 
