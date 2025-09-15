@@ -1,7 +1,63 @@
 # Rega #3822
 
-Thank you for your submission. After a cursory review, it seems that the
-package, though in good shape, does not integrate with established Bioconductor
-data structures. Do you have plans to further integrate this package with
-other packages that leverage Bioconductor data structures?
+## General
+
+* The package is well-structured with a clear separation of concerns (API
+  client generation, parsing, validation, workflows), which is commendable.
+* Good use of modern packages like `httr2`, `validate`, and `rlang`.
+* The custom error handling in the main submission workflow provides excellent
+  robustness.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* The vignette is clear and easy to follow.
+* The API client generation functions (`create_client`, `extract_api`) are
+  very general. Consider spinning this out into a separate, reusable package
+  for building API clients from OpenAPI specifications.
+
+## R
+
+* In `apiclient.R`, the `parse_ega_body` function contains a developer
+  comment: `in the datasets response, there are 2 columns with status, why?`.
+  Please remove comment from production code.
+* In `format.R`, the `process_delimited_column` function has hard-coded logic
+  for `pubmed_ids`. To improve generability, consider making such
+  transformations data-driven (e.g., passing a list of column-specific type
+  conversions) rather than using `if/else` statements for specific columns.
+* In `workflows.R`, the `new_submission` function is quite long. For better
+  readability and maintainability, consider refactoring the major steps
+  (submitting samples, studies, etc.) into smaller internal helper functions.
+* The use of `Sys.getenv` and `askpass::askpass` in `access.R` for
+  credential management is a good but consider using the `keyring` package for
+  more secure and flexible credential storage.
+* The manual creation of lookup tables (LUTs) in `parse.R` from API
+  responses is a potential point of fragility if the API response structure
+  changes. This is an inherent challenge, but it's worth noting.
+
+## tests
+
+* The test suite is comprehensive, covering helpers, internal functions, and
+  workflow logic.
+* Consider adding tests for the `R/workflows.R` file.
+
+```
+> covr::package_coverage(type = 'all')
+Rega Coverage: 75.00%
+R/workflows.R: 15.38%
+R/parse.R: 85.00%
+R/access.R: 87.93%
+R/apiclient.R: 98.50%
+R/format.R: 98.77%
+R/validate.R: 99.42%
+R/utils.R: 100.00%
+R/workflow_helpers.R: 100.00%
+```
 
