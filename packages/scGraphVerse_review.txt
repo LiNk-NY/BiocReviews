@@ -1,0 +1,72 @@
+# scGraphVerse #3820
+
+## DESCRIPTION
+
+* The package seems to depend on quite a high number of other packages. Is
+  there a way to reduce the number of dependencies? A package with many
+  dependencies can be hard to maintain and install.
+* Consider seperating out the plotting functions into a separate package, in
+  order to reduce the number of dependencies for users who may not need the
+  plotting functionality.
+
+## NAMESPACE
+
+* Consider checking the packages 'heaviness' with `pkgndep` to see if
+  any dependencies can be reduced.
+
+```
+  > pkgndep::pkgndep("scGraphVerse")
+retrieve package database from CRAN/Bioconductor (3.22)...
+  - 25246 remote packages on CRAN/Bioconductor.
+  - 1264 packages installed locally.
+prepare dependency table...
+prepare reverse dependency table...
+'scGraphVerse', version 0.99.15
+- 322 packages are required for installing 'scGraphVerse'.
+- 394 packages are required if installing packages listed in all fields in
+  DESCRIPTION.
+
+Following adjustment could be performed:
+- Found 4 functions are imported from a heavy parent 'Seurat'. Moving 'Seurat''
+  to 'Suggests' will reduce 50 dependencies.
+- Found 1 function is imported from a heavy parent 'INetTool'. Moving 'INetTool'
+  to 'Suggests' will reduce 29 dependencies.
+Moving all mentioned packages to 'Suggests' will reduce the dependency
+packages from 322 to 243.
+```
+
+## vignettes
+
+* Consider using a helper function to preprocess the data in the `loaddata`
+  chunk, in order to avoid repeating the same code multiple times.
+* There is a `list()` function call in the `consensus` chunk that seems to be
+  superfluous and can it be removed?
+
+
+## R
+
+* Consider renaming the `adj_truth`, `count_matrices`, etc. datasets to
+  something more descriptive, e.g., `toy_adj_matrix`, to improve code
+  readability.
+* Can you show how the `adj_truth` dataset is used in the examples? It is
+  loaded in the `community_path` example but not used.
+* Some functions such as `community_similarity` and `compare_consensus` do too
+  much (i.e., computes community assignment, topological properties, and
+  visualizes) for a single function. Consider breaking them down into smaller,
+  more focused functions to improve readability and maintainability.
+* Improve accuracy of error messages, e.g., in `compare_consensus` the
+  error reads "binary adjacency matrix" but the function is only checking
+  that the `consensus_matrix` input is a matrix.
+* For functions with multiple argument options, e.g., `method` argument in
+  `create_consensus` (and `cutoff_adjacency`), add all possible methods in the
+  function signature, i.e., `c("vote", "union", "INet")` and use `match.arg`
+  in the function body to validate the input.
+* The `earlyj` function does not seem to be filtering the `input_list`
+  properly, the error message states that the input should be a list of
+  matrices, seurat obj, or SCE obj, but the function only checks if the input
+  is a list.
+* Ensure that all functions return properly documented values, e.g., in the
+  `edge_mining`, one of the return calls provides a simple `data.frame` but
+  the documentation states that a "named list of data.frames" is returned.
+
+

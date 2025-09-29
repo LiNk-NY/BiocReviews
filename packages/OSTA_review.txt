@@ -1,0 +1,16 @@
+# OSTA #3859
+
+## DESCRIPTION
+
+* The `BugReports` link should point to the GitHub issues page.
+* Looks good.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Looks good.
+
+
