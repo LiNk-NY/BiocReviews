@@ -9,7 +9,7 @@ BIOC="devel"
 
 PKGLOC=$REVIEWS/$pkgname
 
-RVER="r-4-4"
+RVER="r-4-5"
 
 if [ -z "${pkgname// }" ]; then
     echo "Enter a package folder name"
