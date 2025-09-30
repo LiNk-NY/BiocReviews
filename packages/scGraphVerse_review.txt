@@ -1,5 +1,13 @@
 # scGraphVerse #3820
 
+* It would be nice to have the package use more integrative Bioconductor data
+  representations rather than primarily using `list` type objects. Have you
+  considered using other data structures?
+* The package seems to do too much in a single package, i.e., network
+  inference, community detection, network comparison, and visualization. Have
+  you considered splitting the package into multiple smaller packages with
+  more focused functionality?
+
 ## DESCRIPTION
 
 * The package seems to depend on quite a high number of other packages. Is
@@ -59,8 +67,8 @@ packages from 322 to 243.
   that the `consensus_matrix` input is a matrix.
 * For functions with multiple argument options, e.g., `method` argument in
   `create_consensus` (and `cutoff_adjacency`), add all possible methods in the
-  function signature, i.e., `c("vote", "union", "INet")` and use `match.arg`
-  in the function body to validate the input.
+  function signature, i.e., `c("vote", "union", "INet")` and use
+  `match.arg(method)` in the function body to validate the input.
 * The `earlyj` function does not seem to be filtering the `input_list`
   properly, the error message states that the input should be a list of
   matrices, seurat obj, or SCE obj, but the function only checks if the input
@@ -68,5 +76,68 @@ packages from 322 to 243.
 * Ensure that all functions return properly documented values, e.g., in the
   `edge_mining`, one of the return calls provides a simple `data.frame` but
   the documentation states that a "named list of data.frames" is returned.
+* Remove the carrige returns in the error messages in `infer_networks`. You
+  can use `\n` to insert a new line in the error message, e.g.,
+  `stop("Python not available.\nIs it configured?", " Try again.")`
+* Consider combining the multiple `message` calls in `init_py` into a single
+  call.
+* The package should not add methods to classes that are not defined in it,
+  e.g., `PCzinb,SummarizedExperiment-method`. Only create methods for classes
+  that are defined in the package. Use only a plain function that can adapt
+  to different input classes instead.
+* Use `seq_len()` instead of `seq(1, n)` (or `(i+1):(i+j)`) to avoid potential
+  issues when n is 0 in `Poisk2()`.
+* Consider using `BiocBaseUtils::checkInstalled()` in `plotg()`,
+  `stringdb_adjacency`, etc. to check if the required R packages are
+  installed, instead of relying on multiple `requireNamespace()` calls.
+* (Optional) Consider using `httr2` instead of `httr` for improved HTTP
+  requests handling in `stringdb_adjacency`.
+* Remove empty `.onLoad` and `.onUnload` functions in `R/zzz.R`.
+* Also, the `.onAttach` function is not needed and creates too much noise for
+  the user. It is generally not a good practice to display a message every
+  time the package is loaded. It is better to avoid using `onAttach` to reduce
+  startup time and avoid cluttering the user's console with messages.
+
+## tests
+
+* Consider improving the code coverage. The current coverage is quite low
+  (28.2%) and many important functions are not tested at all, e.g., functions
+  in `R/JRF_internal.R` and `R/ZILGM_internal.R` are not tested. Try to get at
+  least 80% coverage to ensure that the package is well tested and reliable.
+
+```r
+> covr::package_coverage(type = "all")
+scGraphVerse Coverage: 28.20%
+R/JRF_internal.R: 0.00%
+R/ZILGM_internal.R: 0.00%
+src/init.c: 0.00%
+src/regrf.c: 0.00%
+src/regTree.c: 0.00%
+R/PCzinb_internal.R: 8.63%
+R/infer_networks.R: 16.33%
+R/create_consensus.R: 24.56%
+R/init_py.R: 40.45%
+R/plotROC.R: 41.03%
+R/plotg.R: 54.55%
+R/download_Atlas.R: 58.33%
+R/utils.R: 65.05%
+R/earlyj.R: 70.59%
+R/cutoff_adjacency.R: 70.77%
+R/edge_mining.R: 76.00%
+R/stringdb_adjacency.R: 78.49%
+R/selgene.R: 86.36%
+R/community_similarity.R: 89.74%
+R/generate_adjacency.R: 90.57%
+R/compare_consensus.R: 92.75%
+R/community_path.R: 93.75%
+R/symmetrize.R: 96.30%
+R/AllGenerics.R: 100.00%
+R/pscores.R: 100.00%
+R/zinb_simdata.R: 100.00%
+R/zzz.R: 100.00%
+Warning message:
+In readLines(source_file) :
+  incomplete final line found on '/home/mramos/reviews/scGraphVerse/src/init.c'
+```
 
 
