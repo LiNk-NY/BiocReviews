@@ -1,9 +1,12 @@
 # OSTA #3859
 
+* The book looks great! I cannot provide a thorough scientific review of the
+  examples, but I ran some of the code in the `seq-workflow-visium-hd.qmd`
+  vignette to verify my point below.
+
 ## DESCRIPTION
 
 * The `BugReports` link should point to the GitHub issues page.
-* Looks good.
 
 ## NAMESPACE
 
@@ -13,4 +16,17 @@
 
 * Looks good.
 
+## inst/pages
+
+* Should the `bkg-importing-data.qmd` file mention cell segmentation for
+  Visium HD?
+* For reproducibility purposes, indicate in the introduction the Bioconductor
+  version used for the examples and the edition of the book.
+* Consider mentioning `scverse/anndataR` in the Python Interoperability
+  section.
+* Should authorship be split by chapter rather than having a group of authors
+  listed in the acknowledgments?
+* It seems like the `colnames(vhd8) <- vhd8$barcode` lines 49 and 92 are no
+  longer needed as `import()` already makes use of the barcodes in
+  `inst/pages/seq-workflow-visium-hd.qmd`.
 
