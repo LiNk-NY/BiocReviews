@@ -1,16 +1,16 @@
 # Rega #3822
 
-## General
-
-* The package is well-structured with a clear separation of concerns (API
-  client generation, parsing, validation, workflows), which is commendable.
+* The package is well-structured with a clear separation of functionality (API
+  client generation, parsing, validation, workflows).
 * Good use of modern packages like `httr2`, `validate`, and `rlang`.
-* The custom error handling in the main submission workflow provides excellent
-  robustness.
+* There are opportunities to increase robustness by checking input types more
+  rigorously in some functions (e.g., making sure that `api` is a list-based
+  class derivative and validated in `api_function_factory` etc.)
 
 ## DESCRIPTION
 
 * Looks good.
+* Update R version dependency to `>= 4.5.0`.
 
 ## NAMESPACE
 
@@ -19,33 +19,37 @@
 ## vignettes
 
 * The vignette is clear and easy to follow.
-* The API client generation functions (`create_client`, `extract_api`) are
-  very general. Consider spinning this out into a separate, reusable package
-  for building API clients from OpenAPI specifications.
+* The `Issues` section in the Rega User Guide should be populated with
+  references to known issues or limitations of the package.
 
 ## R
 
 * In `apiclient.R`, the `parse_ega_body` function contains a developer
   comment: `in the datasets response, there are 2 columns with status, why?`.
-  Please remove comment from production code.
+  Please address this comment or remove it if it's no longer relevant.
+* The use of `Sys.getenv` and `askpass::askpass` in `access.R` for credential
+  management is a good but consider using the `keyring` package or similar for
+  more secure and flexible credential storage.
+* For enhanced security, error when a password is unencrypted / plaintext
+  rather than issuing a warning in `.get_ega_password`.
+* If the token URL is hardcoded, consider using an `.EGA_TOKEN_URL` constant
+  instead of `NULL` in the function arguments of `ega_token` and `ega_oauth`.
+  If the URL changes, it will be easier to update in one place.
+* The API client generation functions (`create_client`, `extract_api`) are
+  very general and not Rega specific. Consider spinning this out into a
+  separate, reusable package for building API clients from OpenAPI
+  specifications.
 * In `format.R`, the `process_delimited_column` function has hard-coded logic
   for `pubmed_ids`. To improve generability, consider making such
   transformations data-driven (e.g., passing a list of column-specific type
   conversions) rather than using `if/else` statements for specific columns.
+* Consider addressing or removing the commented code in `validation_to_msg`.
 * In `workflows.R`, the `new_submission` function is quite long. For better
   readability and maintainability, consider refactoring the major steps
   (submitting samples, studies, etc.) into smaller internal helper functions.
-* The use of `Sys.getenv` and `askpass::askpass` in `access.R` for
-  credential management is a good but consider using the `keyring` package for
-  more secure and flexible credential storage.
-* The manual creation of lookup tables (LUTs) in `parse.R` from API
-  responses is a potential point of fragility if the API response structure
-  changes. This is an inherent challenge, but it's worth noting.
 
 ## tests
 
-* The test suite is comprehensive, covering helpers, internal functions, and
-  workflow logic.
 * Consider adding tests for the `R/workflows.R` file.
 
 ```
