@@ -1,0 +1,44 @@
+# MDSvis #3924
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Use a more specific name than `run_app` for the function that launches the
+  app, e.g. `mdsvis_app`.
+
+## vignettes
+
+* Remove the commented devtools code from the `MDSvis_Input...` vignette and
+  add code similar to that on the package landing pages, e.g.,
+  https://bioconductor.org/packages/release/bioc/html/CytoMDS.html
+* Use chunk options like message=FALSE, warning=FALSE, echo=TRUE, etc. instead
+  of `suppressPackageStartupMessages(...)`.
+* Use `eval=FALSE` for code that the vignette should not run on build, e.g.
+  `MDSvis::run_app()` rather than commenting that code out.
+* Clarify how the `*RDSPath` objects would be used by the shiny app in
+  the `MDSvis_Input...` RMarkdown. Perhaps, the shiny app could read in the
+  RDS data from a file path, so it may be better to provide an input folder
+  path or specific file path arguments to the `MDSvis::run_app()` function.
+
+## R
+
+* Rename `functions.R` to something more specific to the package, e.g.
+  `checkDimCompatibility.R`.
+* Remove the old `exportPlot` code from `run_app()` if not needed.
+* Consider using an example dataset as the default input files in the app, so
+  that users can launch the app without needing to provide their own data and
+  test the functionality.
+
+## tests
+
+* Consider adding tests for the `R/run_app.R` file:
+
+```r
+> covr::package_coverage(type = "all")
+MDSvis Coverage: 4.74%
+R/run_app.R: 0.00%
+R/functions.R: 100.00%
+```
