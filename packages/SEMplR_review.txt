@@ -1,0 +1,58 @@
+# SEMplR #3962
+
+* Consider renaming the package so that the lower case "l" is not confused
+  with the numeral "1" or capital "I". Consider using all capital letters
+  (SEMPLR) or changing the "l" to a different letter.
+* A significant portion of the code is dedicated to plotting functions.
+  Consider separating plotting functions into their own package to improve
+  modularity.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Consider separating score calculation and plotting functions into their own
+  respective packages to improve modularity and ease of maintenance.
+
+## vignettes
+
+* Consider only using one vignette output type (e.g., only `BiocStyle`)
+
+## R
+
+* Uncomment the validity method for `SEMplScores` or remove it if not needed.
+* Add the `@source` for the `SEMC` dataset.
+* It is preferrable to use `function()` instead of the more cryptic `\( )`
+  syntax for defining named functions, especially in package code
+  (`R/enrichSEMs.R`).
+* Where possible, use named indices rather than numeric indices for accessing
+  elements of lists and data frames (e.g., `sem[["value"]]` rather than
+  `sem[, 1]` in `R/loadSEMcollection.R`).
+
+## tests
+
+* Coverage is excellent.
+
+```r
+> covr::package_coverage(type = "all")
+SEMplR Coverage: 99.53%
+R/enrichSEMs.R: 95.06%
+R/plotEnrich.R: 99.19%
+R/AllGenerics.R: 100.00%
+R/convertSEMsToPPMs.R: 100.00%
+R/getRangeSeqs.R: 100.00%
+R/loadSEMCollection.R: 100.00%
+R/methods-SEMplScores.R: 100.00%
+R/methods-SNPEffectMatrix.R: 100.00%
+R/methods-SNPEffectMatrixCollection.R: 100.00%
+R/plotSEM.R: 100.00%
+R/plotSEMMotifs.R: 100.00%
+R/plotSEMVariants.R: 100.00%
+R/scoreBinding.R: 100.00%
+R/scoreVariants.R: 100.00%
+R/utils.R: 100.00%
+src/scoreSequence.cpp: 100.00%
+```
+
