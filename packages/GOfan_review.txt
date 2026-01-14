@@ -1,0 +1,56 @@
+# GOfan #4013
+
+## DESCRIPTION
+
+* Looks good.
+* Provide a bit more detail in the `Description:` field (at least three
+  sentences).
+
+## NAMESPACE
+
+* Avoid over specific `_df` suffixes in function names. Consider using
+  `getAncestors()` instead of `getAncestors_df()`.
+* Based on the number of imports, consider moving `ggplot2` into the `Depends`
+  field in the `DESCRIPTION`.
+
+## vignettes
+
+* Optional. Wrap the text to about 80 characters per line for better
+  readability in plain text.
+* Consider using `Sys.getenv("IS_BIOC_BUILD_MACHINE")` to detect if the
+  vignette is being built on the BBS.
+* Looks good.
+
+## R
+
+* Validating arguments with `missing()` will run even if there is a default
+  value (e.g., in `rescale(to = c(0, 1))`. Consider using a different approach
+  (e.g., check for two values in the `to` argument) to determine if the user
+  provided a valid set of values.
+* Minor. Consider using single quotes to refer to arguments in error messages,
+  e.g. `stop("'from' range cannot contain NA")`.
+
+## tests
+
+* Coverage looks good.
+
+```r
+> covr::package_coverage(type = "all")
+GOfan Coverage: 76.74%
+R/ggSunburst.R: 58.93%
+R/sunburstGO.R: 60.61%
+R/getAncestors.R: 94.59%
+R/getGOalias.R: 95.24%
+R/simplifyDAG.R: 96.00%
+R/filterGraph.R: 96.36%
+R/getGraph.R: 100.00%
+R/goGraph.R: 100.00%
+R/graph2tree.R: 100.00%
+R/Utilities.R: 100.00%
+```
+
+## BiocCheck
+
+* No ERRORs or WARNINGs. Consider addressing some of the BiocCheck NOTEs.
+
+
