@@ -1,0 +1,47 @@
+# HumanRetinaLRSData #4017
+
+* Overall, the package is well organized and well written. There are a couple
+  of issues with the implementation. For one, the data format should not be
+  serialized R objects, but rather flat files that can be easily accessed
+  according to FAIR principles https://www.nature.com/articles/sdata201618.
+  Secondly, the R package should not use an `.onLoad` function to retrieve
+  data from the OSF API. Instead, the data should be checked against the
+  `metadata.csv` file included in the package, which would be more robust and
+  not require an internet connection.
+
+## DESCRIPTION
+
+* Please add a couple more sentences in the Description field to give a better
+  overview of the dataset.
+* Add BugReports and URL fields.
+* Remove `LazyData` from the `DESCRIPTION` file or set to `false`.
+* The minimum required R version is `4.6.0` for Bioconductor devel. Please
+  update the `DESCRIPTION` file accordingly.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* Add a loading section where the vignette shows what packages should be
+  loaded to demonstrate subsequent operations (currently the first chunk has
+  `include=FALSE`)
+* It is not very user-friendly to include a function directly in the vignette
+  (`plot_pca`). Consider importing this function from another package if
+  possible so that the dependencies are not too heavy.
+* Minor. Consider limiting the text to 80 characters per line for better
+  readability in the source file.
+
+## R
+
+* Consider using the `metadata.csv` in the package to check against the
+  `osf_file_name` input. It would not require an internet connection and would
+  be more robust. Currently the `load_object` function reads the metadata from
+  the OSF API every time it is called, which is not ideal.
+* Remove the `.onLoad` function as it is repetitive and any file retrieval
+  should be done via the `load_object` function.
+* It is strongly recommended to use flat files, e.g., `.csv`, `.paquet`, etc.
+  rather than serialized files for data storage. This will make the data more
+  accessible and easier to work with for users who may not be using R.
+
