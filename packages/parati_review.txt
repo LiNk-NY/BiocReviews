@@ -1,0 +1,65 @@
+# parati #4084
+
+The package requires substantial revisions across all components architecture,
+coding efficiency, and documentation to meet the standards expected for a
+Bioconductor package. If the package does not pivot to leverage established
+Bioconductor infrastructure, it is better suited for a CRAN submission.
+
+## DESCRIPTION
+
+* Bioconductor has a long-standing requirement for packages to reuse
+  existing infrastructure. You must provide support for
+  `SummarizedExperiment`, `VCF` (from `VariantAnnotation`), or other
+  relevant data classes. Direct manipulation of VCFs as data tables bypasses
+  the robust validation and methods provided by the ecosystem.
+* `optparse` and `openxlsx` are listed in `Imports`. If `optparse` is only
+  used for the CLI script in `inst/scripts/`, it should not be a hard
+  dependency.
+* The current `biocViews` are too generic. Use more descriptive terms.
+
+## NAMESPACE
+
+* Looks ok.
+
+## vignettes
+
+* Several sections appear to be formatted as static markdown code blocks
+  rather than evaluated R chunks. You must use ` ```{r} ` syntax to ensure
+  the workflow is actually executed and verified during the build process.
+* **Runnable Examples:** Avoid using `eval=FALSE` or `\donttest` for the
+  primary workflow. Provide a minimal, high-speed example using the included
+  toy data so that the vignette serves as a live demonstration of the
+  package's correctness.
+
+## R
+
+* **Side Effects:** Functions should return R objects to the environment
+  rather than writing files to the disk by default. For example,
+  `parati_run` has a `write_files = TRUE` default and writes VCF files to a
+  directory. Please remove these side effects. The primary output of a
+  Bioconductor function should be a data structure (e.g., an S4 object) that
+  the user can then manipulate or save. Allow users to save their own
+  results as they see fit.
+* **Coding Efficiency:** The use of row-wise `for` loops in
+  `R/haplotype_infer.R` can be inefficient. This approach may not scale with
+  large VCF files. Consider refactoring the inference logic to use
+  vectorized operations.
+* **Dependency Management:** Remove all instances of `requireNamespace` for
+  packages listed in the `Imports` field of the `DESCRIPTION` file (e.g.,
+  `data.table`, `stringr`). These packages are already loaded into the
+  namespace via the `NAMESPACE` file; using `requireNamespace` inside the
+  function body is redundant and clutters the code.
+* **Loop Merging:** In `parati_run.R`, you are calling `merge.data.table`
+  inside a loop. Collect the results in a list and use `rbindlist` or a
+  single `Reduce(merge, ...)` call at the end.
+* Remove the vcf_to_plink.R file or implement the funcitonality.
+
+## tests
+
+* **Verification:** The current tests only check if a "minimal run" returns
+  a list with the correct names. You must implement rigorous unit tests that
+  verify the *mathematical/biological correctness* of the transmission
+  inference
+* **skip_on_bioc:** Do not use `skip_on_bioc()` for core logic tests. These
+  must run on the Bioconductor Build System.
+
