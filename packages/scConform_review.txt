@@ -1,0 +1,73 @@
+# scConform #4109
+
+## DESCRIPTION
+
+* Update the R version dependency from R (>= 4.5.0) to R (>= 4.6.0) to match
+  the current Bioconductor devel requirement.
+* `biocViews:` Consider adding more specific terms such as Classification if
+  it applies, and ensure Software is included as a top-level view.
+* `Authors:` Consider adding an 'fnd' (funder) role if the work was supported
+  by specific grants.
+
+## NAMESPACE
+
+* The namespace looks clean. Ensure all imported functions are actually used.
+* With `import(Rgraphviz)`, consider using selective imports (`@importFrom`)
+  instead, if only a few functions are needed.
+
+## vignettes
+
+* Installation Instructions: Update the installation section to simply use the
+  standard `BiocManager::install()` approach. Avoid recommending
+  `devtools::install_github()` or using `spdl::info` in the user-facing
+  installation code.
+* Use a `REFERENCES.bib` file for citations and a `bibliography:` field in the
+  yaml front matter instead of hardcoding references in the vignette. This
+  allows for better management of references and ensures they are properly
+  cited and formatted.
+* The preliminary ontology building step is quite involved. Perhaps this is
+  better suited as a separate vignette focused on ontology construction, with
+  the main vignette demonstrating how to use the package with a pre-built
+  ontology.
+
+## R
+
+* The `@description` section in `R/getCommonAncestor.R` seems unfinished.
+  Complete the description to provide users with a clear understanding of the
+  function's utility.
+* Consider using markdown with roxygen2 blocks for better formatting of
+  documentation and readability.
+* Be more specific when indicating the type of input for `@param` documentation.
+  For example, for `col_grad` indicate to the user the possible inputs (e.g.,
+  a vector of allowed color names or a specific color palette). Indicate the
+  type of input for `probs` (e.g., vector of type double of probabilities
+  between 0 and 1).
+* Avoid growing vectors or lists in loops. This can be a significant
+  performance bottleneck.
+   * In R/utils.R (function .resampleTwo), idx1 and idx2 are grown in a for
+     loop.
+   * In R/plotResult.R, vec_col and labels are grown in for loops.
+   * Use lapply, vapply, or pre-allocate the objects with the required length
+     and fill during the loop.
+* In `plotResult()`, the ... argument is defined but not passed to the
+  internal `plot()` call. If you intend to allow users to pass additional
+  graphical parameters, ensure they are correctly forwarded.
+
+## tests
+
+* The tests seem to generate an Rplots.pdf file in the tests/testthat/
+  directory.
+* Remove tests/testthat/Rplots.pdf from the repository and add it to
+  .gitignore / .Rbuildignore.
+* Coverage looks good:
+```r
+> covr::package_coverage(type = "all")
+scConform Coverage: 82.48%
+R/utils.R: 79.88%
+R/getPredictionSets.R: 81.25%
+R/getCommonAncestor.R: 100.00%
+R/plotResult.R: 100.00%
+```
+
+<sub> This review was assisted by Gemini CLI and checked for accuracy. </sub>
+
