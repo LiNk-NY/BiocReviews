@@ -1,0 +1,178 @@
+name: R CMD build and check
+
+on:
+  issues:
+    types: [labeled]
+  issue_comment:
+    types: [created, edited]
+
+env:
+  R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  CRAN: https://p3m.dev/cran/__linux__/noble/latest
+  BIOC_VERSION: devel
+
+jobs:
+  set-matrix:
+    if: |
+      github.event.label.name == 'AI review' ||
+      startsWith(github.event.comment.body, 'Remotes:')
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.set.outputs.matrix }}
+      target_repo: ${{ steps.extract.outputs.repo }}
+    steps:
+      - name: Extract Repo from Issue Body
+        id: extract
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const body = context.payload.issue.body || "";
+            // Regex to find 'owner/repo' from a GitHub URL
+            const match = body.match(/github\.com\/([a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+)/);
+            if (match) {
+              core.setOutput('repo', match[1]);
+            } else {
+              core.setFailed("No GitHub repository URL found in the issue body.");
+            }
+      - name: Set Matrix Bioconductor Version
+        id: set
+        run: |
+          MATRIX="{\"include\":[{\"bioc_version\":\"devel\"}]}"
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+  build-check:
+    if: |
+      github.event.label.name == 'AI review' ||
+      startsWith(github.event.comment.body, 'Remotes:')
+    needs: set-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
+    container: bioconductor/bioconductor_docker:${{ matrix.bioc_version }}
+
+    steps:
+      - name: Parse Remotes from Comment
+        id: parse_remotes
+        run: |
+          txt <- "${{ github.event.comment.body }}"
+          first <- sub("\r$", "", strsplit(txt, "\n", fixed = TRUE)[[1]][1])
+          if (!startsWith(first, "Remotes:")) quit(status = 0)
+          r <- read.dcf(textConnection(first))[, "Remotes"]
+          cat("found_remotes=", trimws(r), "\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE, sep = "")
+        shell: Rscript {0}
+
+      - name: Checkout External Repository
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ needs.set-matrix.outputs.target_repo }}
+          ref: ${{ matrix.bioc_version }}
+
+      - name: Install Remotes
+        run: |
+          extra_deps <- "${{ steps.parse_remotes.outputs.found_remotes }}"
+          if (nzchar(extra_deps)) {
+              deps_vector <- strsplit(extra_deps, ",\\s*")[[1L]]
+              remotes::install_github(deps_vector, upgrade = "always")
+          }
+          BiocManager::install(ask = FALSE, update = TRUE)
+          remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
+        shell: Rscript {0}
+
+      - name: Query dependencies
+        run: |
+          BiocManager::install(c("covr", "jsonlite", "BiocCheck"))
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+        shell: Rscript {0}
+
+      - name: Install R Package
+        run: |
+          remotes::install_local(repos = BiocManager::repositories())
+        shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v5
+        with:
+          path: /usr/local/lib/R/site-library
+          key: ${{ runner.os }}-r-${{ matrix.bioc_version }}-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-r-${{ matrix.bioc_version }}-
+
+      - name: Install GPG
+        run: sudo apt-get update && sudo apt-get install -y gpg
+
+      - name: Install Dependencies
+        run: |
+          BiocManager::install(ask = FALSE, update = TRUE)
+          remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
+        shell: Rscript {0}
+
+      - name: Build Check Package
+        env:
+          _R_CHECK_CRAN_INCOMING_REMOTE_: false
+        run: |
+          check <- rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error", check_dir = "check")
+          sink("check_results.txt")
+          print(check)
+          sink()
+        shell: Rscript {0}
+
+      - name: Test coverage
+        run: |
+          cov <- covr::package_coverage(
+            quiet = FALSE,
+            clean = FALSE,
+            type = "all",
+            install_path = file.path(
+              normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"),
+              "package"
+            )
+          )
+          library(jsonlite)
+          cov_list <- covr::coverage_to_list(cov)
+          write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
+          percent <- round(covr::percent_coverage(cov), 2)
+          writeLines(paste0("Total Coverage: ", percent, "%"), "coverage_summary.txt")
+        shell: Rscript {0}
+
+      - name: Upload coverage artifact
+        if: success()
+        uses: actions/checkout@v6
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: coverage-data
+          path: |
+            coverage.json
+            coverage_summary.txt
+          retention-days: 5
+
+      - name: Run BiocCheck
+        id: bioccheck
+        run: |
+          sink("bioccheck_results.txt")
+          BiocCheck::BiocCheck(
+            ".",
+            `quit-with-status` = TRUE,
+            `no-check-bioc-help` = TRUE
+          )
+          sink()
+        shell: Rscript {0}
+
+      - name: Post Results to Issue
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const check = fs.existsSync('check_results.txt') ? fs.readFileSync('check_results.txt', 'utf8') : 'No check log found.';
+            const bioc = fs.existsSync('bioccheck_results.txt') ? fs.readFileSync('bioc_results.txt', 'utf8') : 'No BiocCheck log found.';
+            const cov = fs.existsSync('coverage_summary.txt') ? fs.readFileSync('coverage_summary.txt', 'utf8') : 'No coverage found.';
+
+            const commentBody = `### 🧬 Build & Check Results\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: commentBody
+            });
+
