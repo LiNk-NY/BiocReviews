@@ -1,90 +1,92 @@
 # BiocReviews
 
 Repository for Bioconductor package reviews, including a collection of human
-reviews (`packages/`) and an automated review system.
+reviews (`packages/`) and an AI-assisted review system.
 
 ---
 
-## Automated Review System
+## AI-Assisted Review System
 
-The automated reviewer analyzes a package's source code together with artifacts
+The AI review assistant analyzes a package's source code together with artifacts
 from R CMD check, BiocCheck, and test coverage to generate a structured review
 following [Bioconductor contribution guidelines](https://contributions.bioconductor.org).
 
+These reviews are preliminary assessments that assist human reviewers in the
+final evaluation process.
+
 ### Review Guidelines
 
-The guidelines used by the automated reviewer are documented and maintained in
+The guidelines used by the AI review assistant are documented and maintained in
 [`.github/bioc-review-guidelines.instructions.md`](.github/bioc-review-guidelines.instructions.md).
-Edit that file to adjust reviewer expectations (new rules, exceptions, etc.).
+Edit that file to adjust the assistant's expectations (new rules, exceptions, etc.).
 
 ---
 
 ### Running a Review
 
-#### Submission issue format (required)
+#### Submission Issue Format
 
 Open submissions using the issue template in
 `.github/ISSUE_TEMPLATE/issue_template.md`.
 
-The workflow parser expects this line in the issue body:
-
+**Required field in issue body:**
 ```
 Repository: https://github.com/owner/repo
 ```
 
-Optional field:
-
+**Optional field:**
 ```
 Branch/Ref: devel
 ```
 
-After confirming the issue is complete and correctly formatted, a **repository
-collaborator** should add the **`AI review`** label to initiate the build/check
-workflow.
+---
 
-To rerun the workflow chain later, a collaborator can post an `@biocreview`
-comment. If needed, include a `Remotes:` line in the same comment (see below).
+#### Triggering Methods
 
-#### Option 1 — Automated (full build + review)
+**Method 1: Initial Review Trigger (AI Review Assistant Activation)**
 
-Add the label **`AI review`** to a package submission issue. This triggers the
-`build-check.yml` workflow which runs R CMD check, BiocCheck, and coverage, then
-uploads artifacts and posts a build/check summary comment.
+A **repository collaborator** adds the **`AI review`** label to a package submission
+issue. This initiates:
 
-After `build-check.yml` completes, `auto-review.yml` is triggered
-and generates/posts the structured automated review using those artifacts.
+1. `build-check.yml` runs R CMD check, BiocCheck, and test coverage
+2. Artifacts are uploaded and a build/check summary is posted to the issue
+3. `auto-review.yml` automatically triggers and generates the structured review
 
-#### Option 2 — Rerun from issue comment
+**Note:** Co-dependent remotes are NOT supported on initial runs. Use Method 2
+to rerun with remotes.
 
-Comment `@biocreview` on an existing issue to trigger the
-workflow chain again. The comment re-runs `build-check.yml`, and then
-`auto-review.yml` runs from the resulting artifacts. Alternatively, trigger
-`auto-review.yml` manually from the
-[Actions tab](../../actions/workflows/auto-review.yml) and supply the
-`owner/repo` and optional issue number.
+---
 
-#### Installing co-dependent packages
+**Method 2: Rerun with Co-dependent Packages**
 
-If the package being reviewed depends on **another package that is also under
-simultaneous review** (i.e., not yet on Bioconductor or CRAN), include a
-`Remotes:` line in the same `@biocreview` rerun comment so those packages are
-pre-installed during the build/check workflow:
-
-```
-@biocreview
-Remotes: waldronlab/imageTCGAutils
-```
-
-Multiple co-dependent packages can be comma-separated:
+Comment `@biocreview` on an existing issue to rerun the full workflow chain:
 
 ```
 @biocreview
 Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
 ```
 
-This is primarily intended for co-dependent simultaneous submissions.
+- The `Remotes:` line is **optional** and only needed when the package depends on
+  other GitHub packages not yet on Bioconductor/CRAN
+- Multiple remotes can be comma-separated
+- This reruns both `build-check.yml` and `auto-review.yml` with artifacts
+- **Important:** Remotes can ONLY be specified via `@biocreview` comments,
+  NOT on initial runs or in the issue body
 
-#### Option 3 — Local
+---
+
+**Method 3: Manual Review-Only Trigger**
+
+Trigger `auto-review.yml` manually from the
+[Actions tab](../../actions/workflows/auto-review.yml) using workflow_dispatch:
+
+- Supply the `owner/repo` and optional issue number
+- Generates review without running build/check
+- Useful for re-reviewing after code changes without full CI rerun
+
+---
+
+**Method 4: Local Review
 
 ```bash
 # Review a local package checkout and write to a file:
@@ -120,13 +122,13 @@ generate_review.R          Core review generation script
 scripts/
   generate_local_review.sh Local wrapper (runs checks + review)
 .github/
-  bioc-review-guidelines.instructions.md   Editable review guidelines
+  bioc-review-guidelines.instructions.md   AI review assistant guidelines
   workflows/
-    build-check.yml        Build/check workflow with artifact output
-    auto-review.yml        Review-generation workflow (artifact-driven + fallback)
+    build-check.yml        Full CI pipeline: R CMD check, BiocCheck, coverage
+    auto-review.yml        AI review assistant workflow (artifact-driven)
   ISSUE_TEMPLATE/
-    issue_template.md      Submission template (includes automation fields)
-    config.yml             Issue template routing
+    issue_template.md      Submission template with activation instructions
+    config.yml             Issue template routing configuration
 buildcheck.sh              Legacy local build/check helper
 clonevim.sh                Clone a package and prepare review file
 ```

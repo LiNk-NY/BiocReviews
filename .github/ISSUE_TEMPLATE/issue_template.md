@@ -1,6 +1,5 @@
 ---
-name: Bioconductor package submission
-about: Bioconductor package submission template for BiocReviews automation
+name: Bioconductor Package Submission
 title: ""
 labels: ""
 assignees: ""
@@ -61,23 +60,40 @@ use the #package-submission channel in Bioconductor Community Slack.
 
 ---
 
-### Collaborator Activation
+### AI Review Assistant Activation
 
-After verifying this issue is complete and correctly formatted, a repository
-collaborator should add the `AI review` label to initiate the build/check
-workflow.
+After verifying this issue is complete and correctly formatted, a **repository
+collaborator** should add the **`AI review`** label to initiate the AI-assisted
+review system:
 
-To rerun the workflow chain later, post a comment beginning with `@biocreview`.
-If the package depends on GitHub packages not yet on Bioconductor/CRAN, include
-a `Remotes:` line in that same rerun comment:
+1. `build-check.yml` runs R CMD check, BiocCheck, and test coverage
+2. Build/check results are posted to this issue
+3. `auto-review.yml` generates and posts a preliminary AI-assisted review
+
+**Note:** Co-dependent remotes are NOT supported on initial runs (see below).
+
+---
+
+### Rerunning with Co-dependent Packages
+
+To rerun the full workflow chain, post a comment starting with `@biocreview`:
+
+```
+@biocreview
+```
+
+If the package depends on GitHub packages not yet on Bioconductor/CRAN
+(e.g., simultaneous submissions), include a `Remotes:` line:
 
 ```
 @biocreview
 Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot
 ```
 
-**Important**: `Remotes:` belongs in the `@biocreview` rerun comment, not in
-the issue body.
+**Important:**
+- `Remotes:` can ONLY be specified in `@biocreview` rerun comments
+- Remotes are NOT supported on initial runs (when adding the AI review label)
+- Do NOT put `Remotes:` in the issue body above
 
 ---
 
@@ -85,7 +101,7 @@ the issue body.
 
 - Missing or malformed `Repository:` URL
 - `Repository:` pointing to a private repository
-- `Remotes:` in issue body instead of the `@biocreview` rerun comment
+- Attempting to use `Remotes:` on initial run or in issue body
 - `Remotes:` not in `owner/repo` format
 
 [1]: https://contributions.bioconductor.org/

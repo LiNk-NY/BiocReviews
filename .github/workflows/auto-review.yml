@@ -1,10 +1,10 @@
-name: Automated Bioconductor Package Review
+name: AI Review Assistant
 
 on:
   workflow_run:
     # IMPORTANT: This workflow name must exactly match the 'name' field in build-check.yml
     # If you rename build-check.yml's workflow, update this reference accordingly
-    workflows: ["R CMD build and check"]
+    workflows: ["Build and Check Pipeline"]
     types: [completed]
   workflow_dispatch:
     inputs:
@@ -29,7 +29,7 @@ permissions:
 
 env:
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-  REVIEW_MODEL: "GitHub Copilot (automated reviewer)"
+  REVIEW_MODEL: "AI Review Assistant (GitHub Copilot)"
 
 jobs:
   auto-review:
@@ -165,5 +165,5 @@ jobs:
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `### Automated Package Review\n\n${review}`
+              body: `### AI-Assisted Package Review\n\n${review}`
             });

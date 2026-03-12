@@ -1,4 +1,4 @@
-name: R CMD build and check
+name: Build and Check Pipeline
 # IMPORTANT: This workflow name is referenced by auto-review.yml's workflow_run trigger
 # If you rename this workflow, update the reference in auto-review.yml accordingly
 
@@ -41,7 +41,7 @@ jobs:
               return;
             }
 
-            const refMatch = body.match(/^[\-\*\s]*(?:Branch\/Ref|Ref):\s*([^\n\r]+)\s*$/im);
+            const refMatch = body.match(/^[\-\*\s]*(?:Branch\/Ref|Ref):\s*([\w\/\.\-]+)\s*$/im);
             const ref = refMatch ? refMatch[1].trim() : "devel";
 
             core.setOutput('repo', repoMatch[1]);
@@ -77,8 +77,10 @@ jobs:
 
       - name: Install co-dependent remotes
         if: steps.parse_remotes.outputs.found_remotes != ''
+        env:
+          REMOTES_INPUT: ${{ steps.parse_remotes.outputs.found_remotes }}
         run: |
-          deps <- trimws(strsplit("${{ steps.parse_remotes.outputs.found_remotes }}", ",\\s*")[[1L]])
+          deps <- trimws(strsplit(Sys.getenv("REMOTES_INPUT"), ",\\s*")[[1L]])
           deps <- deps[nzchar(deps)]
           if (length(deps) > 0) {
             message("Installing remotes: ", paste(deps, collapse = ", "))
