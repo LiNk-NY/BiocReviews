@@ -1,4 +1,6 @@
-name: R CMD build and check
+name: Build and Check Pipeline
+# IMPORTANT: This workflow name is referenced by auto-review.yml's workflow_run trigger
+# If you rename this workflow, update the reference in auto-review.yml accordingly
 
 on:
   issues:
@@ -6,186 +8,172 @@ on:
   issue_comment:
     types: [created, edited]
 
+permissions:
+  contents: read
+  issues: write
+
 env:
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   CRAN: https://p3m.dev/cran/__linux__/noble/latest
   BIOC_VERSION: devel
-  REVIEW_MODEL: "GitHub Copilot (automated reviewer)"
 
 jobs:
-  set-matrix:
+  build-check:
     if: |
-      github.event.label.name == 'AI review' ||
-      startsWith(github.event.comment.body, 'Remotes:')
+      (github.event_name == 'issues' && github.event.label.name == 'AI review') ||
+      (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '@biocreview'))
     runs-on: ubuntu-24.04
-    outputs:
-      matrix: ${{ steps.set.outputs.matrix }}
-      target_repo: ${{ steps.extract.outputs.repo }}
+    container: bioconductor/bioconductor_docker:devel
+
     steps:
-      - name: Extract Repo from Issue Body
-        id: extract
+      - name: Resolve submission metadata from issue body
+        id: resolve
         uses: actions/github-script@v8
         with:
           script: |
             const body = context.payload.issue.body || "";
-            // Regex to find 'owner/repo' from a GitHub URL
-            const match = body.match(/github\.com\/([a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+)/);
-            if (match) {
-              core.setOutput('repo', match[1]);
-            } else {
-              core.setFailed("No GitHub repository URL found in the issue body.");
+
+            const repoMatch = body.match(/^[\-\*\s]*Repository:\s*https?:\/\/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)\/?\s*$/im)
+              || body.match(/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)/);
+            if (!repoMatch) {
+              core.setFailed("No valid Repository URL found. Use 'Repository: https://github.com/owner/repo' in the issue body.");
+              return;
             }
-      - name: Set Matrix Bioconductor Version
-        id: set
-        run: |
-          MATRIX="{\"include\":[{\"bioc_version\":\"devel\"}]}"
-          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
 
-  build-check:
-    if: |
-      github.event.label.name == 'AI review' ||
-      startsWith(github.event.comment.body, 'Remotes:')
-    needs: set-matrix
-    runs-on: ubuntu-latest
-    strategy:
-      matrix: ${{ fromJson(needs.set-matrix.outputs.matrix) }}
-    container: bioconductor/bioconductor_docker:${{ matrix.bioc_version }}
+            const refMatch = body.match(/^[\-\*\s]*(?:Branch\/Ref|Ref):\s*([\w\/\.\-]+)\s*$/im);
+            const ref = refMatch ? refMatch[1].trim() : "devel";
 
-    steps:
-      - name: Parse Remotes from Comment
+            core.setOutput('repo', repoMatch[1]);
+            core.setOutput('ref', ref || 'devel');
+            core.setOutput('issue', String(context.issue.number));
+
+      - name: Parse remotes from comment (optional)
         id: parse_remotes
-        run: |
-          txt <- "${{ github.event.comment.body }}"
-          first <- sub("\r$", "", strsplit(txt, "\n", fixed = TRUE)[[1]][1])
-          if (!startsWith(first, "Remotes:")) quit(status = 0)
-          r <- read.dcf(textConnection(first))[, "Remotes"]
-          cat("found_remotes=", trimws(r), "\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE, sep = "")
-        shell: Rscript {0}
-
-      - name: Checkout External Repository
-        uses: actions/checkout@v6
+        uses: actions/github-script@v8
         with:
-          repository: ${{ needs.set-matrix.outputs.target_repo }}
-          ref: ${{ matrix.bioc_version }}
+          script: |
+            if (context.eventName !== 'issue_comment') {
+              core.setOutput('found_remotes', '');
+              return;
+            }
 
-      - name: Install Remotes
+            const commentBody = context.payload.comment.body || '';
+            const remotesMatch = commentBody.match(/^Remotes:\s*(.+)$/im);
+
+            if (!remotesMatch) {
+              core.setOutput('found_remotes', '');
+              return;
+            }
+
+            core.setOutput('found_remotes', remotesMatch[1].trim());
+
+      - name: Checkout target package
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.resolve.outputs.repo }}
+          ref: ${{ steps.resolve.outputs.ref }}
+          path: package
+
+      - name: Install co-dependent remotes
+        if: steps.parse_remotes.outputs.found_remotes != ''
+        env:
+          REMOTES_INPUT: ${{ steps.parse_remotes.outputs.found_remotes }}
         run: |
-          extra_deps <- "${{ steps.parse_remotes.outputs.found_remotes }}"
-          if (nzchar(extra_deps)) {
-              deps_vector <- strsplit(extra_deps, ",\\s*")[[1L]]
-              remotes::install_github(deps_vector, upgrade = "always")
+          deps <- trimws(strsplit(Sys.getenv("REMOTES_INPUT"), ",\\s*")[[1L]])
+          deps <- deps[nzchar(deps)]
+          if (length(deps) > 0) {
+            message("Installing remotes: ", paste(deps, collapse = ", "))
+            remotes::install_github(deps, upgrade = "never")
           }
-          BiocManager::install(ask = FALSE, update = TRUE)
-          remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
         shell: Rscript {0}
 
-      - name: Query dependencies
+      - name: Install build/check dependencies
         run: |
-          BiocManager::install(c("covr", "jsonlite", "BiocCheck"))
-          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          BiocManager::install(c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"), ask = FALSE, update = FALSE)
+          remotes::install_deps("package", dependencies = TRUE, repos = BiocManager::repositories())
         shell: Rscript {0}
 
-      - name: Install R Package
+      - name: R CMD check
+        continue-on-error: true
+        env:
+          _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: |
-          remotes::install_local(repos = BiocManager::repositories())
+          check <- tryCatch(
+            rcmdcheck::rcmdcheck("package", args = "--no-manual", error_on = "never", check_dir = "check"),
+            error = function(e) {
+              message("rcmdcheck failed: ", conditionMessage(e))
+              NULL
+            }
+          )
+          if (!is.null(check)) {
+            sink("check_results.txt")
+            print(check)
+            sink()
+          }
         shell: Rscript {0}
 
-      - name: Cache R packages
-        uses: actions/cache@v5
-        with:
-          path: /usr/local/lib/R/site-library
-          key: ${{ runner.os }}-r-${{ matrix.bioc_version }}-${{ hashFiles('.github/depends.Rds') }}
-          restore-keys: ${{ runner.os }}-r-${{ matrix.bioc_version }}-
+      - name: Test coverage
+        continue-on-error: true
+        run: |
+          cov <- tryCatch(
+            covr::package_coverage("package", quiet = FALSE, clean = FALSE, type = "all"),
+            error = function(e) NULL
+          )
+          if (!is.null(cov)) {
+            cov_list <- covr::coverage_to_list(cov)
+            jsonlite::write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
+            pct <- round(covr::percent_coverage(cov), 2)
+            writeLines(paste0("Total Coverage: ", pct, "%"), "coverage_summary.txt")
+          }
+        shell: Rscript {0}
 
       - name: Install GPG
         run: sudo apt-get update && sudo apt-get install -y gpg
 
-      - name: Install Dependencies
-        run: |
-          BiocManager::install(ask = FALSE, update = TRUE)
-          remotes::install_deps(dependencies = TRUE, repos = BiocManager::repositories())
-        shell: Rscript {0}
-
-      - name: Build Check Package
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: |
-          check <- rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error", check_dir = "check")
-          sink("check_results.txt")
-          print(check)
-          sink()
-        shell: Rscript {0}
-
-      - name: Test coverage
-        run: |
-          cov <- covr::package_coverage(
-            quiet = FALSE,
-            clean = FALSE,
-            type = "all",
-            install_path = file.path(
-              normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"),
-              "package"
-            )
-          )
-          library(jsonlite)
-          cov_list <- covr::coverage_to_list(cov)
-          write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
-          percent <- round(covr::percent_coverage(cov), 2)
-          writeLines(paste0("Total Coverage: ", percent, "%"), "coverage_summary.txt")
-        shell: Rscript {0}
-
-      - name: Upload coverage artifact
-        if: success()
-        uses: actions/checkout@v6
-
-      - uses: actions/upload-artifact@v6
-        with:
-          name: coverage-data
-          path: |
-            coverage.json
-            coverage_summary.txt
-          retention-days: 5
-
       - name: Run BiocCheck
-        id: bioccheck
-        # BiocCheck returns non-zero on issues; continue so we can post results
         continue-on-error: true
         run: |
           sink("bioccheck_results.txt")
-          BiocCheck::BiocCheck(
-            ".",
-            `quit-with-status` = TRUE,
-            `no-check-bioc-help` = TRUE
+          tryCatch(
+            BiocCheck::BiocCheck("package", `quit-with-status` = TRUE, `no-check-bioc-help` = TRUE),
+            error = function(e) message("BiocCheck error: ", conditionMessage(e))
           )
           sink()
         shell: Rscript {0}
 
-      - name: Checkout BiocReviews (for generate_review.R)
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}
-          path: BiocReviews
-
-      - name: Generate Automated Review
+      - name: Save run metadata files
         run: |
-          Rscript BiocReviews/generate_review.R \
-            "." \
-            "check_results.txt" \
-            "bioccheck_results.txt" \
-            "coverage.json" \
-            "${{ github.event.issue.number }}" \
-            "automated_review.md"
-        shell: bash
+          echo "${{ steps.resolve.outputs.issue }}" > issue_number.txt
+          echo "${{ steps.resolve.outputs.repo }}" > target_repo.txt
+          echo "${{ steps.resolve.outputs.ref }}" > target_ref.txt
 
-      - name: Upload automated review artifact
+      - name: Upload build-check results artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automated-review
-          path: automated_review.md
-          retention-days: 30
+          name: build-check-results
+          path: |
+            check_results.txt
+            bioccheck_results.txt
+            coverage.json
+            coverage_summary.txt
+          retention-days: 7
+          if-no-files-found: warn
 
-      - name: Post Results to Issue
+      - name: Upload build-check metadata artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-check-metadata
+          path: |
+            issue_number.txt
+            target_repo.txt
+            target_ref.txt
+          retention-days: 7
+
+      - name: Post build/check summary to issue
+        if: always()
         uses: actions/github-script@v8
         with:
           script: |
@@ -193,25 +181,12 @@ jobs:
             const check = fs.existsSync('check_results.txt') ? fs.readFileSync('check_results.txt', 'utf8') : 'No check log found.';
             const bioc = fs.existsSync('bioccheck_results.txt') ? fs.readFileSync('bioccheck_results.txt', 'utf8') : 'No BiocCheck log found.';
             const cov = fs.existsSync('coverage_summary.txt') ? fs.readFileSync('coverage_summary.txt', 'utf8') : 'No coverage found.';
-            const review = fs.existsSync('automated_review.md') ? fs.readFileSync('automated_review.md', 'utf8') : '';
 
-            // Post build/check results as one comment
-            const buildBody = `### Build & Check Results\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}`;
+            const body = `### Build & Check Results\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}`;
             await github.rest.issues.createComment({
-              issue_number: context.issue.number,
+              issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: buildBody
+              body
             });
-
-            // Post automated review as a separate comment if generated
-            if (review) {
-              const reviewBody = `### Automated Package Review\n\n> Generated by [BiocReviews](https://github.com/${{ github.repository }}) based on Bioconductor contribution guidelines.\n> This is a preliminary automated review — a human reviewer will follow up.\n\n${review}`;
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: reviewBody
-              });
-            }
 
