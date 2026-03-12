@@ -11,16 +11,9 @@ wish to submit to _Bioconductor_.
 
 - Repository: https://github.com/yourusername/yourpackagename
 
-Optional automation inputs:
+Optional automation input:
 
 - Branch/Ref: devel
-- Remotes:
-
-  If your package depends on other GitHub packages not yet available on
-  Bioconductor/CRAN, list them as comma-separated `owner/repo` entries.
-  Example:
-
-  `Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot`
 
 Confirm the following by editing each check box to `[x]`:
 
@@ -74,8 +67,14 @@ After verifying this issue is complete and correctly formatted, a repository
 collaborator should add the `AI review` label to initiate the build/check
 workflow.
 
-Use a follow-up issue comment beginning with `Remotes:` only when co-dependent
-GitHub packages must be pre-installed.
+If the package depends on GitHub packages not yet on Bioconductor/CRAN, post a
+**separate issue comment** starting with `Remotes:` to pre-install them:
+
+```
+Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot
+```
+
+**Important**: Remotes must be in a separate comment, not in the issue body.
 
 ---
 
@@ -83,6 +82,7 @@ GitHub packages must be pre-installed.
 
 - Missing or malformed `Repository:` URL
 - `Repository:` pointing to a private repository
+- `Remotes:` in issue body instead of separate comment
 - `Remotes:` not in `owner/repo` format
 
 [1]: https://contributions.bioconductor.org/

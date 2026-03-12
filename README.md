@@ -32,16 +32,19 @@ The workflow parser expects this line in the issue body:
 Repository: https://github.com/owner/repo
 ```
 
-Optional fields:
+Optional field:
 
 ```
 Branch/Ref: devel
-Remotes: owner/repoA, owner/repoB
 ```
 
 After confirming the issue is complete and correctly formatted, a **repository
 collaborator** should add the **`AI review`** label to initiate the build/check
 workflow.
+
+**Note on co-dependent packages**: If the package depends on GitHub packages not
+yet on Bioconductor/CRAN, post a separate comment starting with `Remotes:`
+**after** adding the label (see instructions below).
 
 #### Option 1 — Automated (full build + review)
 
@@ -61,10 +64,12 @@ manually from the
 [Actions tab](../../actions/workflows/auto-review.yml) and supply the
 `owner/repo` and optional issue number.
 
+#### Installing co-dependent packages
+
 If the package being reviewed depends on **another package that is also under
-simultaneous review** (i.e., not yet on Bioconductor or CRAN), include a
-`Remotes:` comment (starting with `Remotes:`) to pre-install those packages
-during the full build/check workflow:
+simultaneous review** (i.e., not yet on Bioconductor or CRAN), post a separate
+issue comment starting with `Remotes:` to pre-install those packages during the
+full build/check workflow:
 
 ```
 Remotes: waldronlab/imageTCGAutils

@@ -35,10 +35,13 @@ env:
 
 jobs:
   auto-review:
+    # Note: workflow_run triggers on any completion (success/failure) because build-check.yml
+    # uses continue-on-error for R CMD check, BiocCheck, and coverage. This ensures the review
+    # runs even when checks report problems, allowing failures to be included in the review.
     if: |
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '@biocreview')) ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+      github.event_name == 'workflow_run'
     runs-on: ubuntu-24.04
     container: bioconductor/bioconductor_docker:devel
 
