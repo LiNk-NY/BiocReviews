@@ -119,7 +119,7 @@ jobs:
       - name: Install review dependencies
         run: |
           BiocManager::install(
-            c("BiocCheck", "rcmdcheck", "covr", "jsonlite"),
+            c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"),
             ask = FALSE, update = FALSE
           )
           remotes::install_deps(
@@ -164,10 +164,12 @@ jobs:
           }
         shell: Rscript {0}
 
-      - name: Install GPG and run BiocCheck
+      - name: Install GPG
+        run: sudo apt-get update && sudo apt-get install -y gpg
+
+      - name: Run BiocCheck
         continue-on-error: true
         run: |
-          sudo apt-get update && sudo apt-get install -y gpg
           sink("bioccheck_results.txt")
           BiocCheck::BiocCheck(
             "package",
@@ -175,7 +177,7 @@ jobs:
             `no-check-bioc-help` = TRUE
           )
           sink()
-        shell: bash
+        shell: Rscript {0}
 
       - name: Generate automated review
         run: |
