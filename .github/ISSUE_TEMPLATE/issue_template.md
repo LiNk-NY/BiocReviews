@@ -1,5 +1,6 @@
 ---
 name: Bioconductor Package Submission
+about: AI-assisted package review for admission into Bioconductor
 title: ""
 labels: ""
 assignees: ""
