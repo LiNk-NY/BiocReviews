@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Bioconductor Package Submission Guide
-    url: https://bioconductor.org/developers/package-submission/
-    about: Read official submission requirements before opening an issue.
   - name: Bioconductor Contribution Guidelines
     url: https://contributions.bioconductor.org/
     about: Review coding, documentation, and package quality expectations.
+  - name: AI Agent-friendly Package Submission Guidelines
+    url: https://github.com/LiNk-NY/BiocReviews/blob/main/.github/bioc-review-guidelines.instructions.md
+    about: These are the guidelines the AI agent will follow when generating reviews.

@@ -73,28 +73,24 @@ review system:
 
 **Note:** Co-dependent remotes are NOT supported on initial runs (see below).
 
+You can re-run the AI review assistant by posting a comment starting with `@biocreview`.
+
 ---
 
-### Rerunning with Co-dependent Packages
+### Rerunning with Co-dependent Packages Not Yet in Bioconductor/CRAN
 
-To rerun the full workflow chain, post a comment starting with `@biocreview`:
-
-```
-@biocreview
-```
-
-If the package depends on GitHub packages not yet on Bioconductor/CRAN
-(e.g., simultaneous submissions), include a `Remotes:` line:
+Bioconductor packages can only depend, import, or suggest packages that are also available in Bioconductor or CRAN. If your package depends on GitHub packages not yet on Bioconductor/CRAN (e.g., simultaneous submissions), you can rerun the full workflow chain with pre-installed remotes by posting a comment starting as follows:
 
 ```
 @biocreview
-Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot
+Remotes: username/package1, username/package2
 ```
 
 **Important:**
-- `Remotes:` can ONLY be specified in `@biocreview` rerun comments
+- `Remotes:` can ONLY be specified in `@biocreview` rerun comments, NOT in the DESCRIPTION file.
 - Remotes are NOT supported on initial runs (when adding the AI review label)
 - Do NOT put `Remotes:` in the issue body above
+- Use of remotes is only allowed during the review of multiple package submission. In the final accepted package, all dependencies must be on Bioconductor/CRAN. This is necessary for user friendliness, ensuring the package can be installed in a standard Bioconductor environment without additional setup, and that all packages meet CRAN/Bioconductor requirements and undergo continuous integration.
 
 ---
 
@@ -102,8 +98,6 @@ Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot
 
 - Missing or malformed `Repository:` URL
 - `Repository:` pointing to a private repository
-- Attempting to use `Remotes:` on initial run or in issue body
-- `Remotes:` not in `owner/repo` format
 
 [1]: https://contributions.bioconductor.org/
 [2]: https://bioconductor.org/developers/package-submission/
