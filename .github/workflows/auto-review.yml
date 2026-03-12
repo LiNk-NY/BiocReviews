@@ -64,10 +64,15 @@ jobs:
         with:
           script: |
             if (context.eventName === 'workflow_dispatch') {
-              core.setOutput('repo', '${{ inputs.repo }}');
-              core.setOutput('ref', '${{ inputs.ref || "devel" }}');
-              core.setOutput('issue', '${{ inputs.issue_number || "" }}');
-              core.setOutput('remotes', '${{ inputs.remotes || "" }}');
+              const inputRepo = '${{ inputs.repo }}';
+              const inputRef = '${{ inputs.ref }}';
+              const inputIssue = '${{ inputs.issue_number }}';
+              const inputRemotes = '${{ inputs.remotes }}';
+
+              core.setOutput('repo', inputRepo);
+              core.setOutput('ref', inputRef || 'devel');
+              core.setOutput('issue', inputIssue || '');
+              core.setOutput('remotes', inputRemotes || '');
             } else {
               // Parse issue body for GitHub URL
               const body = context.payload.issue.body || "";
