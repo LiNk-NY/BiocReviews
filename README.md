@@ -42,9 +42,8 @@ After confirming the issue is complete and correctly formatted, a **repository
 collaborator** should add the **`AI review`** label to initiate the build/check
 workflow.
 
-**Note on co-dependent packages**: If the package depends on GitHub packages not
-yet on Bioconductor/CRAN, post a separate comment starting with `Remotes:`
-**after** adding the label (see instructions below).
+To rerun the workflow chain later, a collaborator can post an `@biocreview`
+comment. If needed, include a `Remotes:` line in the same comment (see below).
 
 #### Option 1 — Automated (full build + review)
 
@@ -52,32 +51,34 @@ Add the label **`AI review`** to a package submission issue. This triggers the
 `build-check.yml` workflow which runs R CMD check, BiocCheck, and coverage, then
 uploads artifacts and posts a build/check summary comment.
 
-After `build-check.yml` completes successfully, `auto-review.yml` is triggered
+After `build-check.yml` completes, `auto-review.yml` is triggered
 and generates/posts the structured automated review using those artifacts.
 
-#### Option 2 — Review only (no build)
+#### Option 2 — Rerun from issue comment
 
-Comment `@biocreview` on an existing issue to trigger only the
-`auto-review.yml` workflow. This clones the package and generates the review
-without running the full build/check pipeline. Alternatively, trigger it
-manually from the
+Comment `@biocreview` on an existing issue to trigger the
+workflow chain again. The comment re-runs `build-check.yml`, and then
+`auto-review.yml` runs from the resulting artifacts. Alternatively, trigger
+`auto-review.yml` manually from the
 [Actions tab](../../actions/workflows/auto-review.yml) and supply the
 `owner/repo` and optional issue number.
 
 #### Installing co-dependent packages
 
 If the package being reviewed depends on **another package that is also under
-simultaneous review** (i.e., not yet on Bioconductor or CRAN), post a separate
-issue comment starting with `Remotes:` to pre-install those packages during the
-full build/check workflow:
+simultaneous review** (i.e., not yet on Bioconductor or CRAN), include a
+`Remotes:` line in the same `@biocreview` rerun comment so those packages are
+pre-installed during the build/check workflow:
 
 ```
+@biocreview
 Remotes: waldronlab/imageTCGAutils
 ```
 
 Multiple co-dependent packages can be comma-separated:
 
 ```
+@biocreview
 Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
 ```
 

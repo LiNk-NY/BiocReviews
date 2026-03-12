@@ -22,7 +22,7 @@ jobs:
   build-check:
     if: |
       (github.event_name == 'issues' && github.event.label.name == 'AI review') ||
-      (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, 'Remotes:'))
+      (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '@biocreview'))
     runs-on: ubuntu-24.04
     container: bioconductor/bioconductor_docker:devel
 
@@ -59,15 +59,14 @@ jobs:
             }
 
             const commentBody = context.payload.comment.body || '';
-            const firstLine = commentBody.split('\n')[0].trim();
+            const remotesMatch = commentBody.match(/^Remotes:\s*(.+)$/im);
 
-            if (!firstLine.startsWith('Remotes:')) {
+            if (!remotesMatch) {
               core.setOutput('found_remotes', '');
               return;
             }
 
-            const remotes = firstLine.substring(8).trim(); // Remove "Remotes:" prefix
-            core.setOutput('found_remotes', remotes);
+            core.setOutput('found_remotes', remotesMatch[1].trim());
 
       - name: Checkout target package
         uses: actions/checkout@v4

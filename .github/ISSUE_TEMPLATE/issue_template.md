@@ -67,14 +67,17 @@ After verifying this issue is complete and correctly formatted, a repository
 collaborator should add the `AI review` label to initiate the build/check
 workflow.
 
-If the package depends on GitHub packages not yet on Bioconductor/CRAN, post a
-**separate issue comment** starting with `Remotes:` to pre-install them:
+To rerun the workflow chain later, post a comment beginning with `@biocreview`.
+If the package depends on GitHub packages not yet on Bioconductor/CRAN, include
+a `Remotes:` line in that same rerun comment:
 
 ```
+@biocreview
 Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot
 ```
 
-**Important**: Remotes must be in a separate comment, not in the issue body.
+**Important**: `Remotes:` belongs in the `@biocreview` rerun comment, not in
+the issue body.
 
 ---
 
@@ -82,7 +85,7 @@ Remotes: waldronlab/imageTCGAutils, waldronlab/HistoImagePlot
 
 - Missing or malformed `Repository:` URL
 - `Repository:` pointing to a private repository
-- `Remotes:` in issue body instead of separate comment
+- `Remotes:` in issue body instead of the `@biocreview` rerun comment
 - `Remotes:` not in `owner/repo` format
 
 [1]: https://contributions.bioconductor.org/

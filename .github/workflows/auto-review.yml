@@ -6,8 +6,6 @@ on:
     # If you rename build-check.yml's workflow, update this reference accordingly
     workflows: ["R CMD build and check"]
     types: [completed]
-  issue_comment:
-    types: [created]
   workflow_dispatch:
     inputs:
       repo:
@@ -35,13 +33,8 @@ env:
 
 jobs:
   auto-review:
-    # Note: workflow_run triggers on any completion (success/failure) because build-check.yml
-    # uses continue-on-error for R CMD check, BiocCheck, and coverage. This ensures the review
-    # runs even when checks report problems, allowing failures to be included in the review.
     if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '@biocreview')) ||
-      github.event_name == 'workflow_run'
+      github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run'
     runs-on: ubuntu-24.04
     container: bioconductor/bioconductor_docker:devel
 
@@ -60,7 +53,7 @@ jobs:
               core.setOutput('kind', 'manual');
               return;
             }
-            core.setOutput('kind', 'comment');
+            core.setOutput('kind', 'workflow_run');
 
       - name: Download build-check metadata artifact
         if: steps.mode.outputs.kind == 'workflow_run'
@@ -120,22 +113,7 @@ jobs:
               return;
             }
 
-            const body = context.payload.issue.body || "";
-            const repoMatch = body.match(/^[\-\*\s]*Repository:\s*https?:\/\/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)\/?\s*$/im)
-              || body.match(/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)/);
-            if (!repoMatch) {
-              core.setFailed("No valid Repository URL found. Use 'Repository: https://github.com/owner/repo' in the issue body.");
-              return;
-            }
-            const refMatch = body.match(/^[\-\*\s]*(?:Branch\/Ref|Ref):\s*([^\n\r]+)\s*$/im);
-            const ref = refMatch ? refMatch[1].trim() : 'devel';
-
-            core.setOutput('repo', repoMatch[1]);
-            core.setOutput('ref', ref || 'devel');
-            core.setOutput('issue', String(context.issue.number));
-            core.setOutput('check_file', '');
-            core.setOutput('bioccheck_file', '');
-            core.setOutput('coverage_file', '');
+            core.setFailed('Unexpected event context. Use workflow_dispatch for manual runs.');
 
       - name: Checkout target package
         uses: actions/checkout@v4
