@@ -169,7 +169,6 @@ jobs:
 
       - name: Generate Automated Review
         run: |
-          issue_num <- "${{ github.event.issue.number }}"
           Rscript BiocReviews/generate_review.R \
             "." \
             "check_results.txt" \
