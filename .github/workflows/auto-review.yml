@@ -119,7 +119,7 @@ jobs:
       - name: Install review dependencies
         run: |
           BiocManager::install(
-            c("BiocCheck", "rcmdcheck", "covr", "jsonlite"),
+            c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"),
             ask = FALSE, update = FALSE
           )
           remotes::install_deps(
