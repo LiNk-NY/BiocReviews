@@ -21,39 +21,62 @@ Edit that file to adjust reviewer expectations (new rules, exceptions, etc.).
 
 ### Running a Review
 
+#### Submission issue format (required)
+
+Open submissions using the issue template in
+`.github/ISSUE_TEMPLATE/issue_template.md`.
+
+The workflow parser expects this line in the issue body:
+
+```
+Repository: https://github.com/owner/repo
+```
+
+Optional fields:
+
+```
+Branch/Ref: devel
+Remotes: owner/repoA, owner/repoB
+```
+
+After confirming the issue is complete and correctly formatted, a **repository
+collaborator** should add the **`AI review`** label to initiate the build/check
+workflow.
+
 #### Option 1 — Automated (full build + review)
 
 Add the label **`AI review`** to a package submission issue. This triggers the
-`build-check.yml` workflow which runs R CMD check, BiocCheck, coverage, and
-then posts the review as a comment on the issue.
+`build-check.yml` workflow which runs R CMD check, BiocCheck, and coverage, then
+uploads artifacts and posts a build/check summary comment.
+
+After `build-check.yml` completes successfully, `auto-review.yml` is triggered
+and generates/posts the structured automated review using those artifacts.
 
 #### Option 2 — Review only (no build)
 
 Comment `@biocreview` on an existing issue to trigger only the
-`auto-review.yml` workflow. This clones the package, runs all checks, and posts
-the review. Alternatively, trigger it manually from the
+`auto-review.yml` workflow. This clones the package and generates the review
+without running the full build/check pipeline. Alternatively, trigger it
+manually from the
 [Actions tab](../../actions/workflows/auto-review.yml) and supply the
 `owner/repo` and optional issue number.
 
 If the package being reviewed depends on **another package that is also under
 simultaneous review** (i.e., not yet on Bioconductor or CRAN), include a
-`Remotes:` line in the same comment to pre-install those packages from GitHub
-before the review runs:
+`Remotes:` comment (starting with `Remotes:`) to pre-install those packages
+during the full build/check workflow:
 
 ```
-@biocreview
 Remotes: waldronlab/imageTCGAutils
 ```
 
 Multiple co-dependent packages can be comma-separated:
 
 ```
-@biocreview
 Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
 ```
 
-When using the **Actions tab** (manual trigger), supply the same comma-separated
-list in the `remotes` input field.
+This is primarily intended for co-dependent simultaneous submissions.
 
 #### Option 3 — Local
 
@@ -93,8 +116,11 @@ scripts/
 .github/
   bioc-review-guidelines.instructions.md   Editable review guidelines
   workflows/
-    build-check.yml        Full build + check + review workflow
-    auto-review.yml        Review-only standalone workflow
+    build-check.yml        Build/check workflow with artifact output
+    auto-review.yml        Review-generation workflow (artifact-driven + fallback)
+  ISSUE_TEMPLATE/
+    issue_template.md      Submission template (includes automation fields)
+    config.yml             Issue template routing
 buildcheck.sh              Legacy local build/check helper
 clonevim.sh                Clone a package and prepare review file
 ```

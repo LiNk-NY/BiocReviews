@@ -1,19 +1,9 @@
 name: Automated Bioconductor Package Review
 
-# Standalone workflow that only generates a review, without running the full
-# build/check pipeline. Useful for re-running the review after code changes.
-#
-# Triggers:
-#   - Issue comment starting with "@biocreview" — runs a review-only pass.
-#     Optionally include a `Remotes:` line to pre-install co-dependent packages
-#     that have not yet been accepted into Bioconductor/CRAN:
-#
-#       @biocreview
-#       Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
-#
-#   - Manual trigger via GitHub Actions UI (workflow_dispatch)
-
 on:
+  workflow_run:
+    workflows: ["R CMD build and check"]
+    types: [completed]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -31,63 +21,109 @@ on:
         description: "GitHub issue number to post review to (optional)"
         required: false
         type: string
-      remotes:
-        description: |
-          Comma-separated list of GitHub repos (owner/repo) to pre-install as
-          co-dependent packages not yet on Bioconductor/CRAN.
-          Example: waldronlab/imageTCGAutils, waldronlab/anotherPkg
-        required: false
-        type: string
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
 
 env:
-  R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-  CRAN: https://p3m.dev/cran/__linux__/noble/latest
-  BIOC_VERSION: devel
   REVIEW_MODEL: "GitHub Copilot (automated reviewer)"
 
 jobs:
   auto-review:
-    # For issue_comment trigger: only run when comment starts with "@biocreview"
     if: |
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'issue_comment' &&
-       startsWith(github.event.comment.body, '@biocreview'))
-
+      (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '@biocreview')) ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-24.04
     container: bioconductor/bioconductor_docker:devel
 
     steps:
-      - name: Resolve target repo (issue_comment trigger)
-        id: resolve
-        uses: actions/github-script@v8
+      - name: Resolve execution mode
+        id: mode
+        uses: actions/github-script@v7
         with:
           script: |
-            if (context.eventName === 'workflow_dispatch') {
-              core.setOutput('repo', '${{ inputs.repo }}');
-              core.setOutput('ref', '${{ inputs.ref || "devel" }}');
-              core.setOutput('issue', '${{ inputs.issue_number || "" }}');
-              core.setOutput('remotes', '${{ inputs.remotes || "" }}');
-            } else {
-              // Parse issue body for GitHub URL
-              const body = context.payload.issue.body || "";
-              const match = body.match(/github\.com\/([a-zA-Z0-9-]+\/[a-zA-Z0-9._-]+)/);
-              if (!match) {
-                core.setFailed("No GitHub repository URL found in the issue body.");
-                return;
-              }
-              core.setOutput('repo', match[1]);
-              core.setOutput('ref', 'devel');
-              core.setOutput('issue', String(context.issue.number));
-
-              // Parse optional Remotes: line from the @biocreview comment body.
-              // Accepts both inline and next-line formats:
-              //   @biocreview Remotes: owner/repo1, owner/repo2
-              //   @biocreview\nRemotes: owner/repo1
-              const commentBody = context.payload.comment.body || '';
-              const remotesMatch = commentBody.match(/^Remotes:\s*(.+)$/im);
-              core.setOutput('remotes', remotesMatch ? remotesMatch[1].trim() : '');
+            if (context.eventName === 'workflow_run') {
+              core.setOutput('kind', 'workflow_run');
+              core.setOutput('run_id', String(context.payload.workflow_run.id));
+              return;
             }
+            if (context.eventName === 'workflow_dispatch') {
+              core.setOutput('kind', 'manual');
+              return;
+            }
+            core.setOutput('kind', 'comment');
+
+      - name: Download build-check metadata artifact
+        if: steps.mode.outputs.kind == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: build-check-metadata
+          path: build_meta
+          run-id: ${{ steps.mode.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download build-check results artifact
+        if: steps.mode.outputs.kind == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: build-check-results
+          path: build_results
+          run-id: ${{ steps.mode.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve target submission
+        id: resolve
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            if (context.eventName === 'workflow_run') {
+              const repo = fs.readFileSync('build_meta/target_repo.txt', 'utf8').trim();
+              const ref = fs.readFileSync('build_meta/target_ref.txt', 'utf8').trim() || 'devel';
+              const issue = fs.readFileSync('build_meta/issue_number.txt', 'utf8').trim();
+              core.setOutput('repo', repo);
+              core.setOutput('ref', ref);
+              core.setOutput('issue', issue);
+              core.setOutput('check_file', 'build_results/check_results.txt');
+              core.setOutput('bioccheck_file', 'build_results/bioccheck_results.txt');
+              core.setOutput('coverage_file', 'build_results/coverage.json');
+              return;
+            }
+
+            if (context.eventName === 'workflow_dispatch') {
+              const repo = '${{ inputs.repo }}';
+              const ref = '${{ inputs.ref }}';
+              const issue = '${{ inputs.issue_number }}';
+              core.setOutput('repo', repo);
+              core.setOutput('ref', ref || 'devel');
+              core.setOutput('issue', issue || '');
+              core.setOutput('check_file', '');
+              core.setOutput('bioccheck_file', '');
+              core.setOutput('coverage_file', '');
+              return;
+            }
+
+            const body = context.payload.issue.body || "";
+            const repoMatch = body.match(/^[\-\*\s]*Repository:\s*https?:\/\/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)\/?\s*$/im)
+              || body.match(/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)/);
+            if (!repoMatch) {
+              core.setFailed("No valid Repository URL found. Use 'Repository: https://github.com/owner/repo' in the issue body.");
+              return;
+            }
+            const refMatch = body.match(/^[\-\*\s]*(?:Branch\/Ref|Ref):\s*([^\n\r]+)\s*$/im);
+            const ref = refMatch ? refMatch[1].trim() : 'devel';
+
+            core.setOutput('repo', repoMatch[1]);
+            core.setOutput('ref', ref || 'devel');
+            core.setOutput('issue', String(context.issue.number));
+            core.setOutput('check_file', '');
+            core.setOutput('bioccheck_file', '');
+            core.setOutput('coverage_file', '');
 
       - name: Checkout target package
         uses: actions/checkout@v4
@@ -102,107 +138,32 @@ jobs:
           repository: ${{ github.repository }}
           path: BiocReviews
 
-      - name: Install co-dependent Remotes
-        # Pre-installs GitHub-only packages that are being submitted to
-        # Bioconductor simultaneously and are not yet on CRAN/Bioconductor.
-        # Specified via `Remotes:` in the @biocreview comment, e.g.:
-        #   @biocreview
-        #   Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
-        if: steps.resolve.outputs.remotes != ''
-        run: |
-          deps <- trimws(strsplit("${{ steps.resolve.outputs.remotes }}", ",\\s*")[[1L]])
-          deps <- deps[nzchar(deps)]
-          message("Installing co-dependent remotes: ", paste(deps, collapse = ", "))
-          remotes::install_github(deps, upgrade = "never")
-        shell: Rscript {0}
-
       - name: Install review dependencies
         run: |
-          BiocManager::install(
-            c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"),
-            ask = FALSE, update = FALSE
-          )
-          remotes::install_deps(
-            "package",
-            dependencies = TRUE,
-            repos = BiocManager::repositories()
-          )
-        shell: Rscript {0}
-
-      - name: R CMD check
-        continue-on-error: true
-        run: |
-          check <- rcmdcheck::rcmdcheck(
-            "package",
-            args = "--no-manual",
-            error_on = "never",
-            check_dir = "check"
-          )
-          sink("check_results.txt")
-          print(check)
-          sink()
-        shell: Rscript {0}
-
-      - name: Test coverage
-        continue-on-error: true
-        run: |
-          cov <- tryCatch(
-            covr::package_coverage(
-              "package",
-              quiet = FALSE,
-              clean = FALSE,
-              type = "all"
-            ),
-            error = function(e) NULL
-          )
-          if (!is.null(cov)) {
-            library(jsonlite)
-            cov_list <- covr::coverage_to_list(cov)
-            write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
-            pct <- round(covr::percent_coverage(cov), 2)
-            writeLines(paste0("Total Coverage: ", pct, "%"), "coverage_summary.txt")
-          }
-        shell: Rscript {0}
-
-      - name: Install GPG
-        run: sudo apt-get update && sudo apt-get install -y gpg
-
-      - name: Run BiocCheck
-        continue-on-error: true
-        run: |
-          sink("bioccheck_results.txt")
-          BiocCheck::BiocCheck(
-            "package",
-            `quit-with-status` = TRUE,
-            `no-check-bioc-help` = TRUE
-          )
-          sink()
+          BiocManager::install(c("jsonlite"), ask = FALSE, update = FALSE)
         shell: Rscript {0}
 
       - name: Generate automated review
         run: |
           Rscript BiocReviews/generate_review.R \
             "package" \
-            "check_results.txt" \
-            "bioccheck_results.txt" \
-            "coverage.json" \
+            "${{ steps.resolve.outputs.check_file }}" \
+            "${{ steps.resolve.outputs.bioccheck_file }}" \
+            "${{ steps.resolve.outputs.coverage_file }}" \
             "${{ steps.resolve.outputs.issue }}" \
-            "automated_review.md"
+            "automated_review.md" \
+            "${{ env.REVIEW_MODEL }}"
 
       - name: Upload automated review artifact
         uses: actions/upload-artifact@v4
         with:
           name: automated-review
-          path: |
-            automated_review.md
-            check_results.txt
-            bioccheck_results.txt
-            coverage_summary.txt
+          path: automated_review.md
           retention-days: 30
 
       - name: Post review to issue
         if: steps.resolve.outputs.issue != ''
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
@@ -210,26 +171,9 @@ jobs:
               ? fs.readFileSync('automated_review.md', 'utf8')
               : '_Review generation failed — check workflow logs._';
 
-            const cov = fs.existsSync('coverage_summary.txt')
-              ? fs.readFileSync('coverage_summary.txt', 'utf8')
-              : '';
-
-            const covLine = cov ? `\n\n**Coverage:** ${cov}` : '';
-
-            const body = [
-              '### Automated Package Review',
-              '',
-              '> Generated by the BiocReviews automated reviewer based on',
-              '> [Bioconductor contribution guidelines](https://contributions.bioconductor.org).',
-              '> This is a preliminary automated review — a human reviewer will follow up.',
-              covLine,
-              '',
-              review
-            ].join('\n');
-
             await github.rest.issues.createComment({
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: body
+              body: `### Automated Package Review\n\n${review}`
             });
