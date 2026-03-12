@@ -74,6 +74,9 @@ Rscript generate_review.R \
     output_review.md
 ```
 
+`1234` above is an **example GitHub issue number**. Replace it with the real
+issue ID when posting back to an issue, or omit it for purely local review use.
+
 **Dependencies for local use:** `rcmdcheck`, `BiocCheck`, `covr`, `jsonlite`
 (all optional except `rcmdcheck`).
 
