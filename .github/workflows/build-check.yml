@@ -145,9 +145,14 @@ jobs:
             }
           )
           if (!is.null(check)) {
-            sink("check_results.txt")
-            print(check)
-            sink()
+            log_files <- list.files("check", pattern = "00check\\.log$", recursive = TRUE, full.names = TRUE)
+            if (length(log_files) > 0) {
+              file.copy(log_files[1], "check_results.txt", overwrite = TRUE)
+            } else {
+              sink("check_results.txt")
+              print(check)
+              sink()
+            }
           }
         shell: Rscript {0}
 
@@ -172,12 +177,17 @@ jobs:
       - name: Run BiocCheck
         continue-on-error: true
         run: |
-          sink("bioccheck_results.txt")
-          tryCatch(
-            BiocCheck::BiocCheck("package", `quit-with-status` = TRUE, `no-check-bioc-help` = TRUE),
-            error = function(e) message("BiocCheck error: ", conditionMessage(e))
+          out <- tryCatch(
+            capture.output(
+              BiocCheck::BiocCheck("package", `quit-with-status` = FALSE, `no-check-bioc-help` = TRUE),
+              type = c("output", "message")
+            ),
+            error = function(e) paste0("BiocCheck error: ", conditionMessage(e))
           )
-          sink()
+          if (length(out) == 0) {
+            out <- "No BiocCheck console output captured. See workflow logs and artifacts for details."
+          }
+          writeLines(out, "bioccheck_results.txt")
         shell: Rscript {0}
 
       - name: Upload build-check results artifact
@@ -210,11 +220,22 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const check = fs.existsSync('check_results.txt') ? fs.readFileSync('check_results.txt', 'utf8') : 'No check log found.';
-            const bioc = fs.existsSync('bioccheck_results.txt') ? fs.readFileSync('bioccheck_results.txt', 'utf8') : 'No BiocCheck log found.';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            const readOrDefault = (path, fallback) => {
+              if (!fs.existsSync(path)) return fallback;
+              const txt = fs.readFileSync(path, 'utf8');
+              return txt.trim().length > 0 ? txt : fallback;
+            };
+
+            const shorten = (text, max = 12000) =>
+              text.length > max ? `${text.slice(0, max)}\n\n[...truncated; see full results in run artifacts]` : text;
+
+            const check = shorten(readOrDefault('check_results.txt', 'No check log found. See run artifacts.'));
+            const bioc = shorten(readOrDefault('bioccheck_results.txt', 'No BiocCheck log found. See run artifacts.'));
             const cov = fs.existsSync('coverage_summary.txt') ? fs.readFileSync('coverage_summary.txt', 'utf8') : 'No coverage found.';
 
-            const body = `### Build & Check Results\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}`;
+            const body = `### Build & Check Results\n\nFull logs and artifacts: ${runUrl}\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}`;
             await github.rest.issues.createComment({
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
