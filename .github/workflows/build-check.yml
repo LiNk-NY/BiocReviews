@@ -13,6 +13,7 @@ permissions:
   issues: write
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   CRAN: https://p3m.dev/cran/__linux__/noble/latest
