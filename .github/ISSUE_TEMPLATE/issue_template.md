@@ -1,5 +1,5 @@
 ---
-name: issue_template
+name: Bioconductor package submission
 about: Bioconductor package submission template for BiocReviews automation
 title: ""
 labels: ""
