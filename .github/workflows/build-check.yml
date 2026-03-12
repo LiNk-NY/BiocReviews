@@ -13,6 +13,7 @@ permissions:
   issues: write
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   CRAN: https://p3m.dev/cran/__linux__/noble/latest
@@ -48,6 +49,43 @@ jobs:
             core.setOutput('ref', ref || 'devel');
             core.setOutput('issue', String(context.issue.number));
 
+      - name: Resolve checkout ref (fallback to repository default branch)
+        id: resolve_ref
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const [owner, repo] = '${{ steps.resolve.outputs.repo }}'.split('/');
+            const requestedRef = '${{ steps.resolve.outputs.ref }}' || 'devel';
+
+            let selectedRef = requestedRef;
+            let fallbackUsed = false;
+
+            try {
+              await github.rest.repos.getBranch({ owner, repo, branch: requestedRef });
+            } catch (e) {
+              const repoInfo = await github.rest.repos.get({ owner, repo });
+              selectedRef = repoInfo.data.default_branch;
+              fallbackUsed = true;
+            }
+
+            core.setOutput('selected_ref', selectedRef);
+            core.setOutput('fallback_used', String(fallbackUsed));
+
+      - name: Initialize artifact and metadata files
+        run: |
+          : > check_results.txt
+          : > bioccheck_results.txt
+          : > coverage_summary.txt
+          echo "{}" > coverage.json
+
+          echo "${{ steps.resolve.outputs.issue }}" > issue_number.txt
+          echo "${{ steps.resolve.outputs.repo }}" > target_repo.txt
+          echo "${{ steps.resolve_ref.outputs.selected_ref }}" > target_ref.txt
+
+          if [ "${{ steps.resolve_ref.outputs.fallback_used }}" = "true" ]; then
+            echo "[INFO] Requested ref was not found; checkout used repository default branch." >> check_results.txt
+          fi
+
       - name: Parse remotes from comment (optional)
         id: parse_remotes
         uses: actions/github-script@v8
@@ -72,7 +110,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ steps.resolve.outputs.repo }}
-          ref: ${{ steps.resolve.outputs.ref }}
+          ref: ${{ steps.resolve_ref.outputs.selected_ref }}
           path: package
 
       - name: Install co-dependent remotes
@@ -141,12 +179,6 @@ jobs:
           )
           sink()
         shell: Rscript {0}
-
-      - name: Save run metadata files
-        run: |
-          echo "${{ steps.resolve.outputs.issue }}" > issue_number.txt
-          echo "${{ steps.resolve.outputs.repo }}" > target_repo.txt
-          echo "${{ steps.resolve.outputs.ref }}" > target_ref.txt
 
       - name: Upload build-check results artifact
         if: always()
