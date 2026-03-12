@@ -67,6 +67,13 @@ Write reviews as Markdown. Structure them exactly as follows:
 - **License**: Must be an open-source license compatible with redistribution. Non-commercial licenses (e.g., `CC BY-NC 4.0`, `ACM`) are NOT allowed. Typical choices: `Artistic-2.0`, `GPL-2`, `GPL-3`, `MIT + file LICENSE`.
 - **biocViews**: Required field. At least two leaf-node terms from https://bioconductor.org/packages/devel/BiocViews.html. All terms must come from the same trunk (`Software`, `AnnotationData`, `ExperimentData`, or `Workflow`). Field name is case-sensitive (`biocViews`).
 - **Dependencies**: All dependencies must be available on Bioconductor or CRAN. The `Remotes:` field is NOT supported and will cause rejection. Do not specify version constraints on individual packages.
+- **Dependencies**: All dependencies must be available on Bioconductor or CRAN. The `Remotes:` field is NOT supported in the final submission and will cause rejection. Do not specify version constraints on individual packages.
+  > **Co-dependent simultaneous submissions**: When a package under review
+  > depends on another package being submitted to Bioconductor at the same
+  > time (not yet on CRAN/Bioconductor), the reviewer should pre-install the
+  > dependency using the `Remotes:` line in the `@biocreview` comment (see
+  > README). The `Remotes:` field in DESCRIPTION is still flagged as a
+  > required fix before acceptance.
 - **Dependency classification**:
   - `Imports:` – packages whose functions are used inside package code.
   - `Depends:` – packages providing essential user-facing functionality (rarely more than 3).

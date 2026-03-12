@@ -35,6 +35,26 @@ the review. Alternatively, trigger it manually from the
 [Actions tab](../../actions/workflows/auto-review.yml) and supply the
 `owner/repo` and optional issue number.
 
+If the package being reviewed depends on **another package that is also under
+simultaneous review** (i.e., not yet on Bioconductor or CRAN), include a
+`Remotes:` line in the same comment to pre-install those packages from GitHub
+before the review runs:
+
+```
+@biocreview
+Remotes: waldronlab/imageTCGAutils
+```
+
+Multiple co-dependent packages can be comma-separated:
+
+```
+@biocreview
+Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
+```
+
+When using the **Actions tab** (manual trigger), supply the same comma-separated
+list in the `remotes` input field.
+
 #### Option 3 — Local
 
 ```bash

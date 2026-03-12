@@ -4,7 +4,13 @@ name: Automated Bioconductor Package Review
 # build/check pipeline. Useful for re-running the review after code changes.
 #
 # Triggers:
-#   - Issue comment starting with "@biocreview" (e.g., "@biocreview")
+#   - Issue comment starting with "@biocreview" — runs a review-only pass.
+#     Optionally include a `Remotes:` line to pre-install co-dependent packages
+#     that have not yet been accepted into Bioconductor/CRAN:
+#
+#       @biocreview
+#       Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
+#
 #   - Manual trigger via GitHub Actions UI (workflow_dispatch)
 
 on:
@@ -23,6 +29,13 @@ on:
         type: string
       issue_number:
         description: "GitHub issue number to post review to (optional)"
+        required: false
+        type: string
+      remotes:
+        description: |
+          Comma-separated list of GitHub repos (owner/repo) to pre-install as
+          co-dependent packages not yet on Bioconductor/CRAN.
+          Example: waldronlab/imageTCGAutils, waldronlab/anotherPkg
         required: false
         type: string
 
@@ -54,6 +67,7 @@ jobs:
               core.setOutput('repo', '${{ inputs.repo }}');
               core.setOutput('ref', '${{ inputs.ref || "devel" }}');
               core.setOutput('issue', '${{ inputs.issue_number || "" }}');
+              core.setOutput('remotes', '${{ inputs.remotes || "" }}');
             } else {
               // Parse issue body for GitHub URL
               const body = context.payload.issue.body || "";
@@ -65,6 +79,14 @@ jobs:
               core.setOutput('repo', match[1]);
               core.setOutput('ref', 'devel');
               core.setOutput('issue', String(context.issue.number));
+
+              // Parse optional Remotes: line from the @biocreview comment body.
+              // Accepts both inline and next-line formats:
+              //   @biocreview Remotes: owner/repo1, owner/repo2
+              //   @biocreview\nRemotes: owner/repo1
+              const commentBody = context.payload.comment.body || '';
+              const remotesMatch = commentBody.match(/^Remotes:\s*(.+)$/im);
+              core.setOutput('remotes', remotesMatch ? remotesMatch[1].trim() : '');
             }
 
       - name: Checkout target package
@@ -79,6 +101,20 @@ jobs:
         with:
           repository: ${{ github.repository }}
           path: BiocReviews
+
+      - name: Install co-dependent Remotes
+        # Pre-installs GitHub-only packages that are being submitted to
+        # Bioconductor simultaneously and are not yet on CRAN/Bioconductor.
+        # Specified via `Remotes:` in the @biocreview comment, e.g.:
+        #   @biocreview
+        #   Remotes: waldronlab/imageTCGAutils, waldronlab/anotherPkg
+        if: steps.resolve.outputs.remotes != ''
+        run: |
+          deps <- trimws(strsplit("${{ steps.resolve.outputs.remotes }}", ",\\s*")[[1L]])
+          deps <- deps[nzchar(deps)]
+          message("Installing co-dependent remotes: ", paste(deps, collapse = ", "))
+          remotes::install_github(deps, upgrade = "never")
+        shell: Rscript {0}
 
       - name: Install review dependencies
         run: |
