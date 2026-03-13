@@ -65,6 +65,7 @@ prompt_parts <- c(
   "Prioritize: required fixes first, then strong recommendations, then minor suggestions.",
   "Do not invent facts. If evidence is missing, say so clearly.",
   "Format with sections and bullets.",
+  "Do not include any attribution footer (e.g., 'Review performed by...') - this will be added automatically.",
   "",
   "## Input Context"
 )
@@ -108,16 +109,15 @@ tryCatch({
   payload_file <- tempfile(fileext = ".json")
   writeLines(payload, payload_file, useBytes = TRUE)
 
-  curl_args <- c(
-    "-sS",
-    "-X", "POST",
-    "-H", sprintf("Authorization: Bearer %s", token),
-    "-H", "Content-Type: application/json",
-    "--data-binary", paste0("@", payload_file),
+  # Use system() with proper quoting to avoid word-splitting issues on macOS
+  curl_cmd <- sprintf(
+    "curl -sS -X POST -H 'Authorization: Bearer %s' -H 'Content-Type: application/json' --data-binary '@%s' '%s'",
+    token,
+    payload_file,
     api_url
   )
 
-  response_lines <- system2("curl", args = curl_args, stdout = TRUE, stderr = TRUE)
+  response_lines <- system(curl_cmd, intern = TRUE)
   status <- attr(response_lines, "status")
   if (!is.null(status) && status != 0) {
     stop(sprintf("curl exited with status %s", status))
