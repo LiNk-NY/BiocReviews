@@ -156,7 +156,9 @@ jobs:
       - name: Enhance review with GitHub Models
         id: llm
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use GITHUB_MODELS_TOKEN if available (for GitHub Models API access),
+          # otherwise fall back to default GITHUB_TOKEN
+          GITHUB_TOKEN: ${{ secrets.GITHUB_MODELS_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           Rscript BiocReviews/scripts/enhance_review_with_github_models.R \
           --base-review automated_review.md \
@@ -168,6 +170,14 @@ jobs:
           --max-prompt-chars "${{ env.MAX_PROMPT_CHARS }}" \
           --max-tokens "${{ env.REVIEW_MAX_TOKENS }}" \
           --guidelines-file "BiocReviews/.github/bioc-review-guidelines.instructions.md"
+
+      - name: Check LLM enhancement status
+        if: steps.llm.outputs.llm_status == 'fallback'
+        run: |
+          echo "::warning::LLM enhancement failed and fell back to rule-based review only."
+          echo "::warning::The GitHub Models API may require a Personal Access Token (PAT) with appropriate scopes."
+          echo "::warning::To fix: Add a GITHUB_MODELS_TOKEN secret with a PAT that has 'models' scope."
+          echo "::warning::See: https://github.com/settings/tokens"
 
       - name: Upload automated review artifact
         uses: actions/upload-artifact@v4
