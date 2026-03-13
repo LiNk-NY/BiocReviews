@@ -117,21 +117,42 @@ tryCatch({
     api_url
   )
 
+  message("Calling GitHub Models API with model: ", model)
   response_lines <- system(curl_cmd, intern = TRUE)
   status <- attr(response_lines, "status")
   if (!is.null(status) && status != 0) {
     stop(sprintf("curl exited with status %s", status))
   }
 
-  body <- fromJSON(paste(response_lines, collapse = "\n"), simplifyVector = FALSE)
+  response_text <- paste(response_lines, collapse = "\n")
+  message("API response length: ", nchar(response_text), " characters")
+
+  body <- fromJSON(response_text, simplifyVector = FALSE)
+
+  # Check if response has expected structure
+  if (is.null(body$choices) || length(body$choices) == 0) {
+    stop(sprintf("API response missing choices. Response keys: %s",
+                 paste(names(body), collapse = ", ")))
+  }
+
   content <- body$choices[[1]]$message$content
+  if (is.null(content) || !nzchar(as.character(content))) {
+    stop("API response content is empty or null")
+  }
+
   llm_text <- extract_content(content)
+  message("Extracted LLM text length: ", nchar(llm_text), " characters")
+
+  if (!nzchar(llm_text)) {
+    stop("Extracted content is empty after processing")
+  }
 }, error = function(e) {
+  message("ERROR: ", conditionMessage(e))
   llm_status <<- "fallback"
   llm_text <<- paste0(
     "## LLM enhancement unavailable\n",
     "- Attempted model: `", model, "`\n",
-    "- Error: `", class(e)[1], "`\n\n",
+    "- Error: `", conditionMessage(e), "`\n\n",
     "The rule-based review is provided below.\n\n",
     base_review
   )
