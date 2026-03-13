@@ -188,45 +188,9 @@ This is useful when reusing check artifacts or integrating into custom workflows
 
 ---
 
-**Method 5: LLM Model Testing**
-
-Test different LLM models from multiple providers locally (not through GH Actions) for generating reviews:
-
-```bash
-# AWS Bedrock - Claude models (recommended)
-./scripts/quick_llm_test.sh recommended ~/reviews/MyPackage
-
-# OpenAI - GPT models
-export OPENAI_API_KEY="sk-..."
-export OPENAI_MODELS="gpt-4o gpt-4o-mini"
-./scripts/test_llm_models.sh ~/reviews/MyPackage openai_output/
-
-# GitHub Models - Free tier (GPT-4o, Llama, etc.)
-export GITHUB_TOKEN=$(gh auth token)
-export GITHUB_MODELS="gpt-4o meta-llama-3.1-405b-instruct"
-./scripts/test_llm_models.sh ~/reviews/MyPackage github_output/
-```
-
-**Supported providers:**
-- **AWS Bedrock** - Claude (Sonnet, Opus, Haiku), Mistral, Llama, Titan
-- **OpenAI** - GPT-4o, GPT-4 Turbo, GPT-3.5
-- **GitHub Models** - GPT-4o, Llama 3.1, Mistral, Cohere (free tier available)
-
-The base review is generated using rule-based static analysis, then each LLM model
-generates an enhanced review using the static analysis as context. Results include
-a comparison summary for evaluating model quality.
-
-**See [docs/LLM_TESTING.md](docs/LLM_TESTING.md) for detailed guide and [docs/MODEL_PROVIDERS.md](docs/MODEL_PROVIDERS.md) for provider setup.**
-
----
-
 **Dependencies:** `rcmdcheck` (required), `BiocCheck`, `covr`, `jsonlite` (optional).
 
-For LLM testing:
-- `jq` (required for all providers)
-- AWS CLI + Bedrock access (for AWS Bedrock models)
-- `OPENAI_API_KEY` (for OpenAI models)
-- `GITHUB_TOKEN` (for GitHub Models - free tier available)
+For LLM enhancement: `GITHUB_TOKEN` with appropriate scopes (see [GitHub Models Token Setup](#github-models-token-setup-required-for-github-actions)).
 
 ---
 
@@ -240,12 +204,7 @@ scripts/
   generate_local_review.sh          Wrapper: run checks then call generate_review.R
   enhance_review_with_github_models.R   LLM enhancement CLI (GitHub Models API)
   enhance_review_with_github_models.sh  Local convenience wrapper for the R script
-  test_llm_models.sh       Test multiple LLM models for review generation
-  quick_llm_test.sh        Quick wrapper for testing model sets
-  llm_model_config.sh      Configuration for LLM model sets
 docs/
-  LLM_TESTING.md           Comprehensive guide for LLM model testing
-  MODEL_PROVIDERS.md       LLM provider setup and configuration guide
   GITHUB_MODELS_TOKEN_SETUP.md   GitHub Models PAT setup for GitHub Actions
 .github/
   bioc-review-guidelines.instructions.md   AI review assistant guidelines (fed to LLM)
