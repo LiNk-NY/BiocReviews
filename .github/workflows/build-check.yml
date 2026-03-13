@@ -159,16 +159,22 @@ jobs:
       - name: Test coverage
         continue-on-error: true
         run: |
-          cov <- tryCatch(
-            covr::package_coverage("package", quiet = FALSE, clean = FALSE, type = "all"),
-            error = function(e) NULL
-          )
-          if (!is.null(cov)) {
-            cov_list <- covr::coverage_to_list(cov)
-            jsonlite::write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
-            pct <- round(covr::percent_coverage(cov), 2)
-            writeLines(paste0("Total Coverage: ", pct, "%"), "coverage_summary.txt")
-          }
+          result <- tryCatch({
+            cov <- covr::package_coverage("package", quiet = FALSE, clean = FALSE, type = "all")
+            if (!is.null(cov) && inherits(cov, "coverage")) {
+              cov_list <- covr::coverage_to_list(cov)
+              jsonlite::write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
+              pct <- round(covr::percent_coverage(cov), 2)
+              writeLines(paste0("Total Coverage: ", pct, "%"), "coverage_summary.txt")
+              message("Coverage analysis completed successfully: ", pct, "%")
+            } else {
+              writeLines("Coverage analysis returned NULL or invalid result.", "coverage_summary.txt")
+            }
+          }, error = function(e) {
+            err_msg <- paste0("Coverage analysis failed: ", conditionMessage(e))
+            message(err_msg)
+            writeLines(err_msg, "coverage_summary.txt")
+          })
         shell: Rscript {0}
 
       - name: Install GPG
@@ -177,17 +183,21 @@ jobs:
       - name: Run BiocCheck
         continue-on-error: true
         run: |
-          out <- tryCatch(
-            capture.output(
+          result <- tryCatch({
+            out <- capture.output(
               BiocCheck::BiocCheck("package", `quit-with-status` = FALSE, `no-check-bioc-help` = TRUE),
               type = c("output", "message")
-            ),
-            error = function(e) paste0("BiocCheck error: ", conditionMessage(e))
-          )
-          if (length(out) == 0) {
-            out <- "No BiocCheck console output captured. See workflow logs and artifacts for details."
-          }
-          writeLines(out, "bioccheck_results.txt")
+            )
+            if (length(out) == 0 || all(nchar(trimws(out)) == 0)) {
+              out <- "BiocCheck completed but produced no console output. See workflow logs for details."
+            }
+            writeLines(out, "bioccheck_results.txt")
+            message("BiocCheck completed and results written to bioccheck_results.txt")
+          }, error = function(e) {
+            err_msg <- paste0("BiocCheck failed: ", conditionMessage(e))
+            message(err_msg)
+            writeLines(err_msg, "bioccheck_results.txt")
+          })
         shell: Rscript {0}
 
       - name: Upload build-check results artifact
