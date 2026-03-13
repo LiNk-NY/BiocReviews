@@ -129,6 +129,18 @@ tryCatch({
 
   body <- fromJSON(response_text, simplifyVector = FALSE)
 
+  # Check if API returned an error
+  if (!is.null(body$error)) {
+    error_msg <- if (is.list(body$error) && !is.null(body$error$message)) {
+      body$error$message
+    } else if (is.character(body$error)) {
+      body$error
+    } else {
+      toJSON(body$error, auto_unbox = TRUE)
+    }
+    stop(sprintf("API returned error: %s", error_msg))
+  }
+
   # Check if response has expected structure
   if (is.null(body$choices) || length(body$choices) == 0) {
     stop(sprintf("API response missing choices. Response keys: %s",
