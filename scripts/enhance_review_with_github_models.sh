@@ -14,7 +14,7 @@
 #
 # Environment variables:
 #   GITHUB_TOKEN       Required for GitHub Models API
-#   GITHUB_MODEL       Optional, default: meta-llama-3.1-405b-instruct
+#   GITHUB_MODEL       Optional, default: gpt-4o
 #   MAX_PROMPT_CHARS   Optional, default: 120000
 #   REVIEW_MAX_TOKENS  Optional, default: 2800
 
@@ -65,7 +65,7 @@ echo "Enhancing review with GitHub Models..." >&2
 echo "  Base:      $BASE_REVIEW" >&2
 echo "  Output:    $OUTPUT_REVIEW" >&2
 echo "  Artifacts: $ARTIFACTS_DIR" >&2
-echo "  Model:     ${GITHUB_MODEL:-meta-llama-3.1-405b-instruct}" >&2
+echo "  Model:     ${GITHUB_MODEL:-gpt-4o}" >&2
 
 Rscript "$ENHANCER_SCRIPT" \
   --base-review "$BASE_REVIEW" \
@@ -73,7 +73,7 @@ Rscript "$ENHANCER_SCRIPT" \
   --check-file "$CHECK_FILE" \
   --bioccheck-file "$BIOCCHECK_FILE" \
   --coverage-file "$COVERAGE_FILE" \
-  --model "${GITHUB_MODEL:-meta-llama-3.1-405b-instruct}" \
+  --model "${GITHUB_MODEL:-gpt-4o}" \
   --max-prompt-chars "${MAX_PROMPT_CHARS:-120000}" \
   --max-tokens "${REVIEW_MAX_TOKENS:-2800}" \
   --guidelines-file "$GUIDELINES_FILE"

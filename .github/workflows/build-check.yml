@@ -106,12 +106,20 @@ jobs:
 
             core.setOutput('found_remotes', remotesMatch[1].trim());
 
+      - name: Extract package name from repo
+        id: pkg_name
+        run: |
+          REPO="${{ steps.resolve.outputs.repo }}"
+          PKG_NAME="${REPO##*/}"
+          echo "name=$PKG_NAME" >> $GITHUB_OUTPUT
+          echo "Package name: $PKG_NAME"
+
       - name: Checkout target package
         uses: actions/checkout@v4
         with:
           repository: ${{ steps.resolve.outputs.repo }}
           ref: ${{ steps.resolve_ref.outputs.selected_ref }}
-          path: package
+          path: ${{ steps.pkg_name.outputs.name }}
 
       - name: Install co-dependent remotes
         if: steps.parse_remotes.outputs.found_remotes != ''
@@ -129,7 +137,7 @@ jobs:
       - name: Install build/check dependencies
         run: |
           BiocManager::install(c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"), ask = FALSE, update = FALSE)
-          remotes::install_deps("package", dependencies = TRUE, repos = BiocManager::repositories())
+          remotes::install_deps("${{ steps.pkg_name.outputs.name }}", dependencies = TRUE, repos = BiocManager::repositories())
         shell: Rscript {0}
 
       - name: R CMD check
@@ -138,7 +146,7 @@ jobs:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: |
           check <- tryCatch(
-            rcmdcheck::rcmdcheck("package", args = "--no-manual", error_on = "never", check_dir = "check"),
+            rcmdcheck::rcmdcheck("${{ steps.pkg_name.outputs.name }}", args = "--no-manual", error_on = "never", check_dir = "check"),
             error = function(e) {
               message("rcmdcheck failed: ", conditionMessage(e))
               NULL
@@ -160,7 +168,7 @@ jobs:
         continue-on-error: true
         run: |
           result <- tryCatch({
-            cov <- covr::package_coverage("package", quiet = FALSE, clean = FALSE, type = "all")
+            cov <- covr::package_coverage("${{ steps.pkg_name.outputs.name }}", quiet = FALSE, clean = FALSE, type = "all")
             if (!is.null(cov) && inherits(cov, "coverage")) {
               cov_list <- covr::coverage_to_list(cov)
               jsonlite::write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
@@ -183,7 +191,7 @@ jobs:
       - name: Run BiocCheck
         continue-on-error: true
         run: |
-          Rscript -e "BiocCheck::BiocCheck('package', \`quit-with-status\` = FALSE, \`no-check-bioc-help\` = TRUE)" || true
+          Rscript -e "BiocCheck::BiocCheck('${{ steps.pkg_name.outputs.name }}', \`quit-with-status\` = FALSE, \`no-check-bioc-help\` = TRUE)" || true
 
           # Copy BiocCheck log file to artifact location
           bioccheck_log=$(find . -name "*.BiocCheck" -type d | head -1)/00BiocCheck.log

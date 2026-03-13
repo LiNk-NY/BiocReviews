@@ -24,7 +24,7 @@ on:
       model:
         description: "GitHub Models model ID for LLM enhancement"
         required: false
-        default: "meta-llama-3.1-405b-instruct"
+        default: "gpt-4o"
         type: string
 
 permissions:
@@ -37,7 +37,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   REVIEW_MODEL: "AI Review Assistant (GitHub Copilot)"
-  GITHUB_MODEL: ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'meta-llama-3.1-405b-instruct' }}
+  GITHUB_MODEL: ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'gpt-4o' }}
   REVIEW_MAX_TOKENS: "2800"
   MAX_PROMPT_CHARS: "120000"
 
@@ -125,12 +125,20 @@ jobs:
 
             core.setFailed('Unexpected event context. Use workflow_dispatch for manual runs.');
 
+      - name: Extract package name from repo
+        id: pkg_name
+        run: |
+          REPO="${{ steps.resolve.outputs.repo }}"
+          PKG_NAME="${REPO##*/}"
+          echo "name=$PKG_NAME" >> $GITHUB_OUTPUT
+          echo "Package name: $PKG_NAME"
+
       - name: Checkout target package
         uses: actions/checkout@v4
         with:
           repository: ${{ steps.resolve.outputs.repo }}
           ref: ${{ steps.resolve.outputs.ref }}
-          path: package
+          path: ${{ steps.pkg_name.outputs.name }}
 
       - name: Checkout BiocReviews (for generate_review.R)
         uses: actions/checkout@v4
@@ -146,7 +154,7 @@ jobs:
       - name: Generate automated review
         run: |
           Rscript BiocReviews/generate_review.R \
-            "package" \
+            "${{ steps.pkg_name.outputs.name }}" \
             "${{ steps.resolve.outputs.check_file }}" \
             "${{ steps.resolve.outputs.bioccheck_file }}" \
             "${{ steps.resolve.outputs.coverage_file }}" \
