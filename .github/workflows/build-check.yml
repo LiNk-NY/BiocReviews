@@ -183,22 +183,15 @@ jobs:
       - name: Run BiocCheck
         continue-on-error: true
         run: |
-          result <- tryCatch({
-            out <- capture.output(
-              BiocCheck::BiocCheck("package", `quit-with-status` = FALSE, `no-check-bioc-help` = TRUE),
-              type = c("output", "message")
-            )
-            if (length(out) == 0 || all(nchar(trimws(out)) == 0)) {
-              out <- "BiocCheck completed but produced no console output. See workflow logs for details."
-            }
-            writeLines(out, "bioccheck_results.txt")
-            message("BiocCheck completed and results written to bioccheck_results.txt")
-          }, error = function(e) {
-            err_msg <- paste0("BiocCheck failed: ", conditionMessage(e))
-            message(err_msg)
-            writeLines(err_msg, "bioccheck_results.txt")
-          })
-        shell: Rscript {0}
+          Rscript -e "BiocCheck::BiocCheck('package', \`quit-with-status\` = FALSE, \`no-check-bioc-help\` = TRUE)" || true
+
+          # Copy BiocCheck log file to artifact location
+          bioccheck_log=$(find . -name "*.BiocCheck" -type d | head -1)/00BiocCheck.log
+          if [ -f "$bioccheck_log" ]; then
+            cp "$bioccheck_log" bioccheck_results.txt
+          else
+            echo "BiocCheck log file not found. Check workflow logs for details." > bioccheck_results.txt
+          fi
 
       - name: Upload build-check results artifact
         if: always()
