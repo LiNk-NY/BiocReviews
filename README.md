@@ -88,28 +88,39 @@ Trigger `auto-review.yml` manually from the
 
 **Method 4: Local Review
 
+**Option A: Complete workflow (recommended)**
+
+Use the wrapper script to run all checks and generate the review in one command:
+
 ```bash
-# Review a local package checkout and write to a file:
-./scripts/generate_local_review.sh ~/reviews/MyPackage 1234 MyPackage_review.md
+# Review a local package and write to a file:
+./scripts/generate_local_review.sh ~/reviews/MyPackage MyPackage_review.md
 
 # Review and print to stdout:
 ./scripts/generate_local_review.sh ~/reviews/MyPackage
+```
 
-# Call the R script directly (e.g., after running build/check separately):
+This script runs R CMD check, BiocCheck, test coverage, then calls `generate_review.R`
+with the results.
+
+**Option B: Review from existing check results**
+
+If you've already run checks separately, call the R script directly:
+
+```bash
 Rscript generate_review.R \
     /path/to/package \
     check_results.txt \
     bioccheck_results.txt \
     coverage.json \
-    1234 \
     output_review.md
 ```
 
-`1234` above is an **example GitHub issue number**. Replace it with the real
-issue ID when posting back to an issue, or omit it for purely local review use.
+This is useful when reusing check artifacts or integrating into custom workflows.
 
-**Dependencies for local use:** `rcmdcheck`, `BiocCheck`, `covr`, `jsonlite`
-(all optional except `rcmdcheck`).
+---
+
+**Dependencies:** `rcmdcheck` (required), `BiocCheck`, `covr`, `jsonlite` (optional).
 
 ---
 
@@ -118,9 +129,9 @@ issue ID when posting back to an issue, or omit it for purely local review use.
 ```
 packages/                  Human reviews (one .txt per package)
 responses/                 Author responses to review comments
-generate_review.R          Core review generation script
+generate_review.R          Core review generator (takes check artifacts as input)
 scripts/
-  generate_local_review.sh Local wrapper (runs checks + review)
+  generate_local_review.sh Wrapper script (runs checks, then calls generate_review.R)
 .github/
   bioc-review-guidelines.instructions.md   AI review assistant guidelines
   workflows/

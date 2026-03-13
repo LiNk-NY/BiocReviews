@@ -141,7 +141,6 @@ jobs:
             "${{ steps.resolve.outputs.check_file }}" \
             "${{ steps.resolve.outputs.bioccheck_file }}" \
             "${{ steps.resolve.outputs.coverage_file }}" \
-            "${{ steps.resolve.outputs.issue }}" \
             "automated_review.md" \
             "${{ env.REVIEW_MODEL }}"
 
