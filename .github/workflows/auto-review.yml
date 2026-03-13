@@ -21,16 +21,25 @@ on:
         description: "GitHub issue number to post review to (optional)"
         required: false
         type: string
+      model:
+        description: "GitHub Models model ID for LLM enhancement"
+        required: false
+        default: "meta-llama-3.1-405b-instruct"
+        type: string
 
 permissions:
   contents: read
   actions: read
   issues: write
+  models: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   REVIEW_MODEL: "AI Review Assistant (GitHub Copilot)"
+  GITHUB_MODEL: ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'meta-llama-3.1-405b-instruct' }}
+  REVIEW_MAX_TOKENS: "2800"
+  MAX_PROMPT_CHARS: "120000"
 
 jobs:
   auto-review:
@@ -144,11 +153,29 @@ jobs:
             "automated_review.md" \
             "${{ env.REVIEW_MODEL }}"
 
+      - name: Enhance review with GitHub Models
+        id: llm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          Rscript BiocReviews/scripts/enhance_review_with_github_models.R \
+          --base-review automated_review.md \
+          --output automated_review_llm.md \
+          --check-file "${{ steps.resolve.outputs.check_file }}" \
+          --bioccheck-file "${{ steps.resolve.outputs.bioccheck_file }}" \
+          --coverage-file "${{ steps.resolve.outputs.coverage_file }}" \
+          --model "${{ env.GITHUB_MODEL }}" \
+          --max-prompt-chars "${{ env.MAX_PROMPT_CHARS }}" \
+          --max-tokens "${{ env.REVIEW_MAX_TOKENS }}" \
+          --guidelines-file "BiocReviews/.github/bioc-review-guidelines.instructions.md"
+
       - name: Upload automated review artifact
         uses: actions/upload-artifact@v4
         with:
           name: automated-review
-          path: automated_review.md
+          path: |
+            automated_review.md
+            automated_review_llm.md
           retention-days: 30
 
       - name: Post review to issue
@@ -157,13 +184,18 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const review = fs.existsSync('automated_review.md')
-              ? fs.readFileSync('automated_review.md', 'utf8')
+            const reviewPath = '${{ steps.llm.outputs.review_file }}' || 'automated_review.md';
+            const wasTruncated = '${{ steps.llm.outputs.truncated }}' === 'true';
+            const statusLine = wasTruncated
+              ? '> ⚠️ Input context was truncated before LLM generation. See the review header for details.\n\n'
+              : '';
+            const review = fs.existsSync(reviewPath)
+              ? fs.readFileSync(reviewPath, 'utf8')
               : '_Review generation failed — check workflow logs._';
 
             await github.rest.issues.createComment({
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `### AI-Assisted Package Review\n\n${review}`
+              body: `### AI-Assisted Package Review\n\n${statusLine}${review}`
             });
