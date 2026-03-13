@@ -5,17 +5,15 @@
 # Runs R CMD check, BiocCheck, test coverage (optional), then generates review.
 #
 # Usage:
-#   ./scripts/generate_local_review.sh <package_dir> [issue_number] [output_file]
+#   ./scripts/generate_local_review.sh <package_dir> [output_file]
 #
 # Arguments:
 #   package_dir   Path to the R package source directory (required)
-#   issue_number  GitHub issue number (optional, default: "")
 #   output_file   Where to write the review (optional, default: stdout)
 #
 # Examples:
 #   ./scripts/generate_local_review.sh ~/reviews/MyPackage
-#   ./scripts/generate_local_review.sh ~/reviews/MyPackage 1234
-#   ./scripts/generate_local_review.sh ~/reviews/MyPackage 1234 MyPackage_review.md
+#   ./scripts/generate_local_review.sh ~/reviews/MyPackage MyPackage_review.md
 
 set -euo pipefail
 
@@ -23,13 +21,12 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REVIEW_SCRIPT="$SCRIPT_DIR/../generate_review.R"
 
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <package_dir> [issue_number] [output_file]" >&2
+  echo "Usage: $0 <package_dir> [output_file]" >&2
   exit 1
 fi
 
 PKG_DIR="$(realpath "$1")"
-ISSUE="${2:-}"
-OUTPUT="${3:-}"
+OUTPUT="${2:-}"
 
 if [[ ! -d "$PKG_DIR" ]]; then
   echo "Error: package directory not found: $PKG_DIR" >&2
@@ -144,7 +141,6 @@ RSCRIPT_ARGS=(
   "$CHECK_FILE"
   "$BIOCCHECK_FILE"
   "$COVERAGE_FILE"
-  "$ISSUE"
   "$OUTPUT"
 )
 

@@ -9,14 +9,13 @@
 # Usage:
 #   Rscript generate_review.R <package_dir> [check_results.txt] \
 #                             [bioccheck_results.txt] [coverage.json] \
-#                             [issue_number] [output_file] [model_name]
+#                             [output_file] [model_name]
 #
 # Arguments:
 #   package_dir           Path to the package source directory (required)
 #   check_results.txt     Path to R CMD check output file  (optional)
 #   bioccheck_results.txt Path to BiocCheck output file    (optional)
 #   coverage.json         Path to covr JSON output         (optional)
-#   issue_number          GitHub issue number, e.g. 1234   (optional)
 #   output_file           Where to write the review        (optional, stdout)
 #   model_name            Name of the AI model used        (optional)
 #                         Falls back to REVIEW_MODEL env var, then a default.
@@ -34,7 +33,7 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1 || !nzchar(args[[1]])) {
   cat("Usage: Rscript generate_review.R <package_dir> [check_results] ",
-      "[bioccheck_results] [coverage.json] [issue_number] [output_file]\n")
+      "[bioccheck_results] [coverage.json] [output_file] [model_name]\n")
   quit(status = 1)
 }
 
@@ -42,9 +41,8 @@ pkg_dir          <- normalizePath(args[[1]], mustWork = TRUE)
 check_file       <- if (length(args) >= 2 && nzchar(args[[2]])) args[[2]] else ""
 bioccheck_file   <- if (length(args) >= 3 && nzchar(args[[3]])) args[[3]] else ""
 coverage_file    <- if (length(args) >= 4 && nzchar(args[[4]])) args[[4]] else ""
-issue_number     <- if (length(args) >= 5 && nzchar(args[[5]])) args[[5]] else ""
-output_file      <- if (length(args) >= 6 && nzchar(args[[6]])) args[[6]] else ""
-model_name       <- if (length(args) >= 7 && nzchar(args[[7]])) args[[7]] else ""
+output_file      <- if (length(args) >= 5 && nzchar(args[[5]])) args[[5]] else ""
+model_name       <- if (length(args) >= 6 && nzchar(args[[6]])) args[[6]] else ""
 # Fall back to environment variable, then a descriptive default
 if (!nzchar(model_name)) model_name <- Sys.getenv("REVIEW_MODEL", unset = "")
 if (!nzchar(model_name)) model_name <- "GitHub Copilot (automated reviewer)"
@@ -741,8 +739,6 @@ if (length(artifact_bullets) == 0) {
 # Assemble final review
 # ---------------------------------------------------------------------------
 
-issue_label <- if (nzchar(issue_number)) paste0(" #", issue_number) else ""
-
 repo_url <- "https://github.com/LiNk-NY/BiocReviews"
 readme_url <- paste0(repo_url, "#readme")
 review_date <- format(Sys.Date(), "%Y-%m-%d")
@@ -754,7 +750,7 @@ footer <- paste0(
 )
 
 sections <- paste(c(
-  paste0("# ", pkg_name, issue_label),
+  paste0("# ", pkg_name),
   "",
   render_section("DESCRIPTION", desc_bullets),
   render_section("NAMESPACE", ns_bullets),
