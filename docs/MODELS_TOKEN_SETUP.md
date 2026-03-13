@@ -1,10 +1,10 @@
 # GitHub Models Token Setup
 
-This guide explains how to configure a Personal Access Token (PAT) for GitHub Models API access in the auto-review workflow.
+This guide explains how to configure a fine-grained Personal Access Token (PAT) for GitHub Models API access in the auto-review workflow.
 
 ## Why is this needed?
 
-The default `GITHUB_TOKEN` provided by GitHub Actions has limited permissions and cannot access the GitHub Models API endpoint (`models.inference.ai.azure.com`). To enable LLM enhancement in the automated reviews, you need to provide a Personal Access Token with the appropriate scopes.
+The default `GITHUB_TOKEN` provided by GitHub Actions has limited permissions and cannot access the GitHub Models API endpoint (`models.inference.ai.azure.com`). To enable LLM enhancement in the automated reviews, you need to provide a fine-grained Personal Access Token with the **Models** scope.
 
 ## Symptoms of Missing Token
 
@@ -28,26 +28,22 @@ If the `MODELS_TOKEN` is not configured, you'll see:
 
 ## Setup Instructions
 
-### Step 1: Create a Personal Access Token
+### Step 1: Create a Fine-Grained Personal Access Token
 
-1. Go to [GitHub Settings > Personal Access Tokens](https://github.com/settings/tokens)
+1. Go to [GitHub Settings > Personal Access Tokens (Fine-grained)](https://github.com/settings/personal-access-tokens/new)
 
-2. Click **"Generate new token"** > **"Generate new token (classic)"**
-
-3. Configure the token:
-   - **Note**: `BiocReviews GitHub Models API Access` (or any descriptive name)
+2. Configure the token:
+   - **Token name**: `BiocReviews GitHub Models API Access` (or any descriptive name)
    - **Expiration**: Choose an appropriate expiration period (90 days, 1 year, or no expiration)
-   - **Scopes**: Select the following permissions:
-     - ✅ `repo` (Full control of private repositories)
-       - This is required for the token to work with repository secrets
-     - ✅ `read:user` (Read user profile data)
-       - This is the minimum scope for GitHub Models free tier access
-     - Optional: `read:org` if this is for an organization repository
+   - **Resource owner**: Your GitHub user or organization
+   - **Repository access**: You can select **"Public Repositories (read-only)"** or limit to specific repositories — no repository permissions are required solely for Models API access
+   - **Permissions**: Under **"Account permissions"**, grant:
+     - ✅ **Models** — Read and write access (required for GitHub Models API access)
 
-4. Click **"Generate token"** at the bottom
+3. Click **"Generate token"** at the bottom
 
-5. **IMPORTANT**: Copy the token immediately! You won't be able to see it again.
-   - The token will look like: `ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
+4. **IMPORTANT**: Copy the token immediately! You won't be able to see it again.
+   - The token will look like: `github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`
 
 ### Step 2: Add Token as Repository Secret
 
@@ -89,7 +85,7 @@ You can test the token locally before adding it as a secret:
 
 ```bash
 # Set the token
-export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+export GITHUB_TOKEN="github_pat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # Test the GitHub Models API
 curl -sS -X POST \
@@ -112,7 +108,7 @@ If you get an error like `{"error":{"code":"401","message":"Unauthorized"}}`, th
 
 **Solution**:
 1. Delete the old token
-2. Create a new token with `repo` and `read:user` scopes
+2. Create a new fine-grained token with the **Models** scope (under "Account permissions")
 3. Update the `MODELS_TOKEN` secret
 
 ### Error: "Rate limit exceeded"
@@ -162,15 +158,15 @@ See [MODEL_PROVIDERS.md](MODEL_PROVIDERS.md) for more details.
 
 ## Security Considerations
 
-- **Token permissions**: The PAT has broad access to your repositories. Store it securely.
+- **Token permissions**: Fine-grained PATs limit access to only the scopes you specify. Keep the **Models** scope as the only account permission for least-privilege access.
 - **Expiration**: Set a reasonable expiration period and plan to rotate tokens regularly.
-- **Revocation**: If the token is compromised, revoke it immediately at https://github.com/settings/tokens
+- **Revocation**: If the token is compromised, revoke it immediately at https://github.com/settings/personal-access-tokens
 - **Secret storage**: Never commit tokens to the repository or expose them in logs.
-- **Organization policies**: Some organizations may restrict PAT usage or require admin approval.
+- **Organization policies**: Some organizations may restrict fine-grained PAT usage or require admin approval.
 
 ## Related Documentation
 
-- [GitHub Personal Access Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+- [GitHub Fine-Grained Personal Access Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token)
 - [GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [GitHub Models Documentation](https://github.com/marketplace/models)
 

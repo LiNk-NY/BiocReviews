@@ -33,10 +33,10 @@ final evaluation process.
 
 ### GitHub Models Token Setup (Required for GitHub Actions)
 
-**For GitHub Actions workflows**: The default `GITHUB_TOKEN` provided by GitHub Actions cannot access the GitHub Models API. To enable LLM enhancement, you must add a Personal Access Token (PAT) as a repository secret.
+**For GitHub Actions workflows**: The default `GITHUB_TOKEN` provided by GitHub Actions cannot access the GitHub Models API. To enable LLM enhancement, you must add a fine-grained Personal Access Token (PAT) as a repository secret.
 
 **Quick setup:**
-1. Generate a PAT at https://github.com/settings/tokens with `repo` and `read:user` scopes
+1. Generate a fine-grained PAT at https://github.com/settings/personal-access-tokens/new with the **Models** scope (under "Account permissions")
 2. Add it as a repository secret named `MODELS_TOKEN`
 3. The workflow will automatically use it when available
 
