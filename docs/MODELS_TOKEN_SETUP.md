@@ -8,7 +8,7 @@ The default `GITHUB_TOKEN` provided by GitHub Actions has limited permissions an
 
 ## Symptoms of Missing Token
 
-If the `GITHUB_MODELS_TOKEN` is not configured, you'll see:
+If the `MODELS_TOKEN` is not configured, you'll see:
 
 1. **In the workflow run**: A warning message:
    ```
@@ -58,7 +58,7 @@ If the `GITHUB_MODELS_TOKEN` is not configured, you'll see:
 3. Click **"New repository secret"**
 
 4. Configure the secret:
-   - **Name**: `GITHUB_MODELS_TOKEN`
+   - **Name**: `MODELS_TOKEN`
    - **Value**: Paste the PAT you generated in Step 1
 
 5. Click **"Add secret"**
@@ -113,7 +113,7 @@ If you get an error like `{"error":{"code":"401","message":"Unauthorized"}}`, th
 **Solution**:
 1. Delete the old token
 2. Create a new token with `repo` and `read:user` scopes
-3. Update the `GITHUB_MODELS_TOKEN` secret
+3. Update the `MODELS_TOKEN` secret
 
 ### Error: "Rate limit exceeded"
 
@@ -129,7 +129,7 @@ If you get an error like `{"error":{"code":"401","message":"Unauthorized"}}`, th
 **Cause**: The secret may not be properly configured or the token is invalid.
 
 **Solution**:
-1. Verify the secret name is exactly `GITHUB_MODELS_TOKEN` (case-sensitive)
+1. Verify the secret name is exactly `MODELS_TOKEN` (case-sensitive)
 2. Check the token hasn't expired
 3. Re-test the token locally using the command above
 4. If needed, regenerate the token and update the secret

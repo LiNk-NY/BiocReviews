@@ -37,12 +37,12 @@ final evaluation process.
 
 **Quick setup:**
 1. Generate a PAT at https://github.com/settings/tokens with `repo` and `read:user` scopes
-2. Add it as a repository secret named `GITHUB_MODELS_TOKEN`
+2. Add it as a repository secret named `MODELS_TOKEN`
 3. The workflow will automatically use it when available
 
 **For local testing**: Use your regular `gh auth token` - no special setup needed.
 
-**See [docs/GITHUB_MODELS_TOKEN_SETUP.md](docs/GITHUB_MODELS_TOKEN_SETUP.md) for detailed instructions.**
+**See [docs/MODELS_TOKEN_SETUP.md](docs/MODELS_TOKEN_SETUP.md) for detailed instructions.**
 
 If the token is not configured, the workflow will fall back to the rule-based review with a warning.
 
@@ -205,7 +205,7 @@ scripts/
   enhance_review_with_github_models.R   LLM enhancement CLI (GitHub Models API)
   enhance_review_with_github_models.sh  Local convenience wrapper for the R script
 docs/
-  GITHUB_MODELS_TOKEN_SETUP.md   GitHub Models PAT setup for GitHub Actions
+  MODELS_TOKEN_SETUP.md          GitHub Models PAT setup for GitHub Actions
 .github/
   bioc-review-guidelines.instructions.md   AI review assistant guidelines (fed to LLM)
   workflows/
