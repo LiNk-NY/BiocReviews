@@ -52,8 +52,9 @@ provider <- if (grepl("gemini", model, ignore.case = TRUE)) "gemini" else "githu
 
 if (provider == "gemini") {
   # Google Gemini configuration
+  # API key from: https://aistudio.google.com/app/api-keys
   if (!nzchar(api_url)) api_url <- sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent", model)
-  max_prompt_chars <- if (nzchar(max_prompt_chars_arg)) as.integer(max_prompt_chars_arg) else 800000L  # ~2M tokens
+  max_prompt_chars <- if (nzchar(max_prompt_chars_arg)) as.integer(max_prompt_chars_arg) else 400000L  # ~1M tokens
   max_tokens <- if (nzchar(max_tokens_arg)) as.integer(max_tokens_arg) else 2800L
   token <- Sys.getenv("GEMINI_API_KEY", unset = "")
   token_param <- "key"
@@ -67,7 +68,7 @@ if (provider == "gemini") {
 }
 
 if (is.na(max_prompt_chars) || max_prompt_chars <= 0) {
-  max_prompt_chars <- if (provider == "gemini") 800000L else 28000L
+  max_prompt_chars <- if (provider == "gemini") 400000L else 28000L
 }
 if (is.na(max_tokens) || max_tokens <= 0) max_tokens <- 2800L
 

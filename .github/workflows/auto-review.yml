@@ -190,8 +190,8 @@ jobs:
         run: |
           echo "::warning::LLM enhancement failed and fell back to rule-based review only."
           echo "::warning::For GitHub Models: Add a MODELS_TOKEN secret with a PAT that has 'models' scope."
-          echo "::warning::For Gemini: Add a GEMINI_API_KEY secret from https://aistudio.google.com/app/apikey"
-          echo "::warning::See: https://github.com/settings/tokens"
+          echo "::warning::For Gemini: Add a GEMINI_API_KEY secret from https://aistudio.google.com/app/api-keys"
+          echo "::warning::GitHub tokens: https://github.com/settings/tokens"
 
       - name: Upload automated review artifact
         uses: actions/upload-artifact@v4
