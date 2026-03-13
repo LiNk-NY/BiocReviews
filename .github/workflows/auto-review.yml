@@ -203,14 +203,33 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const reviewPath = '${{ steps.llm.outputs.review_file }}' || 'automated_review.md';
+            const reviewPath = '${{ steps.llm.outputs.review_file }}' || 'automated_review_llm.md';
             const wasTruncated = '${{ steps.llm.outputs.truncated }}' === 'true';
             const statusLine = wasTruncated
               ? '> ⚠️ Input context was truncated before LLM generation. See the review header for details.\n\n'
               : '';
-            const review = fs.existsSync(reviewPath)
-              ? fs.readFileSync(reviewPath, 'utf8')
-              : '_Review generation failed — check workflow logs._';
+
+            let review = '_Review generation failed — check workflow logs._';
+
+            // Try to read the LLM-enhanced review first
+            if (fs.existsSync(reviewPath)) {
+              const content = fs.readFileSync(reviewPath, 'utf8').trim();
+              // Check if the content is meaningful (more than just the header)
+              // A valid review should be longer than just a header line
+              if (content.length > 150) {
+                review = content;
+              } else {
+                core.warning('LLM-enhanced review is too short, falling back to base review');
+                // Fall back to base review if LLM version is too short
+                if (fs.existsSync('automated_review.md')) {
+                  review = fs.readFileSync('automated_review.md', 'utf8');
+                }
+              }
+            } else if (fs.existsSync('automated_review.md')) {
+              // Fall back to base review if LLM version doesn't exist
+              core.warning('LLM-enhanced review not found, using base review');
+              review = fs.readFileSync('automated_review.md', 'utf8');
+            }
 
             await github.rest.issues.createComment({
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
