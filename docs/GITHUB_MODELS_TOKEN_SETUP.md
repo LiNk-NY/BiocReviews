@@ -173,8 +173,6 @@ See [MODEL_PROVIDERS.md](MODEL_PROVIDERS.md) for more details.
 - [GitHub Personal Access Tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 - [GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [GitHub Models Documentation](https://github.com/marketplace/models)
-- [Model Providers Guide](MODEL_PROVIDERS.md)
-- [LLM Testing Guide](LLM_TESTING.md)
 
 ## Support
 
