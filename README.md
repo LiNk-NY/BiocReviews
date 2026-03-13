@@ -31,6 +31,21 @@ The AI review assistant uses a **two-stage pipeline**:
 These reviews are preliminary assessments that assist human reviewers in the
 final evaluation process.
 
+### GitHub Models Token Setup (Required for GitHub Actions)
+
+**For GitHub Actions workflows**: The default `GITHUB_TOKEN` provided by GitHub Actions cannot access the GitHub Models API. To enable LLM enhancement, you must add a Personal Access Token (PAT) as a repository secret.
+
+**Quick setup:**
+1. Generate a PAT at https://github.com/settings/tokens with `repo` and `read:user` scopes
+2. Add it as a repository secret named `GITHUB_MODELS_TOKEN`
+3. The workflow will automatically use it when available
+
+**For local testing**: Use your regular `gh auth token` - no special setup needed.
+
+**See [docs/GITHUB_MODELS_TOKEN_SETUP.md](docs/GITHUB_MODELS_TOKEN_SETUP.md) for detailed instructions.**
+
+If the token is not configured, the workflow will fall back to the rule-based review with a warning.
+
 ### Review Guidelines
 
 The guidelines used by the AI review assistant are documented and maintained in
@@ -231,6 +246,7 @@ scripts/
 docs/
   LLM_TESTING.md           Comprehensive guide for LLM model testing
   MODEL_PROVIDERS.md       LLM provider setup and configuration guide
+  GITHUB_MODELS_TOKEN_SETUP.md   GitHub Models PAT setup for GitHub Actions
 .github/
   bioc-review-guidelines.instructions.md   AI review assistant guidelines (fed to LLM)
   workflows/
