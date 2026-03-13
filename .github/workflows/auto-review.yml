@@ -102,9 +102,13 @@ jobs:
               const repo = fs.readFileSync('build_meta/target_repo.txt', 'utf8').trim();
               const ref = fs.readFileSync('build_meta/target_ref.txt', 'utf8').trim() || 'devel';
               const issue = fs.readFileSync('build_meta/issue_number.txt', 'utf8').trim();
+              const model = fs.existsSync('build_meta/llm_model.txt')
+                ? fs.readFileSync('build_meta/llm_model.txt', 'utf8').trim()
+                : 'gpt-4o';  // default fallback
               core.setOutput('repo', repo);
               core.setOutput('ref', ref);
               core.setOutput('issue', issue);
+              core.setOutput('model', model);
               core.setOutput('check_file', 'build_results/check_results.txt');
               core.setOutput('bioccheck_file', 'build_results/bioccheck_results.txt');
               core.setOutput('coverage_file', 'build_results/coverage.json');
@@ -115,9 +119,11 @@ jobs:
               const repo = '${{ inputs.repo }}';
               const ref = '${{ inputs.ref }}';
               const issue = '${{ inputs.issue_number }}';
+              const model = '${{ inputs.model }}' || 'gpt-4o';
               core.setOutput('repo', repo);
               core.setOutput('ref', ref || 'devel');
               core.setOutput('issue', issue || '');
+              core.setOutput('model', model);
               core.setOutput('check_file', '');
               core.setOutput('bioccheck_file', '');
               core.setOutput('coverage_file', '');
@@ -162,30 +168,29 @@ jobs:
             "automated_review.md" \
             "${{ env.REVIEW_MODEL }}"
 
-      - name: Enhance review with GitHub Models
+      - name: Enhance review with LLM
         id: llm
         env:
-          # Use MODELS_TOKEN if available (for GitHub Models API access),
-          # otherwise fall back to default GITHUB_TOKEN
+          # For GitHub Models: use MODELS_TOKEN if available, otherwise fall back to GITHUB_TOKEN
+          # For Gemini: use GEMINI_API_KEY
           GITHUB_TOKEN: ${{ secrets.MODELS_TOKEN || secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
-          Rscript BiocReviews/scripts/enhance_review_with_github_models.R \
+          Rscript BiocReviews/scripts/enhance_review_with_llm.R \
           --base-review automated_review.md \
           --output automated_review_llm.md \
           --check-file "${{ steps.resolve.outputs.check_file }}" \
           --bioccheck-file "${{ steps.resolve.outputs.bioccheck_file }}" \
           --coverage-file "${{ steps.resolve.outputs.coverage_file }}" \
-          --model "${{ env.GITHUB_MODEL }}" \
-          --max-prompt-chars "${{ env.MAX_PROMPT_CHARS }}" \
-          --max-tokens "${{ env.REVIEW_MAX_TOKENS }}" \
+          --model "${{ steps.resolve.outputs.model }}" \
           --guidelines-file "BiocReviews/.github/bioc-review-guidelines.instructions.md"
 
       - name: Check LLM enhancement status
         if: steps.llm.outputs.llm_status == 'fallback'
         run: |
           echo "::warning::LLM enhancement failed and fell back to rule-based review only."
-          echo "::warning::The GitHub Models API may require a Personal Access Token (PAT) with appropriate scopes."
-          echo "::warning::To fix: Add a MODELS_TOKEN secret with a PAT that has 'models' scope."
+          echo "::warning::For GitHub Models: Add a MODELS_TOKEN secret with a PAT that has 'models' scope."
+          echo "::warning::For Gemini: Add a GEMINI_API_KEY secret from https://aistudio.google.com/app/apikey"
           echo "::warning::See: https://github.com/settings/tokens"
 
       - name: Upload automated review artifact
