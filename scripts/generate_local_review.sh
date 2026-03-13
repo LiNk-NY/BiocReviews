@@ -5,29 +5,39 @@
 # Runs R CMD check, BiocCheck, test coverage (optional), then generates review.
 #
 # Usage:
-#   ./scripts/generate_local_review.sh <package_dir> [output_file]
+#   ./scripts/generate_local_review.sh <package_dir> [output_file] [artifacts_dir]
 #
 # Arguments:
-#   package_dir   Path to the R package source directory (required)
-#   output_file   Where to write the review (optional, default: stdout)
+#   package_dir     Path to the R package source directory (required)
+#   output_file     Where to write the review (optional, default: stdout)
+#   artifacts_dir   Where to store check artifacts (optional, default: temp dir)
+#                   Use a local directory for Docker compatibility
 #
 # Examples:
 #   ./scripts/generate_local_review.sh ~/reviews/MyPackage
-#   ./scripts/generate_local_review.sh ~/reviews/MyPackage MyPackage_review.md
+#   ./scripts/generate_local_review.sh package review.md build_artifacts
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REVIEW_SCRIPT="$SCRIPT_DIR/../generate_review.R"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Use relative path for Docker compatibility
+REVIEW_SCRIPT="generate_review.R"
 
 if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <package_dir> [output_file]" >&2
+  echo "Usage: $0 <package_dir> [output_file] [artifacts_dir]" >&2
   exit 1
 fi
 
-PKG_DIR="$(realpath "$1")"
+PKG_DIR="$1"
 OUTPUT="${2:-}"
+ARTIFACTS_DIR="${3:-}"
 
+# Change to PROJECT_ROOT for Docker compatibility (all paths relative to BiocReviews)
+cd "$PROJECT_ROOT"
+
+# Verify PKG_DIR exists but keep it as relative path for Docker compatibility
 if [[ ! -d "$PKG_DIR" ]]; then
   echo "Error: package directory not found: $PKG_DIR" >&2
   exit 1
@@ -38,9 +48,18 @@ if [[ ! -f "$REVIEW_SCRIPT" ]]; then
   exit 1
 fi
 
-# Create a temp working directory for artifact files
-WORK_DIR="$(mktemp -d)"
-trap 'rm -rf "$WORK_DIR"' EXIT
+# Setup working directory for artifacts
+if [[ -n "$ARTIFACTS_DIR" ]]; then
+  # Use specified directory (Docker-compatible - under current directory)
+  WORK_DIR="$ARTIFACTS_DIR"
+  mkdir -p "$WORK_DIR"
+  CLEANUP_WORK_DIR=false
+else
+  # Use temp directory (original behavior, may not work with Docker)
+  WORK_DIR="$(mktemp -d)"
+  CLEANUP_WORK_DIR=true
+  trap 'rm -rf "$WORK_DIR"' EXIT
+fi
 
 PKG_NAME="$(basename "$PKG_DIR")"
 echo "==> Reviewing package: $PKG_NAME" >&2
@@ -55,6 +74,10 @@ COVERAGE_FILE="$WORK_DIR/coverage.json"
 # ---------------------------------------------------------------------------
 echo "" >&2
 echo "==> Running R CMD check..." >&2
+
+# Get package name from DESCRIPTION for log file location
+REAL_PKG_NAME=$(grep "^Package:" "$PKG_DIR/DESCRIPTION" | sed 's/^Package: *//')
+
 Rscript - <<EOF
 suppressPackageStartupMessages(library(rcmdcheck))
 check <- tryCatch(
@@ -70,9 +93,19 @@ check <- tryCatch(
   }
 )
 if (!is.null(check)) {
+  # Save the check object summary
   sink("$CHECK_FILE")
   print(check)
   sink()
+
+  # Also copy the detailed 00check.log if available
+  check_log <- file.path("$WORK_DIR", "check", paste0("$REAL_PKG_NAME", ".Rcheck"), "00check.log")
+  if (file.exists(check_log)) {
+    cat("\n\n=== Full R CMD check log ===\n\n", file = "$CHECK_FILE", append = TRUE)
+    cat(readLines(check_log, warn = FALSE), sep = "\n", file = "$CHECK_FILE", append = TRUE)
+  }
+} else {
+  file.create("$CHECK_FILE")
 }
 EOF
 echo "==> R CMD check done." >&2
@@ -111,9 +144,13 @@ echo "==> Coverage done." >&2
 # ---------------------------------------------------------------------------
 echo "" >&2
 echo "==> Running BiocCheck..." >&2
+
+# Get package name from DESCRIPTION
+REAL_PKG_NAME=$(grep "^Package:" "$PKG_DIR/DESCRIPTION" | sed 's/^Package: *//')
+
+# Run BiocCheck (it writes to <package>.BiocCheck/00BiocCheck.log)
 Rscript - <<EOF || true
 if (requireNamespace("BiocCheck", quietly = TRUE)) {
-  sink("$BIOCCHECK_FILE")
   tryCatch(
     BiocCheck::BiocCheck(
       "$PKG_DIR",
@@ -122,11 +159,19 @@ if (requireNamespace("BiocCheck", quietly = TRUE)) {
     ),
     error = function(e) message("BiocCheck error: ", conditionMessage(e))
   )
-  sink()
 } else {
   message("Skipping BiocCheck — install 'BiocCheck' to enable.")
 }
 EOF
+
+# Copy BiocCheck log file to artifacts
+if [[ -f "${REAL_PKG_NAME}.BiocCheck/00BiocCheck.log" ]]; then
+  cp "${REAL_PKG_NAME}.BiocCheck/00BiocCheck.log" "$BIOCCHECK_FILE"
+  echo "==> BiocCheck results copied from ${REAL_PKG_NAME}.BiocCheck/00BiocCheck.log" >&2
+else
+  echo "==> BiocCheck log not found at ${REAL_PKG_NAME}.BiocCheck/00BiocCheck.log" >&2
+  touch "$BIOCCHECK_FILE"
+fi
 echo "==> BiocCheck done." >&2
 
 # ---------------------------------------------------------------------------
