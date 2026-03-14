@@ -102,14 +102,14 @@ if (provider == "gemini") {
   # API key from: https://aistudio.google.com/app/api-keys
   if (!nzchar(api_url)) api_url <- sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent", model)
   max_prompt_chars <- if (nzchar(max_prompt_chars_arg)) as.integer(max_prompt_chars_arg) else 400000L  # ~1M tokens
-  max_tokens <- if (nzchar(max_tokens_arg)) as.integer(max_tokens_arg) else 2800L
+  max_tokens <- if (nzchar(max_tokens_arg)) as.integer(max_tokens_arg) else 28000L
   token <- Sys.getenv("GEMINI_API_KEY", unset = "")
   token_param <- "key"
 } else {
   # GitHub Models configuration
   if (!nzchar(api_url)) api_url <- "https://models.inference.ai.azure.com/chat/completions"
   max_prompt_chars <- if (nzchar(max_prompt_chars_arg)) as.integer(max_prompt_chars_arg) else 28000L  # ~7K tokens (8K limit with margin)
-  max_tokens <- if (nzchar(max_tokens_arg)) as.integer(max_tokens_arg) else 2800L
+  max_tokens <- if (nzchar(max_tokens_arg)) as.integer(max_tokens_arg) else 28000L
   token <- Sys.getenv("GITHUB_TOKEN", unset = "")
   token_param <- "bearer"
 }
@@ -117,7 +117,7 @@ if (provider == "gemini") {
 if (is.na(max_prompt_chars) || max_prompt_chars <= 0) {
   max_prompt_chars <- if (provider == "gemini") 400000L else 28000L
 }
-if (is.na(max_tokens) || max_tokens <= 0) max_tokens <- 2800L
+if (is.na(max_tokens) || max_tokens <= 0) max_tokens <- 28000L
 
 message(sprintf("Using provider: %s, model: %s", provider, model))
 message(sprintf("Token budget: %d chars (~%d tokens)", max_prompt_chars, as.integer(max_prompt_chars / 4)))
@@ -198,6 +198,7 @@ if (provider == "gemini") {
 
 llm_status <- "success"
 llm_text <- ""
+finish_reason <- "UNKNOWN"
 
 tryCatch({
   payload_file <- tempfile(fileext = ".json")
@@ -253,12 +254,27 @@ tryCatch({
       stop(sprintf("API response missing candidates. Response keys: %s",
                    paste(names(body), collapse = ", ")))
     }
-    content <- body$candidates[[1]]$content$parts[[1]]$text
+    candidate <- body$candidates[[1]]
+
+    # Check finish reason
+    finish_reason <- candidate$finishReason
+    if (!is.null(finish_reason)) finish_reason <<- as.character(finish_reason)
+    if (!is.null(finish_reason)) {
+      message(sprintf("Gemini finish reason: %s", finish_reason))
+      if (finish_reason != "STOP") {
+        message(sprintf("WARNING: Response finished with %s instead of STOP - may be incomplete", finish_reason))
+      }
+    }
+
+    content <- candidate$content$parts[[1]]$text
   } else {
     # GitHub Models/OpenAI format: choices[].message.content
     if (is.null(body$choices) || length(body$choices) == 0) {
       stop(sprintf("API response missing choices. Response keys: %s",
                    paste(names(body), collapse = ", ")))
+    }
+    if (!is.null(body$choices[[1]]$finish_reason)) {
+      finish_reason <<- as.character(body$choices[[1]]$finish_reason)
     }
     content <- body$choices[[1]]$message$content
   }
@@ -276,6 +292,7 @@ tryCatch({
 }, error = function(e) {
   message("ERROR: ", conditionMessage(e))
   llm_status <<- "fallback"
+  finish_reason <<- "ERROR"
 
   error_msg <- conditionMessage(e)
   fallback_parts <- c(
@@ -316,6 +333,7 @@ tryCatch({
 provider_name <- if (provider == "gemini") "Google Gemini" else "GitHub Models"
 header_lines <- c(
   sprintf("*Review enhanced by **%s (%s)** on %s.*", model, provider_name, as.character(Sys.Date())),
+  sprintf("*Finish reason: `%s`.*", finish_reason),
   ""
 )
 
@@ -337,12 +355,14 @@ writeLines(c(header_lines, trimws(llm_text), ""), output_path, useBytes = TRUE)
 
 github_output <- Sys.getenv("GITHUB_OUTPUT", unset = "")
 if (nzchar(github_output)) {
+  finish_reason_output <- gsub("[\r\n]+", " ", finish_reason)
   write(
     c(
       sprintf("review_file=%s", output_path),
       sprintf("llm_status=%s", llm_status),
       sprintf("truncated=%s", if (truncated) "true" else "false"),
-      sprintf("omitted_chars=%s", omitted_chars)
+      sprintf("omitted_chars=%s", omitted_chars),
+      sprintf("finish_reason=%s", finish_reason_output)
     ),
     file = github_output,
     append = TRUE

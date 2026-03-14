@@ -44,11 +44,11 @@ coverage_file <- get_arg("--coverage-file", default = "")
 guidelines_file <- get_arg("--guidelines-file", default = ".github/bioc-review-guidelines.instructions.md")
 model <- get_arg("--model", default = Sys.getenv("GITHUB_MODEL", "gpt-4o"))
 max_prompt_chars <- as.integer(get_arg("--max-prompt-chars", default = Sys.getenv("MAX_PROMPT_CHARS", "120000")))
-max_tokens <- as.integer(get_arg("--max-tokens", default = Sys.getenv("REVIEW_MAX_TOKENS", "2800")))
+max_tokens <- as.integer(get_arg("--max-tokens", default = Sys.getenv("REVIEW_MAX_TOKENS", "28000")))
 api_url <- get_arg("--api-url", default = "https://models.inference.ai.azure.com/chat/completions")
 
 if (is.na(max_prompt_chars) || max_prompt_chars <= 0) max_prompt_chars <- 120000L
-if (is.na(max_tokens) || max_tokens <= 0) max_tokens <- 2800L
+if (is.na(max_tokens) || max_tokens <= 0) max_tokens <- 28000L
 
 base_review <- read_txt(base_review_path)
 context_sections <- list(
@@ -104,6 +104,7 @@ payload <- toJSON(
 token <- Sys.getenv("GITHUB_TOKEN", unset = "")
 llm_status <- "success"
 llm_text <- ""
+finish_reason <- "UNKNOWN"
 
 tryCatch({
   payload_file <- tempfile(fileext = ".json")
@@ -147,6 +148,10 @@ tryCatch({
                  paste(names(body), collapse = ", ")))
   }
 
+  if (!is.null(body$choices[[1]]$finish_reason)) {
+    finish_reason <<- as.character(body$choices[[1]]$finish_reason)
+  }
+
   content <- body$choices[[1]]$message$content
   if (is.null(content) || !nzchar(as.character(content))) {
     stop("API response content is empty or null")
@@ -161,6 +166,7 @@ tryCatch({
 }, error = function(e) {
   message("ERROR: ", conditionMessage(e))
   llm_status <<- "fallback"
+  finish_reason <<- "ERROR"
   llm_text <<- paste0(
     "## LLM enhancement unavailable\n",
     "- Attempted model: `", model, "`\n",
@@ -172,6 +178,7 @@ tryCatch({
 
 header_lines <- c(
   sprintf("*Review enhanced by **%s (GitHub Models)** on %s.*", model, as.character(Sys.Date())),
+  sprintf("*Finish reason: `%s`.*", finish_reason),
   ""
 )
 
@@ -193,12 +200,14 @@ writeLines(c(header_lines, trimws(llm_text), ""), output_path, useBytes = TRUE)
 
 github_output <- Sys.getenv("GITHUB_OUTPUT", unset = "")
 if (nzchar(github_output)) {
+  finish_reason_output <- gsub("[\r\n]+", " ", finish_reason)
   write(
     c(
       sprintf("review_file=%s", output_path),
       sprintf("llm_status=%s", llm_status),
       sprintf("truncated=%s", if (truncated) "true" else "false"),
-      sprintf("omitted_chars=%s", omitted_chars)
+      sprintf("omitted_chars=%s", omitted_chars),
+      sprintf("finish_reason=%s", finish_reason_output)
     ),
     file = github_output,
     append = TRUE
