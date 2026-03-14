@@ -6,7 +6,7 @@ on:
   issues:
     types: [labeled]
   issue_comment:
-    types: [created, edited]
+    types: [created]
 
 permissions:
   contents: read
