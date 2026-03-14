@@ -245,6 +245,7 @@ jobs:
             issue_number.txt
             target_repo.txt
             target_ref.txt
+            llm_model.txt
           retention-days: 7
 
       - name: Post build/check summary to issue
