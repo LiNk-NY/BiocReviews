@@ -1,13 +1,17 @@
 # LLM Setup Guide
 
-BiocReviews supports two LLM providers for automated code review: **GitHub Models** (GPT-4o) and **Google Gemini** (gemini-3.1-pro-preview).
+BiocReviews supports two LLM providers for automated code review: **GitHub Models** (GPT-4o) and **Google Gemini**.
 
 ## Supported Models
 
-| Provider | Model | API Key Secret | Usage |
-|----------|-------|----------------|-------|
-| **GitHub Models** | `gpt-4o` (default) | `MODELS_TOKEN` | `@biocreview` or `@biocreview gpt-4o` |
-| **Google Gemini** | `gemini-3.1-pro-preview` | `GEMINI_API_KEY` | `@biocreview gemini-3.1-pro-preview` |
+| Provider | Model | Free Tier | API Key Secret | Usage |
+|----------|-------|-----------|----------------|-------|
+| **GitHub Models** | `gpt-4o` (default) | ✅ 15 RPM, 150K tokens/day | `MODELS_TOKEN` | `@biocreview` or `@biocreview gpt-4o` |
+| **Google Gemini** | `gemini-2.0-flash-exp` (recommended) | ✅ Available | `GEMINI_API_KEY` | `@biocreview gemini-2.0-flash-exp` |
+| **Google Gemini** | `gemini-1.5-flash` | ✅ 5 RPM, 250K TPM, 20 RPD | `GEMINI_API_KEY` | `@biocreview gemini-1.5-flash` |
+| **Google Gemini** | `gemini-1.5-pro` | ⚠️ Limited availability | `GEMINI_API_KEY` | `@biocreview gemini-1.5-pro` |
+
+**Note**: Some Gemini models like `gemini-3.1-pro` appear in the API but are not available on the free tier (rate limit 0/0/0).
 
 ## Quick Setup
 
@@ -36,7 +40,9 @@ See [GitHub's documentation](https://docs.github.com/en/authentication/keeping-y
    - Navigate to **Settings > Secrets and variables > Actions**
    - Create secret: `GEMINI_API_KEY` = your API key
 
-3. **Trigger a review**: Comment `@biocreview gemini-3.1-pro-preview` on an issue
+3. **Trigger a review**: Comment `@biocreview gemini-2.0-flash-exp` on an issue
+   - Use `gemini-2.0-flash-exp` for best performance (experimental)
+   - Use `gemini-1.5-flash` for stable production use
 
 See [Google's documentation](https://ai.google.dev/gemini-api/docs/api-key) for more details on Gemini API keys.
 
@@ -70,7 +76,7 @@ export GEMINI_API_KEY="..."
 curl -sS -X POST \
   -H "Content-Type: application/json" \
   -d '{"contents":[{"parts":[{"text":"test"}]}]}' \
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-pro-preview:generateContent?key=$GEMINI_API_KEY"
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=$GEMINI_API_KEY"
 ```
 
 ### Rate limits
