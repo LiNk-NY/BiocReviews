@@ -531,16 +531,6 @@ if (length(long_fns) > 0) {
            paste(head(long_fns, 5), collapse = "; "), "."))
 }
 
-# Copy-and-append anti-pattern
-append_hits <- grep("c\\(.*,.*\\)\\s*(;|$)|append\\(.*\\)",
-                    r_all_lines, perl = TRUE, value = TRUE)
-if (length(append_hits) > 10) {
-  r_bullets[[length(r_bullets)+1]] <- bullet("append",
-    paste0(length(append_hits), " potential copy-and-append pattern(s) found. ",
-           "Pre-allocate result containers with `vector()` or `list()` and ",
-           "fill by index, or use `lapply()`/`vapply()`."))
-}
-
 if (length(r_bullets) == 0) {
   r_bullets[[1]] <- bullet("ok", "Looks good.")
 }
