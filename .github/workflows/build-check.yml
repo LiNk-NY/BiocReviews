@@ -71,6 +71,27 @@ jobs:
             core.setOutput('selected_ref', selectedRef);
             core.setOutput('fallback_used', String(fallbackUsed));
 
+      - name: Parse LLM model from comment
+        id: parse_model
+        uses: actions/github-script@v8
+        with:
+          script: |
+            let model = 'gpt-4o';  // default
+
+            if (context.eventName === 'issue_comment') {
+              const commentBody = context.payload.comment.body || '';
+              // Match: @biocreview <model-name>
+              // Accepts any model name starting with gemini or gpt
+              const modelMatch = commentBody.match(/@biocreview\s+((?:gemini|gpt)[\w.-]*)/i);
+
+              if (modelMatch) {
+                model = modelMatch[1];
+              }
+            }
+
+            core.setOutput('model', model);
+            console.log(`LLM model selected: ${model}`);
+
       - name: Initialize artifact and metadata files
         run: |
           : > check_results.txt
@@ -81,6 +102,7 @@ jobs:
           echo "${{ steps.resolve.outputs.issue }}" > issue_number.txt
           echo "${{ steps.resolve.outputs.repo }}" > target_repo.txt
           echo "${{ steps.resolve_ref.outputs.selected_ref }}" > target_ref.txt
+          echo "${{ steps.parse_model.outputs.model }}" > llm_model.txt
 
           if [ "${{ steps.resolve_ref.outputs.fallback_used }}" = "true" ]; then
             echo "[INFO] Requested ref was not found; checkout used repository default branch." >> check_results.txt
