@@ -16,7 +16,7 @@ this repository. Edit this file to adjust reviewer expectations.
 Write reviews as Markdown. Structure them exactly as follows:
 
 ```
-# {PackageName} #{IssueNumber}
+# {PackageName}
 
 {Optional 1-3 sentence summary of the package and overall impression.}
 
