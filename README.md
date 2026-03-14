@@ -23,8 +23,8 @@ The AI review assistant uses a **two-stage pipeline**:
 
    If the combined prompt exceeds the configured character limit
    (`MAX_PROMPT_CHARS`, default 120 000), the prompt is hard-truncated and a
-   visible warning block is inserted at the top of the output and in the issue
-   comment. The `REVIEW_MAX_TOKENS` env var (default 2 800) controls the maximum
+  visible warning block is inserted at the top of the output and in the issue
+  comment. The `REVIEW_MAX_TOKENS` env var (default 28 000) controls the maximum
    length of the LLM response. Both values can be overridden in the workflow
    dispatch inputs or locally via environment variables.
 
@@ -151,7 +151,7 @@ current directory. Override model or limits via environment variables:
 ```bash
 export GITHUB_MODEL=gpt-4o
 export MAX_PROMPT_CHARS=80000
-export REVIEW_MAX_TOKENS=3500
+export REVIEW_MAX_TOKENS=28000
 export GUIDELINES_FILE=.github/bioc-review-guidelines.instructions.md  # default
 ./scripts/enhance_review_with_github_models.sh
 ```
@@ -168,7 +168,7 @@ Rscript scripts/enhance_review_with_github_models.R \
   --guidelines-file .github/bioc-review-guidelines.instructions.md \
   --model meta-llama-3.1-405b-instruct \
   --max-prompt-chars 120000 \
-  --max-tokens 2800
+  --max-tokens 28000
 ```
 
 **Option B: Review from existing check results**

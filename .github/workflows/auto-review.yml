@@ -39,7 +39,7 @@ env:
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   REVIEW_MODEL: "AI Review Assistant (GitHub Copilot)"
   GITHUB_MODEL: ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'gpt-4o' }}
-  REVIEW_MAX_TOKENS: "2800"
+  REVIEW_MAX_TOKENS: "28000"
   MAX_PROMPT_CHARS: "120000"
 
 jobs:
