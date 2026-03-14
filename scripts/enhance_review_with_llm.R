@@ -36,6 +36,53 @@ extract_content <- function(content) {
   as.character(content)
 }
 
+list_available_models <- function(provider, token) {
+  tryCatch({
+    if (provider == "gemini") {
+      list_url <- sprintf("https://generativelanguage.googleapis.com/v1beta/models?key=%s", token)
+      curl_cmd <- sprintf("curl -sS '%s'", list_url)
+    } else {
+      # GitHub Models list endpoint
+      list_url <- "https://models.inference.ai.azure.com/models"
+      curl_cmd <- sprintf("curl -sS -H 'Authorization: Bearer %s' '%s'", token, list_url)
+    }
+
+    response_lines <- system(curl_cmd, intern = TRUE)
+    if (is.null(attr(response_lines, "status")) || attr(response_lines, "status") == 0) {
+      response_text <- paste(response_lines, collapse = "\n")
+      body <- fromJSON(response_text, simplifyVector = FALSE)
+
+      if (provider == "gemini") {
+        # Extract model names from Gemini response
+        if (!is.null(body$models)) {
+          models <- vapply(body$models, function(m) {
+            # Extract just the model name from "models/gemini-xxx"
+            name <- sub("^models/", "", m$name)
+            # Filter to only generation models (exclude embedding, etc.)
+            if (!is.null(m$supportedGenerationMethods) &&
+                "generateContent" %in% unlist(m$supportedGenerationMethods)) {
+              name
+            } else {
+              NA_character_
+            }
+          }, character(1))
+          models <- models[!is.na(models)]
+          return(sort(models))
+        }
+      } else {
+        # Parse GitHub Models response
+        if (!is.null(body$data)) {
+          models <- vapply(body$data, function(m) m$id, character(1))
+          return(sort(models))
+        }
+      }
+    }
+    character(0)
+  }, error = function(e) {
+    character(0)
+  })
+}
+
 base_review_path <- get_arg("--base-review", required = TRUE)
 output_path <- get_arg("--output", required = TRUE)
 check_file <- get_arg("--check-file", default = "")
@@ -229,13 +276,41 @@ tryCatch({
 }, error = function(e) {
   message("ERROR: ", conditionMessage(e))
   llm_status <<- "fallback"
-  llm_text <<- paste0(
+
+  error_msg <- conditionMessage(e)
+  fallback_parts <- c(
     "## LLM enhancement unavailable\n",
-    "- Attempted model: `", model, "`\n",
-    "- Error: `", conditionMessage(e), "`\n\n",
-    "The rule-based review is provided below.\n\n",
+    sprintf("- Attempted model: `%s`\n", model),
+    sprintf("- Error: `%s`\n", error_msg)
+  )
+
+  # If the error suggests a model not found, list available models
+  if (grepl("not found|not supported|invalid model|model.*not.*available", error_msg, ignore.case = TRUE)) {
+    message("Fetching list of available models...")
+    available <- list_available_models(provider, token)
+    if (length(available) > 0) {
+      fallback_parts <- c(
+        fallback_parts,
+        "\n### Available models\n",
+        sprintf("Try one of these %s models instead:\n", if (provider == "gemini") "Gemini" else "GitHub"),
+        paste0("- `", available, "`", collapse = "\n"),
+        "\n"
+      )
+    } else {
+      fallback_parts <- c(
+        fallback_parts,
+        "\n(Could not fetch list of available models)\n"
+      )
+    }
+  }
+
+  fallback_parts <- c(
+    fallback_parts,
+    "\nThe rule-based review is provided below.\n\n",
     base_review
   )
+
+  llm_text <<- paste0(fallback_parts, collapse = "")
 })
 
 provider_name <- if (provider == "gemini") "Google Gemini" else "GitHub Models"
