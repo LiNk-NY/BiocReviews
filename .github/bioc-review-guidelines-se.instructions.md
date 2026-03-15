@@ -24,7 +24,8 @@ This analysis should be evidence-based, constructive, and actionable. Focus on p
 ### What to Evaluate
 
 **Computational Efficiency**:
-- Are operations vectorized where possible, or are there unnecessary loops?
+- Are genuinely vectorized operations (vector arithmetic, matrix operations) used where they provide clear performance or readability benefits?
+- Note: Modern R (3.4+) byte-compiles loops, making them comparably efficient to `*apply` functions. Prefer vectorization when it uses actual vectorized operations (e.g., `x * 2` instead of `sapply(x, function(i) i * 2)`), not just for hiding loops.
 - Are there obvious algorithmic inefficiencies (e.g., O(n²) when O(n log n) is possible)?
 - Does the code use appropriate data structures for the operations performed?
 - Are there unnecessary data copies or conversions?
@@ -47,18 +48,20 @@ This analysis should be evidence-based, constructive, and actionable. Focus on p
 
 ### How to Assess
 
-- Look for nested loops that could be vectorized
-- Check for use of `apply` family vs explicit vectorization
+- Look for opportunities to use true vectorized operations (not just `*apply` wrappers)
+- Focus on algorithmic efficiency rather than micro-optimizations
 - Examine large data handling strategies
 - Review any performance-critical functions for optimization opportunities
 - Consider whether the package uses appropriate Bioconductor infrastructure for performance
+- Avoid recommending premature optimization; readability often outweighs minor performance differences
 
 ### Feedback Format
 
 Provide specific, actionable feedback:
-- **Good**: "The `calculateScores()` function uses vectorized operations efficiently."
-- **Concern**: "The `processMatrix()` function uses nested loops (lines 45-52) that could be replaced with matrix operations for better performance on large datasets."
+- **Good**: "The `calculateScores()` function uses vectorized matrix operations efficiently, which will scale well to large datasets."
+- **Concern**: "The `processMatrix()` function uses nested loops (lines 45-52) that could be replaced with matrix operations (e.g., `%*%`, `sweep()`) for significantly better performance on large datasets."
 - **Suggestion**: "Consider using `DelayedArray` for the large matrix operations in `analyzeData()` to support out-of-memory computation."
+- **Note**: "While the code uses explicit loops rather than `*apply` functions, this is fine - modern R byte-compiles loops efficiently. Focus on algorithmic improvements rather than stylistic changes."
 
 ---
 
@@ -94,6 +97,7 @@ Provide specific, actionable feedback:
 - Is there significant code duplication that could be refactored?
 - Are common patterns abstracted into reusable functions?
 - Is the balance appropriate (avoiding premature abstraction)?
+- Are abstractions justified by actual code reuse, or are they adding complexity without benefit?
 
 ### How to Assess
 
@@ -298,18 +302,30 @@ Provide specific, actionable feedback:
 - Is there a clear conceptual model underlying the package?
 - Do the abstractions match the biological or computational domain?
 
+**Complexity and Simplicity**:
+- Is the design as simple as it can be while meeting requirements?
+- Are S4 classes created only when type safety and structure are genuinely needed?
+- Does the package avoid over-engineering (e.g., excessive abstraction layers, premature generalization)?
+- Are design patterns used appropriately, not just for their own sake?
+- Is the complexity justified by the problem being solved?
+
 ### How to Assess
 
 - Review the exported API for consistency and intuitiveness
-- Examine S4 class definitions and methods
+- Examine S4 class definitions and methods - are they justified?
 - Consider whether the package design matches its stated goals
 - Evaluate whether design choices are appropriate for the problem domain
+- Look for signs of over-engineering: excessive abstraction, too many classes for simple data, complex designs for straightforward problems
+- Ask: "Could this be simpler while still meeting the requirements?"
 
 ### Feedback Format
 
 - **Good**: "The package provides a clear, layered API with high-level convenience functions (`runAnalysis()`) and low-level building blocks for customization."
+- **Good**: "The package uses simple lists and data frames appropriately, avoiding unnecessary S4 class complexity for straightforward data structures."
 - **Concern**: "The API exposes many low-level implementation details, making it difficult for users to identify the main entry points."
+- **Concern**: "The package defines 8 S4 classes for what are essentially simple parameter sets. Consider using lists or simple S3 classes unless the type safety and validation provided by S4 classes are necessary."
 - **Suggestion**: "Consider introducing an S4 class to represent the analysis results rather than returning a complex nested list, which would provide type safety and clearer accessor methods."
+- **Suggestion**: "The package appears over-engineered with multiple abstraction layers for a straightforward task. Consider simplifying the design - users would benefit from a more direct implementation."
 
 ---
 
