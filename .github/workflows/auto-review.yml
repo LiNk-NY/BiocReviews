@@ -180,6 +180,7 @@ jobs:
           Rscript BiocReviews/scripts/enhance_review_with_llm.R \
           --base-review automated_review.md \
           --output automated_review_llm.md \
+          --package-dir "${{ steps.pkg_name.outputs.name }}" \
           --check-file "${{ steps.resolve.outputs.check_file }}" \
           --bioccheck-file "${{ steps.resolve.outputs.bioccheck_file }}" \
           --coverage-file "${{ steps.resolve.outputs.coverage_file }}" \
