@@ -321,11 +321,11 @@ Provide specific, actionable feedback:
 ### Feedback Format
 
 - **Good**: "The package provides a clear, layered API with high-level convenience functions (`runAnalysis()`) and low-level building blocks for customization."
-- **Good**: "The package uses simple lists and data frames appropriately, avoiding unnecessary S4 class complexity for straightforward data structures."
+- **Good**: "The package uses appropriate data classes, preferring the simplest appropriate Bioconductor-native class that is sufficient for the task."
 - **Concern**: "The API exposes many low-level implementation details, making it difficult for users to identify the main entry points."
-- **Concern**: "The package defines 8 S4 classes for what are essentially simple parameter sets. Consider using lists or simple S3 classes unless the type safety and validation provided by S4 classes are necessary."
+- **Concern**: "The package defines 8 S4 classes for what are essentially simple parameter sets. Consider using DataFrame and SummarizedExperiment and defining new methods to accomplish the same tasks with simpler data structures."
 - **Suggestion**: "Consider introducing an S4 class to represent the analysis results rather than returning a complex nested list, which would provide type safety and clearer accessor methods."
-- **Suggestion**: "The package appears over-engineered with multiple abstraction layers for a straightforward task. Consider simplifying the design - users would benefit from a more direct implementation."
+- **Suggestion**: "The package appears over-engineered with multiple abstraction layers for a straightforward task. Consider simplifying the design - users and future maintenance would benefit from a more direct implementation."
 
 ---
 
