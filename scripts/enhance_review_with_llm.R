@@ -160,6 +160,8 @@ prompt_parts <- c(
   "- Performance (computational efficiency, memory usage, scalability)",
   "- Maintainability (code organization, modularity, clarity)",
   "- Robustness (error handling, input validation, edge cases)",
+  "- Security (potential vulnerabilities, safe handling of user input, credential management)",
+  "- Unintended Consequences (side effects, data integrity, resource management, surprising behavior)",
   "- Design Quality (API design, architecture, patterns)",
   "- Ecosystem Integration (use of Bioconductor classes, relationship to similar packages)",
   "- User Experience (ease of use, intuitiveness, API friendliness)",

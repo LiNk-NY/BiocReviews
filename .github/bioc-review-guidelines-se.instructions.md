@@ -8,6 +8,8 @@ The Software Engineering (SE) analysis evaluates:
 - **Performance**: Computational efficiency and scalability
 - **Maintainability**: Code organization and ease of modification
 - **Robustness**: Error handling and edge case coverage
+- **Security**: Potential vulnerabilities and best practices
+- **Unintended Consequences**: Potential for software to behave ways that would not be expected by the user or developer
 - **Design Quality**: Architectural decisions and patterns
 - **Ecosystem Integration**: Relationship to other Bioconductor packages
 - **User Experience**: API design and ease of use
@@ -156,7 +158,113 @@ Provide specific, actionable feedback:
 
 ---
 
-## 4. Design Quality and Architecture
+## 4. Security Analysis
+
+### What to Evaluate
+
+**Command Injection and System Calls**:
+- Are `system()`, `system2()`, or shell commands used safely?
+- Is user input properly sanitized before passing to system commands?
+- Are command arguments properly escaped or quoted?
+- Could users manipulate arguments to execute arbitrary commands?
+
+**File System Security**:
+- Are file paths validated to prevent path traversal attacks (e.g., `../../etc/passwd`)?
+- Are temporary files created securely (e.g., using `tempfile()` rather than predictable names)?
+- Are file permissions handled appropriately?
+- Could users read or write files outside intended directories?
+
+**Data Handling**:
+- Is `unserialize()` or `readRDS()` used on untrusted data?
+- Are database queries parameterized to prevent SQL injection?
+- Is sensitive data (API keys, passwords, tokens) hard-coded in source code?
+- Are credentials logged or exposed in error messages?
+
+**Network Operations**:
+- Are HTTPS connections verified (SSL/TLS certificates checked)?
+- Are API tokens transmitted securely?
+- Is user input validated before making network requests?
+- Are downloaded files verified (checksums, signatures)?
+
+**Bioconductor-Specific Concerns**:
+- Do packages that download data validate sources and integrity?
+- Are web APIs called securely with proper authentication?
+- For Shiny applications: Are there XSS or CSRF vulnerabilities?
+- Are ExperimentHub or AnnotationHub resources properly validated?
+
+### How to Assess
+
+- Search for `system()`, `system2()`, `shell()` calls and examine their usage
+- Look for file operations with user-supplied paths
+- Check for `unserialize()`, `eval()`, or `parse()` on external data
+- Review any network operations for secure practices
+- Examine credential handling and storage
+- For packages with web interfaces, consider common web vulnerabilities
+
+### Feedback Format
+
+- **Good**: "File downloads in `fetchData()` verify SHA256 checksums, protecting against data tampering."
+- **Concern**: "The `runAnalysis()` function passes user input directly to `system()` without sanitization (line 45), creating a command injection vulnerability."
+- **Suggestion**: "Consider using `system2()` with proper argument vectorization instead of `paste()` to construct shell commands, which prevents injection attacks."
+- **Concern**: "API keys are stored in plaintext in `R/config.R`. Consider using environment variables or the `keyring` package for secure credential storage."
+
+---
+
+## 5. Unintended Consequences Analysis
+
+### What to Evaluate
+
+**Undocumented Side Effects**:
+- Do functions modify global state without documenting it?
+- Are there unexpected file system modifications (creating, deleting files)?
+- Do functions change environment variables or working directory?
+- Are options or par() settings changed without restoration?
+- Are connections left open?
+
+**Data Integrity**:
+- Could functions silently corrupt or lose data?
+- Are type coercions performed that might lose information?
+- Could rounding or precision issues lead to incorrect results?
+- Are missing values handled in ways that could mask problems?
+
+**Resource Management**:
+- Are connections (database, file, network) properly closed?
+- Could the package cause memory leaks?
+- Are temporary files cleaned up properly?
+- Could long-running operations block or hang indefinitely?
+
+**Surprising Behavior**:
+- Do functions do more than their name suggests?
+- Are there surprising interactions between parameters?
+- Could default behaviors lead to unexpected results?
+- Are NA/NULL values propagated in surprising ways?
+
+**Scientific Correctness**:
+- Could edge cases lead to scientifically incorrect results?
+- Are statistical assumptions validated or documented?
+- Could silent failures lead to wrong conclusions?
+- Are warnings about data quality issues surfaced appropriately?
+
+### How to Assess
+
+- Look for functions that modify global state
+- Check for proper connection cleanup (on.exit handlers)
+- Review file operations for cleanup
+- Examine function behavior with edge case inputs
+- Consider whether function names accurately reflect their actions
+- Look for silent coercions or transformations that could lose information
+
+### Feedback Format
+
+- **Good**: "The `processData()` function uses `on.exit()` to ensure database connections are closed even if an error occurs."
+- **Concern**: "The `loadData()` function silently converts integers to doubles, which could cause unexpected behavior when large integer values lose precision."
+- **Suggestion**: "Consider warning users when the `filter()` function removes >10% of data, as this could indicate a parameter misconfiguration rather than intended filtering."
+- **Concern**: "The `plotResults()` function changes `par()` settings globally without restoring them, affecting subsequent plots in the user's session."
+- **Suggestion**: "The `normalizeData()` function performs quantile normalization by default, which may not be appropriate for all data types. Consider making this behavior explicit in the function name (e.g., `quantileNormalize()`) or requiring users to specify the method explicitly."
+
+---
+
+## 6. Design Quality and Architecture
 
 ### What to Evaluate
 
@@ -205,7 +313,7 @@ Provide specific, actionable feedback:
 
 ---
 
-## 5. Ecosystem Integration
+## 7. Ecosystem Integration
 
 ### What to Evaluate
 
@@ -253,7 +361,7 @@ Provide specific, actionable feedback:
 
 ---
 
-## 6. User Experience and Friendliness
+## 8. User Experience and Friendliness
 
 ### What to Evaluate
 
@@ -309,7 +417,7 @@ Provide specific, actionable feedback:
 
 ---
 
-## 7. Documentation Quality
+## 9. Documentation Quality
 
 ### What to Evaluate
 
@@ -381,6 +489,12 @@ The Software Engineering Analysis should be structured as follows:
 
 ### Robustness
 [Bullet points on error handling, input validation, edge cases]
+
+### Security
+[Bullet points on potential vulnerabilities, safe handling of user input, credential management]
+
+### Unintended Consequences
+[Bullet points on side effects, data integrity, resource management, surprising behavior]
 
 ### Design Quality
 [Bullet points on API design, architecture, patterns]
