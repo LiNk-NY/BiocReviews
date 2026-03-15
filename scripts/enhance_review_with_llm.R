@@ -88,6 +88,7 @@ output_path <- get_arg("--output", required = TRUE)
 check_file <- get_arg("--check-file", default = "")
 bioccheck_file <- get_arg("--bioccheck-file", default = "")
 coverage_file <- get_arg("--coverage-file", default = "")
+package_dir <- get_arg("--package-dir", default = "")
 guidelines_file <- get_arg("--guidelines-file", default = ".github/bioc-review-guidelines.instructions.md")
 se_guidelines_file <- get_arg("--se-guidelines-file", default = ".github/bioc-review-guidelines-se.instructions.md")
 model <- get_arg("--model", default = Sys.getenv("GITHUB_MODEL", "gpt-4o"))
@@ -123,11 +124,89 @@ if (is.na(max_tokens) || max_tokens <= 0) max_tokens <- 28000L
 message(sprintf("Using provider: %s, model: %s", provider, model))
 message(sprintf("Token budget: %d chars (~%d tokens)", max_prompt_chars, as.integer(max_prompt_chars / 4)))
 
+# Function to read package source code with size limits
+read_package_source <- function(pkg_dir, max_chars = 50000) {
+  if (!nzchar(pkg_dir) || !dir.exists(pkg_dir)) {
+    return("")
+  }
+
+  parts <- character(0)
+  remaining_chars <- max_chars
+
+  # Read DESCRIPTION (always include, usually small)
+  desc_path <- file.path(pkg_dir, "DESCRIPTION")
+  if (file.exists(desc_path)) {
+    desc_content <- read_txt(desc_path)
+    if (nchar(desc_content) <= remaining_chars) {
+      parts <- c(parts, "=== DESCRIPTION ===", desc_content, "")
+      remaining_chars <- remaining_chars - nchar(desc_content) - 50
+    }
+  }
+
+  # Read NAMESPACE (always include, usually small)
+  ns_path <- file.path(pkg_dir, "NAMESPACE")
+  if (file.exists(ns_path)) {
+    ns_content <- read_txt(ns_path)
+    if (nchar(ns_content) <= remaining_chars) {
+      parts <- c(parts, "=== NAMESPACE ===", ns_content, "")
+      remaining_chars <- remaining_chars - nchar(ns_content) - 50
+    }
+  }
+
+  # Read R/ files (most important for code review)
+  r_dir <- file.path(pkg_dir, "R")
+  if (dir.exists(r_dir) && remaining_chars > 1000) {
+    r_files <- list.files(r_dir, pattern = "\\.[Rr]$", full.names = TRUE)
+    if (length(r_files) > 0) {
+      parts <- c(parts, "=== R/ Source Files ===", "")
+
+      # Sort by size, read smaller files first to get more coverage
+      file_info <- data.frame(
+        path = r_files,
+        size = vapply(r_files, function(f) file.info(f)$size, numeric(1)),
+        stringsAsFactors = FALSE
+      )
+      file_info <- file_info[order(file_info$size), ]
+
+      files_included <- 0
+      for (i in seq_len(nrow(file_info))) {
+        if (remaining_chars < 500) break
+
+        fpath <- file_info$path[i]
+        fname <- basename(fpath)
+        content <- read_txt(fpath)
+        content_size <- nchar(content)
+
+        if (content_size <= remaining_chars) {
+          parts <- c(parts, sprintf("--- %s ---", fname), content, "")
+          remaining_chars <- remaining_chars - content_size - 50
+          files_included <- files_included + 1
+        }
+      }
+
+      if (files_included < length(r_files)) {
+        parts <- c(parts, sprintf("(Note: %d of %d R files included due to size limits)",
+                                 files_included, length(r_files)), "")
+      }
+    }
+  }
+
+  if (length(parts) == 0) {
+    return("")
+  }
+
+  paste(parts, collapse = "\n")
+}
+
+# Read package source code if directory provided
+package_source <- read_package_source(package_dir, max_chars = 50000)
+
 base_review <- read_txt(base_review_path)
 context_sections <- list(
   list(title = "Bioconductor Review Guidelines", text = read_txt(guidelines_file)),
   list(title = "Software Engineering Analysis Guidelines", text = read_txt(se_guidelines_file)),
   list(title = "Base Static Analysis", text = base_review),
+  list(title = "Package Source Code", text = package_source),
   list(title = "R CMD check results", text = read_txt(check_file)),
   list(title = "BiocCheck results", text = read_txt(bioccheck_file)),
   list(title = "Coverage summary", text = read_txt(coverage_file))
