@@ -45,7 +45,8 @@ env:
 jobs:
   auto-review:
     if: |
-      github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run'
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-24.04
     container: bioconductor/bioconductor_docker:devel
 
