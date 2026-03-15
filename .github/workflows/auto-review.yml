@@ -183,7 +183,8 @@ jobs:
           --bioccheck-file "${{ steps.resolve.outputs.bioccheck_file }}" \
           --coverage-file "${{ steps.resolve.outputs.coverage_file }}" \
           --model "${{ steps.resolve.outputs.model }}" \
-          --guidelines-file "BiocReviews/.github/bioc-review-guidelines.instructions.md"
+          --guidelines-file "BiocReviews/.github/bioc-review-guidelines.instructions.md" \
+          --se-guidelines-file "BiocReviews/.github/bioc-review-guidelines-se.instructions.md"
 
       - name: Check LLM enhancement status
         if: steps.llm.outputs.llm_status == 'fallback'

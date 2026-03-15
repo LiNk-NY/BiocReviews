@@ -89,6 +89,7 @@ check_file <- get_arg("--check-file", default = "")
 bioccheck_file <- get_arg("--bioccheck-file", default = "")
 coverage_file <- get_arg("--coverage-file", default = "")
 guidelines_file <- get_arg("--guidelines-file", default = ".github/bioc-review-guidelines.instructions.md")
+se_guidelines_file <- get_arg("--se-guidelines-file", default = ".github/bioc-review-guidelines-se.instructions.md")
 model <- get_arg("--model", default = Sys.getenv("GITHUB_MODEL", "gpt-4o"))
 max_prompt_chars_arg <- get_arg("--max-prompt-chars", default = "")
 max_tokens_arg <- get_arg("--max-tokens", default = "")
@@ -125,6 +126,7 @@ message(sprintf("Token budget: %d chars (~%d tokens)", max_prompt_chars, as.inte
 base_review <- read_txt(base_review_path)
 context_sections <- list(
   list(title = "Bioconductor Review Guidelines", text = read_txt(guidelines_file)),
+  list(title = "Software Engineering Analysis Guidelines", text = read_txt(se_guidelines_file)),
   list(title = "Base Static Analysis", text = base_review),
   list(title = "R CMD check results", text = read_txt(check_file)),
   list(title = "BiocCheck results", text = read_txt(bioccheck_file)),
@@ -138,6 +140,33 @@ prompt_parts <- c(
   "Do not invent facts. If evidence is missing, say so clearly.",
   "Format with sections and bullets.",
   "Do not include any attribution footer (e.g., 'Review performed by...') - this will be added automatically.",
+  "",
+  "## Review Structure",
+  "",
+  "Your review should have TWO MAIN PARTS, clearly separated:",
+  "",
+  "### Part 1: Technical Review",
+  "This section should cover the standard Bioconductor requirements and technical compliance:",
+  "- DESCRIPTION file compliance",
+  "- NAMESPACE issues",
+  "- Vignette requirements",
+  "- R code technical issues (e.g., T/F vs TRUE/FALSE, sapply vs vapply, etc.)",
+  "- Test coverage",
+  "- Documentation completeness",
+  "- Build artifacts (R CMD check, BiocCheck)",
+  "",
+  "### Part 2: Software Engineering Analysis",
+  "This should be a SEPARATE section titled '## Software Engineering Analysis' that provides deeper analysis of:",
+  "- Performance (computational efficiency, memory usage, scalability)",
+  "- Maintainability (code organization, modularity, clarity)",
+  "- Robustness (error handling, input validation, edge cases)",
+  "- Design Quality (API design, architecture, patterns)",
+  "- Ecosystem Integration (use of Bioconductor classes, relationship to similar packages)",
+  "- User Experience (ease of use, intuitiveness, API friendliness)",
+  "- Documentation Quality (completeness, clarity, examples, vignettes)",
+  "",
+  "Follow the format and guidance provided in the 'Software Engineering Analysis Guidelines' section below.",
+  "Keep these two parts CLEARLY SEPARATED in your output.",
   "",
   "## Input Context"
 )
