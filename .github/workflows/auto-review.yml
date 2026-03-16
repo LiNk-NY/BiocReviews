@@ -25,7 +25,7 @@ on:
       model:
         description: "GitHub Models model ID for LLM enhancement"
         required: false
-        default: "gpt-4o"
+        default: "gemini-3.1-pro-preview"
         type: string
 
 permissions:
@@ -38,7 +38,7 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
   REVIEW_MODEL: "AI Review Assistant (GitHub Copilot)"
-  GITHUB_MODEL: ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'gpt-4o' }}
+  GITHUB_MODEL: ${{ github.event_name == 'workflow_dispatch' && inputs.model || 'gemini-3.1-pro-preview' }}
   REVIEW_MAX_TOKENS: "28000"
   MAX_PROMPT_CHARS: "120000"
 
