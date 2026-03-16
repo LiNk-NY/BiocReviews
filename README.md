@@ -52,6 +52,23 @@ The guidelines used by the AI review assistant are documented and maintained in
 [`.github/bioc-review-guidelines.instructions.md`](.github/bioc-review-guidelines.instructions.md).
 Edit that file to adjust the assistant's expectations (new rules, exceptions, etc.).
 
+### Package Source Code Inclusion
+
+The LLM enhancement stage includes actual package source code in its analysis context, enabling deeper software engineering analysis beyond what's possible from build artifacts alone.
+
+**Files included:**
+- `DESCRIPTION` (full file)
+- `NAMESPACE` (full file)
+- `R/*.R` (source files, prioritizing smaller files first)
+
+**Character budget:** 100,000 characters maximum
+
+Files are read until the character budget is exhausted. If not all R/ files can be included, a note is added to the output indicating how many files were included vs. total files.
+
+**To adjust source code inclusion**, edit [`scripts/enhance_review_with_llm.R`](scripts/enhance_review_with_llm.R):
+- Change the `max_chars` parameter in the `read_package_source()` call (line ~200)
+- Modify the `read_package_source()` function (line ~125) to include additional directories (e.g., `vignettes/`, `tests/`) or change file selection logic
+
 ---
 
 ### Running a Review
