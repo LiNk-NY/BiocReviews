@@ -48,10 +48,65 @@ Write reviews as Markdown. Structure them exactly as follows:
 - Use bullet points (`*`) for individual review items.
 - Flag **Required** changes (must fix before acceptance) vs **Suggestions** (recommended but optional).
 - Prefix required items with `* **[Required]**` and suggestions with `* **[Suggestion]**`.
+- **Include effort estimates** for each item using one of these qualitative levels:
+  - `Quick Fix` - Simple, obvious changes (typos, adding missing DESCRIPTION fields, one-line fixes, formatting)
+  - `Minor` - Small code changes (updating a few functions, adding documentation sections, simple refactoring)
+  - `Moderate` - More involved changes (restructuring code, adding test coverage for multiple functions, implementing new methods)
+  - `Significant` - Major work (architectural changes, extensive refactoring, integrating Bioconductor classes throughout)
+- Format: `* **[Required | Effort: Minor]** Description of issue...` or `* **[Suggestion | Effort: Quick Fix]** Description of issue...`
 - Be specific: include file names, function names, and line numbers where applicable.
 - Include short code examples to illustrate better patterns.
 - Keep tone professional, constructive, and encouraging.
 - If a section has no issues, write `* Looks good.`
+
+---
+
+## Effort Estimation Guidelines
+
+When assigning effort estimates, consider the scope and complexity of the change required:
+
+### Quick Fix (minutes)
+- Fixing typos or formatting issues
+- Adding missing DESCRIPTION fields (BugReports, URL)
+- Removing commented-out code
+- Updating version numbers
+- Adding `@return` documentation to a few functions
+- Fixing simple roxygen2 syntax errors
+- Adding missing `importFrom` statements
+
+### Minor (under a day)
+- Adding `@examples` to several exported functions
+- Documenting 3-10 function parameters
+- Refactoring 1-3 functions to use `vapply()` instead of `sapply()`
+- Replacing `1:n` with `seq_len(n)` throughout package
+- Adding validation checks to function arguments
+- Reorganizing a single file (e.g., extracting helpers)
+- Writing tests for 2-5 simple functions
+- Adding a `show()` method for one S4 class
+
+### Moderate (1-3 days)
+- Adding comprehensive test coverage for a module (bringing coverage from 40% to 80%)
+- Refactoring multiple functions to follow coding best practices
+- Implementing accessor functions for S4 classes
+- Restructuring code to reduce cyclomatic complexity
+- Adding a vignette section with working examples
+- Creating proper constructors for 2-4 S4 classes
+- Reworking NAMESPACE to use explicit imports throughout
+- Replacing `system()` calls with `system2()` and adding error handling
+
+### Significant (multiple days to weeks)
+- Refactoring package to use `SummarizedExperiment` instead of custom data structures
+- Integrating `GenomicRanges` throughout package (replacing data.frames)
+- Splitting a monolithic vignette into multiple focused vignettes
+- Complete test suite implementation for under-tested package (<20% coverage)
+- Major architectural changes to follow Bioconductor class conventions
+- Implementing comprehensive parallelization with `BiocParallel`
+- Reworking data storage to use `BiocFileCache` or `AnnotationHub`
+
+**Context matters**: The same type of change can have different effort levels depending on package size:
+- Fixing `sapply()` usage: Quick Fix for 1-2 instances, Minor for 5-10 instances, Moderate for 20+ instances
+- Adding examples: Quick Fix for 2-3 functions, Minor for 10-15 functions, Moderate for 30+ functions
+- Test coverage: Minor to add 20%, Moderate to add 40%, Significant to add 60%+
 
 ---
 
