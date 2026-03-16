@@ -13,8 +13,9 @@
 #                  coverage.json (default: current directory)
 #
 # Environment variables:
-#   GITHUB_TOKEN       Required for GitHub Models API
-#   GITHUB_MODEL       Optional, default: gpt-4o
+#   GITHUB_TOKEN       Required for GitHub Models API (for non-Gemini models)
+#   GEMINI_API_KEY     Required for Gemini models
+#   REVIEW_MODEL       Optional, default: gemini-3.1-pro-preview
 #   MAX_PROMPT_CHARS   Optional, default: 120000
 #   REVIEW_MAX_TOKENS  Optional, default: 2800
 
@@ -33,10 +34,20 @@ if [[ ! -f "$ENHANCER_SCRIPT" ]]; then
   exit 1
 fi
 
-if [[ -z "${GITHUB_TOKEN:-}" ]]; then
-  echo "Error: GITHUB_TOKEN is not set." >&2
-  echo "Set it first, e.g. export GITHUB_TOKEN=\$(gh auth token)" >&2
-  exit 1
+# Check that appropriate API key is set
+MODEL_TO_USE="${REVIEW_MODEL:-gemini-3.1-pro-preview}"
+if [[ "$MODEL_TO_USE" == gemini* ]]; then
+  if [[ -z "${GEMINI_API_KEY:-}" ]]; then
+    echo "Error: GEMINI_API_KEY is not set for Gemini model." >&2
+    echo "Get your API key from: https://aistudio.google.com/app/api-keys" >&2
+    exit 1
+  fi
+else
+  if [[ -z "${GITHUB_TOKEN:-}" ]]; then
+    echo "Error: GITHUB_TOKEN is not set for GitHub Models." >&2
+    echo "Set it first, e.g. export GITHUB_TOKEN=\$(gh auth token)" >&2
+    exit 1
+  fi
 fi
 
 cd "$PROJECT_ROOT"
@@ -61,11 +72,11 @@ if [[ ! -f "$COVERAGE_FILE" ]]; then COVERAGE_FILE=""; fi
 
 GUIDELINES_FILE="${GUIDELINES_FILE:-$PROJECT_ROOT/.github/bioc-review-guidelines.instructions.md}"
 
-echo "Enhancing review with GitHub Models..." >&2
+echo "Enhancing review with LLM..." >&2
 echo "  Base:      $BASE_REVIEW" >&2
 echo "  Output:    $OUTPUT_REVIEW" >&2
 echo "  Artifacts: $ARTIFACTS_DIR" >&2
-echo "  Model:     ${GITHUB_MODEL:-gpt-4o}" >&2
+echo "  Model:     ${REVIEW_MODEL:-gemini-3.1-pro-preview}" >&2
 
 Rscript "$ENHANCER_SCRIPT" \
   --base-review "$BASE_REVIEW" \
@@ -73,7 +84,7 @@ Rscript "$ENHANCER_SCRIPT" \
   --check-file "$CHECK_FILE" \
   --bioccheck-file "$BIOCCHECK_FILE" \
   --coverage-file "$COVERAGE_FILE" \
-  --model "${GITHUB_MODEL:-gpt-4o}" \
+  --model "${REVIEW_MODEL:-gemini-3.1-pro-preview}" \
   --max-prompt-chars "${MAX_PROMPT_CHARS:-120000}" \
   --max-tokens "${REVIEW_MAX_TOKENS:-2800}" \
   --guidelines-file "$GUIDELINES_FILE"

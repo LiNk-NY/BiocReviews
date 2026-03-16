@@ -14,8 +14,8 @@ The AI review assistant uses a **two-stage pipeline**:
    review (`automated_review.md`). No external API is needed.
 
 2. **LLM enhancement (`scripts/enhance_review_with_github_models.R`)** — the
-   static review plus raw artifact context are sent to an LLM (default: `gpt-4o`
-   via GitHub Models API, or `gemini-3.1-pro-preview` via Google AI). The LLM
+   static review plus raw artifact context are sent to an LLM (default: `gemini-3.1-pro-preview`
+   via Google AI, or `gpt-4o` via GitHub Models API). The LLM
    re-organises findings, prioritises required fixes, and returns a polished
    review (`automated_review_llm.md`). The review guidelines file
    (`.github/bioc-review-guidelines.instructions.md`) is prepended to the prompt
@@ -166,7 +166,8 @@ Arguments default to `automated_review.md`, `automated_review_llm.md`, and the
 current directory. Override model or limits via environment variables:
 
 ```bash
-export GITHUB_MODEL=gpt-4o
+export REVIEW_MODEL=gemini-3.1-pro-preview  # or gpt-4o for GitHub Models
+export GEMINI_API_KEY=your_api_key  # for Gemini, or use GITHUB_TOKEN for GitHub Models
 export MAX_PROMPT_CHARS=80000
 export REVIEW_MAX_TOKENS=28000
 export GUIDELINES_FILE=.github/bioc-review-guidelines.instructions.md  # default
