@@ -310,16 +310,22 @@ When artifacts from the `build-check.yml` workflow are available, interpret them
   - Dependency NOTEs → review DESCRIPTION classification.
 
 ### BiocCheck (`bioccheck_results.txt`)
-- **Required**: Must be addressed before acceptance.
-- **Recommended**: Should be addressed; comment on any not addressed.
-- **Considerations**: Optional but worth noting in the review.
-- Common BiocCheck items to highlight:
+BiocCheck reports three severity levels that map to review priorities:
+- **BiocCheck ERRORs**: Must be fixed before acceptance. Flag as `[Required]`.
+- **BiocCheck WARNINGs**: Should be addressed; strongly recommended. Comment on any not addressed.
+- **BiocCheck NOTEs**: Informational suggestions only. Do NOT flag as required. These include:
+  - Suggestions to add a NEWS file
+  - Recommendations for shorter lines
+  - Suggestions about documentation for unexported functions (e.g., missing `@return` for internal helpers)
+  - Function length recommendations (>50 lines)
+  - biocViews suggestions
+  - Consider mentioning these in an "Optional Improvements" or "Suggestions" section if relevant, but never as required changes.
+- Common BiocCheck items to highlight (if they are ERRORs or WARNINGs, not NOTEs):
   - T/F used instead of TRUE/FALSE
   - `1:n` style iterations
   - `sapply` usage
-  - Functions longer than 50 lines (cyclomatic complexity)
   - Missing `sessionInfo()` in vignettes
-  - Missing value/return documentation
+  - Missing value/return documentation **for exported functions**
 
 ### Test Coverage (`coverage.json` / `coverage_summary.txt`)
 - Coverage < 20%: Flag as **Required** — package is under-tested.
