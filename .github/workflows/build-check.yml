@@ -76,7 +76,7 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            let model = 'gpt-4o';  // default
+            let model = 'gemini-3.1-pro-preview';  // default
 
             if (context.eventName === 'issue_comment') {
               const commentBody = context.payload.comment.body || '';

@@ -105,7 +105,7 @@ jobs:
               const issue = fs.readFileSync('build_meta/issue_number.txt', 'utf8').trim();
               const model = fs.existsSync('build_meta/llm_model.txt')
                 ? fs.readFileSync('build_meta/llm_model.txt', 'utf8').trim()
-                : 'gpt-4o';  // default fallback
+                : 'gemini-3.1-pro-preview';  // default fallback
               core.setOutput('repo', repo);
               core.setOutput('ref', ref);
               core.setOutput('issue', issue);
@@ -120,7 +120,7 @@ jobs:
               const repo = '${{ inputs.repo }}';
               const ref = '${{ inputs.ref }}';
               const issue = '${{ inputs.issue_number }}';
-              const model = '${{ inputs.model }}' || 'gpt-4o';
+              const model = '${{ inputs.model }}' || 'gemini-3.1-pro-preview';
               core.setOutput('repo', repo);
               core.setOutput('ref', ref || 'devel');
               core.setOutput('issue', issue || '');

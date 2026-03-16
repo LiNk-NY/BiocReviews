@@ -6,8 +6,8 @@ BiocReviews supports two LLM providers for automated code review: **GitHub Model
 
 | Provider | Model | API Key Secret | Usage |
 |----------|-------|----------------|-------|
-| **GitHub Models** | `gpt-4o` (default) | `MODELS_TOKEN` | `@biocreview` or `@biocreview gpt-4o` |
-| **Google Gemini** | `gemini-3.1-pro-preview` | `GEMINI_API_KEY` | `@biocreview gemini-3.1-pro-preview` |
+| **Google Gemini** | `gemini-3.1-pro-preview` (default) | `GEMINI_API_KEY` | `@biocreview` or `@biocreview gemini-3.1-pro-preview` |
+| **GitHub Models** | `gpt-4o` | `MODELS_TOKEN` | `@biocreview gpt-4o` |
 
 ## Quick Setup
 
