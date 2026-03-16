@@ -125,13 +125,16 @@ message(sprintf("Using provider: %s, model: %s", provider, model))
 message(sprintf("Token budget: %d chars (~%d tokens)", max_prompt_chars, as.integer(max_prompt_chars / 4)))
 
 # Function to read package source code with size limits
-read_package_source <- function(pkg_dir, max_chars = 50000) {
+# Returns a list with $text (the source code) and $truncated (logical)
+read_package_source <- function(pkg_dir, max_chars = 100000) {
   if (!nzchar(pkg_dir) || !dir.exists(pkg_dir)) {
-    return("")
+    return(list(text = "", truncated = FALSE))
   }
 
   parts <- character(0)
   remaining_chars <- max_chars
+  total_r_files <- 0
+  files_included <- 0
 
   # Read DESCRIPTION (always include, usually small)
   desc_path <- file.path(pkg_dir, "DESCRIPTION")
@@ -157,7 +160,9 @@ read_package_source <- function(pkg_dir, max_chars = 50000) {
   r_dir <- file.path(pkg_dir, "R")
   if (dir.exists(r_dir) && remaining_chars > 1000) {
     r_files <- list.files(r_dir, pattern = "\\.[Rr]$", full.names = TRUE)
-    if (length(r_files) > 0) {
+    total_r_files <- length(r_files)
+
+    if (total_r_files > 0) {
       parts <- c(parts, "=== R/ Source Files ===", "")
 
       # Sort by size, read smaller files first to get more coverage
@@ -168,7 +173,6 @@ read_package_source <- function(pkg_dir, max_chars = 50000) {
       )
       file_info <- file_info[order(file_info$size), ]
 
-      files_included <- 0
       for (i in seq_len(nrow(file_info))) {
         if (remaining_chars < 500) break
 
@@ -184,22 +188,31 @@ read_package_source <- function(pkg_dir, max_chars = 50000) {
         }
       }
 
-      if (files_included < length(r_files)) {
+      if (files_included < total_r_files) {
         parts <- c(parts, sprintf("(Note: %d of %d R files included due to size limits)",
-                                 files_included, length(r_files)), "")
+                                 files_included, total_r_files), "")
       }
     }
   }
 
   if (length(parts) == 0) {
-    return("")
+    return(list(text = "", truncated = FALSE))
   }
 
-  paste(parts, collapse = "\n")
+  list(
+    text = paste(parts, collapse = "\n"),
+    truncated = files_included < total_r_files
+  )
 }
 
 # Read package source code if directory provided
-package_source <- read_package_source(package_dir, max_chars = 50000)
+package_source_result <- read_package_source(package_dir, max_chars = 100000)
+package_source <- package_source_result$text
+source_truncated <- package_source_result$truncated
+
+if (source_truncated && nzchar(package_source)) {
+  message("Warning: Package source code was truncated to fit within character budget")
+}
 
 base_review <- read_txt(base_review_path)
 context_sections <- list(
