@@ -313,19 +313,25 @@ When artifacts from the `build-check.yml` workflow are available, interpret them
 BiocCheck reports three severity levels that map to review priorities:
 - **BiocCheck ERRORs**: Must be fixed before acceptance. Flag as `[Required]`.
 - **BiocCheck WARNINGs**: Should be addressed; strongly recommended. Comment on any not addressed.
-- **BiocCheck NOTEs**: Informational suggestions only. Do NOT flag as required. These include:
-  - Suggestions to add a NEWS file
-  - Recommendations for shorter lines
-  - Suggestions about documentation for unexported functions (e.g., missing `@return` for internal helpers)
-  - Function length recommendations (>50 lines)
-  - biocViews suggestions
-  - Consider mentioning these in an "Optional Improvements" or "Suggestions" section if relevant, but never as required changes.
-- Common BiocCheck items to highlight (if they are ERRORs or WARNINGs, not NOTEs):
-  - T/F used instead of TRUE/FALSE
-  - `1:n` style iterations
-  - `sapply` usage
-  - Missing `sessionInfo()` in vignettes
-  - Missing value/return documentation **for exported functions**
+- **BiocCheck NOTEs**: Informational suggestions only. Do NOT flag as required.
+
+**IMPORTANT**: BiocCheck's text output doesn't always include explicit ERROR/WARNING/NOTE labels. Use this reference to correctly classify messages:
+
+**WARNINGs (Strongly Recommended, NOT Required):**
+- "Empty or missing \value sections found in man page(s)" for exported functions
+- "At least 80% of man pages documenting exported objects must have runnable examples"
+
+**NOTEs (Informational/Suggestions only):**
+- "Consider adding a NEWS file"
+- "Consider shorter lines; X lines (Y%) are > 80 characters long"
+- "Consider multiples of 4 spaces for line indents"
+- "Potential intermediate files found: vignettes/*.html" (and other intermediate files)
+- "Update R version dependency from X to Y"
+- "Consider adding these automatically suggested biocViews"
+- "No 'fnd' role found in Authors@R"
+- Coding practice suggestions: "Avoid sapply()", "Avoid 1:...", "Avoid using = for assignment"
+
+Do NOT classify WARNINGs or NOTEs as [Required]. WARNINGs should be listed as strongly recommended but not blocking. NOTEs are optional improvements only.
 
 ### Test Coverage (`coverage.json` / `coverage_summary.txt`)
 - Coverage < 20%: Flag as **Required** — package is under-tested.
