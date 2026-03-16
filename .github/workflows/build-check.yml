@@ -207,6 +207,15 @@ jobs:
           })
         shell: Rscript {0}
 
+      - name: Clean up intermediate vignette files
+        run: |
+          # Remove only untracked (newly built) HTML/PDF files from vignettes directory
+          # This preserves any HTML/PDF files that were actually committed to the repo
+          cd "${{ steps.pkg_name.outputs.name }}"
+          git ls-files --others --exclude-standard vignettes/ | grep -E '\.(html|pdf)$' | xargs -r rm -v
+          cd ..
+          echo "Cleaned up intermediate vignette files (untracked only)"
+
       - name: Install GPG
         run: sudo apt-get update && sudo apt-get install -y gpg
 
