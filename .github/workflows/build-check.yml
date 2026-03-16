@@ -190,7 +190,7 @@ jobs:
         continue-on-error: true
         run: |
           result <- tryCatch({
-            cov <- covr::package_coverage("${{ steps.pkg_name.outputs.name }}", quiet = FALSE, clean = FALSE, type = "all")
+            cov <- covr::package_coverage("${{ steps.pkg_name.outputs.name }}", quiet = FALSE, clean = TRUE, type = "all")
             if (!is.null(cov) && inherits(cov, "coverage")) {
               cov_list <- covr::coverage_to_list(cov)
               jsonlite::write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
