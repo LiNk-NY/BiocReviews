@@ -3,6 +3,9 @@ contact_links:
   - name: Bioconductor Contribution Guidelines
     url: https://contributions.bioconductor.org/
     about: Review coding, documentation, and package quality expectations.
-  - name: AI Agent-friendly Package Submission Guidelines
+  - name: AI Instructions for Technical Review
     url: https://github.com/LiNk-NY/BiocReviews/blob/main/.github/bioc-review-guidelines.instructions.md
-    about: These are the guidelines the AI agent will follow when generating reviews.
+    about: These genAI instructions guide a technical review based on R CMD check, BiocCheck, and covr results.
+  - name: AI Instructions for Software Engineering Review
+    url: https://github.com/LiNk-NY/BiocReviews/blob/main/.github/bioc-review-guidelines-se.instructions.md
+    about: These genAI instructions guide a Software Engineering review (performance, maintainability, robustness, security, user experience, etc)
