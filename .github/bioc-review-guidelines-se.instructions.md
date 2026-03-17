@@ -448,6 +448,7 @@ Provide specific, actionable feedback:
 - Are technical terms explained appropriately?
 - Is the intended use of each function clear?
 - Are parameter descriptions informative (not just repeating names)?
+- Where roxygen2 markup is used for unexported functions, are @noRd flags added?
 
 **Vignette Quality**:
 - Does the vignette provide a clear introduction to the package?
@@ -485,6 +486,7 @@ Provide specific, actionable feedback:
 
 - **Good**: "The vignette provides a clear, well-motivated example workflow that demonstrates the package's main features in a biological context."
 - **Concern**: "Many parameter descriptions in the documentation simply repeat the parameter name without explaining what values are expected or how they affect the analysis."
+- **Concern**: "Use @noRd to avoid publishing documentation of unexported functions. It can be confusing to users to see documentation for functions that are not available to them."
 - **Suggestion**: "The vignette would benefit from explaining *when* users should choose this package over alternatives like `DESeq2` or `edgeR`, including use case guidance."
 - **Suggestion**: "Consider adding a troubleshooting section to the vignette addressing common errors, as several functions have non-obvious requirements."
 
