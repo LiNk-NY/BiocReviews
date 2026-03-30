@@ -1,0 +1,59 @@
+# jvecfor #4155
+
+## DESCRIPTION
+
+* Minor: Consider adding an author with the `fnd` role in `Authors@R` if the
+  work was funded by a grant.
+
+## NAMESPACE
+
+* Looks good. Exports are well defined and minimal.
+
+## vignettes
+
+* Looks good. Java library is bundled within the package, and the vignette
+  provides clear instructions on how to use the package.
+* Consider using `error = TRUE` in the code chunks that have `tryCatch()` to
+  show the errors in the vignette (e.g., in `metric-dotproduct` chunk).
+
+## R
+
+* `jvecfor_setup()` modifies the installation directory which is not allowed
+per Bioconductor policies as this directory is often read-only. To support
+custom JARs, use the `options(jvecfor.jar = ...)` mechanism or use
+`tools::R_user_dir("jvecfor", "data")` or  `BiocFileCache` to store and
+retrieve user-provided JAR files.
+
+## tests
+
+* The overall test coverage is 70.85%. While pipeline.R and fastFindKNN.R are
+  well-tested, utils.R has only 41.32% coverage. Consider adding tests for the
+  JAR resolution logic and Java version checking to ensure these utilities
+  fail gracefully on unsupported systems.
+
+## Performance and scalability
+
+* Sparse Matrix Coercion (Critical Concern): In `R/fastFindKNN.R`, the
+  `.coerce_X()` function silently coerces sparse matrices (`dgCMatrix`) to
+  dense matrices via `as.matrix(X)`. In single-cell analysis, datasets
+  routinely exceed 100,000 cells and 20,000 features. Coercing this to a dense
+  matrix will allocate gigabytes of memory and likely crash R with an
+  Out-Of-Memory (OOM) error. Furthermore, writing a massive dense matrix to a
+  TSV file will incur severe I/O bottlenecks. Consider supporting a sparse
+  format (like `MatrixMarket`; MTX) in the Java backend, or at minimum, add a
+  strong warning or size check before coercing large sparse matrices.
+
+* I/O Overhead: Passing data to Java via TSV files and reading results from
+  standard output involves significant serialization and deserialization
+  overhead. While acceptable for a first version, this I/O overhead might
+  dominate the actual KNN compute time for smaller datasets.
+
+## Future enhancements
+
+* Consider implementing a custom `BiocNeighborsParam` class (e.g.,
+  `JvecforParam`). This would allow users to pass your algorithm directly into
+  higher-level Bioconductor functions (like those in `scran` or `scater`) that
+  accept a `BNPARAM` argument, for drop-in integration.
+
+<sub> Note. This review was assisted by Gemini gemini-3.1-pro-preview </sub>
+
