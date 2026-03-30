@@ -155,6 +155,7 @@ jobs:
           deps <- trimws(strsplit(Sys.getenv("REMOTES_INPUT"), ",\\s*")[[1L]])
           deps <- deps[nzchar(deps)]
           if (length(deps) > 0) {
+            options(repos = c(CRAN = Sys.getenv("CRAN")))
             message("Installing remotes: ", paste(deps, collapse = ", "))
             remotes::install_github(deps, upgrade = "never")
           }
@@ -162,6 +163,7 @@ jobs:
 
       - name: Install build/check dependencies
         run: |
+          options(repos = c(CRAN = Sys.getenv("CRAN")))
           BiocManager::install(c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"), ask = FALSE, update = FALSE)
           remotes::install_deps("${{ steps.pkg_name.outputs.name }}", dependencies = TRUE, repos = BiocManager::repositories())
         shell: Rscript {0}
