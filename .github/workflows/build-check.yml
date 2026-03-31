@@ -384,22 +384,33 @@ jobs:
 
             let imageUrl = null;
             try {
-              const imageBuffer = fs.readFileSync(histPath);
-              const uploadResponse = await github.request(
-                'POST /repos/{owner}/{repo}/issues/assets',
+              const imageData = fs.readFileSync(histPath);
+              const token = process.env.GITHUB_TOKEN;
+              if (!token) {
+                core.warning('GITHUB_TOKEN not available, skipping histogram upload.');
+                throw new Error('GITHUB_TOKEN is not set');
+              }
+              const uploadRes = await fetch(
+                `https://uploads.github.com/repos/${context.repo.owner}/${context.repo.repo}/issues/assets`,
                 {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
+                  method: 'POST',
                   headers: {
-                    'content-type': 'image/png',
-                    'content-disposition': 'attachment; filename="pkgndep_histogram.png"',
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'image/png',
+                    'Content-Disposition': 'attachment; filename="pkgndep_histogram.png"',
                   },
-                  data: imageBuffer,
+                  body: imageData,
                 }
               );
-              imageUrl = uploadResponse.data.url;
+              if (uploadRes.ok) {
+                const uploadData = await uploadRes.json();
+                imageUrl = uploadData.url;
+              } else {
+                const errText = await uploadRes.text();
+                core.warning(`Could not upload histogram image: ${uploadRes.status} ${errText}`);
+              }
             } catch (uploadError) {
-              core.warning('Could not upload histogram image via API: ' + uploadError.message);
+              core.warning('Could not upload histogram image: ' + uploadError.message);
             }
 
             let body;
