@@ -164,6 +164,22 @@ if (requireNamespace("cyclocomp", quietly = TRUE)) {
 }
 
 # ---------------------------------------------------------------------------
+# Run pkgndep analysis
+# ---------------------------------------------------------------------------
+
+pkgndep_result <- NULL
+pkgndep_text   <- NULL
+
+if (requireNamespace("pkgndep", quietly = TRUE)) {
+  tryCatch({
+    pkgndep_result <- pkgndep::pkgndep(pkg_dir)
+    pkgndep_text   <- utils::capture.output(print(pkgndep_result))
+  }, error = function(e) {
+    message("pkgndep failed: ", conditionMessage(e))
+  })
+}
+
+# ---------------------------------------------------------------------------
 # Parse coverage results
 # ---------------------------------------------------------------------------
 
@@ -333,6 +349,15 @@ if (!is.null(cyclo_results) && is.data.frame(cyclo_results) && nrow(cyclo_result
   }
 } else {
   sections <- c(sections, "* Cyclomatic complexity results not available")
+}
+sections <- c(sections, "")
+
+# pkgndep section
+sections <- c(sections, "### Dependency Load (pkgndep)", "")
+if (!is.null(pkgndep_text) && length(pkgndep_text) > 0) {
+  sections <- c(sections, "```", pkgndep_text, "```")
+} else {
+  sections <- c(sections, "* Dependency load analysis not available")
 }
 sections <- c(sections, "")
 
