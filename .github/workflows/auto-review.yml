@@ -177,7 +177,7 @@ jobs:
           tryCatch({
             result <- pkgndep::pkgndep(pkg_dir)
             grDevices::png(out_file, width = 900, height = 600, res = 120)
-            pkgndep::dependency_histogram(result)
+            plot(result)
             grDevices::dev.off()
             cat("histogram_generated=true\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
             message("pkgndep histogram saved to ", out_file)
