@@ -153,10 +153,11 @@ cyclo_results <- NULL
 
 if (requireNamespace("cyclocomp", quietly = TRUE)) {
   tryCatch({
-    if (requireNamespace(pkg_name, quietly = TRUE)) {
-      cyclo_results <- cyclocomp::cyclocomp_package(pkg_name)
-    } else {
-      cyclo_results <- cyclocomp::cyclocomp_package_dir(pkg_dir)
+    r_files <- list.files(file.path(pkg_dir, "R"),
+                          pattern = "\\.R$", full.names = TRUE,
+                          ignore.case = TRUE)
+    if (length(r_files) > 0) {
+      cyclo_results <- cyclocomp::cyclocomp_r_files(r_files)
     }
   }, error = function(e) {
     message("cyclocomp failed: ", conditionMessage(e))
