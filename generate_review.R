@@ -8,16 +8,19 @@
 # Usage:
 #   Rscript generate_review.R <package_dir> [check_results.txt] \
 #                             [bioccheck_results.txt] [coverage.json] \
-#                             [output_file] [model_name]
+#                             [output_file] [model_name] \
+#                             [cyclocomp_results.csv] [pkgndep_results.txt]
 #
 # Arguments:
 #   package_dir           Path to the package source directory (required)
-#   check_results.txt     Path to R CMD check output file  (optional)
-#   bioccheck_results.txt Path to BiocCheck output file    (optional)
-#   coverage.json         Path to covr JSON output         (optional)
-#   output_file           Where to write the review        (optional, stdout)
-#   model_name            Name of the AI model used        (optional)
+#   check_results.txt     Path to R CMD check output file   (optional)
+#   bioccheck_results.txt Path to BiocCheck output file     (optional)
+#   coverage.json         Path to covr JSON output          (optional)
+#   output_file           Where to write the review         (optional, stdout)
+#   model_name            Name of the AI model used         (optional)
 #                         Falls back to REVIEW_MODEL env var, then a default.
+#   cyclocomp_results.csv Path to pre-computed cyclocomp CSV (optional)
+#   pkgndep_results.txt   Path to pre-computed pkgndep text  (optional)
 #
 # All optional arguments can be supplied as "" to skip.
 
@@ -42,6 +45,8 @@ bioccheck_file   <- if (length(args) >= 3 && nzchar(args[[3]])) args[[3]] else "
 coverage_file    <- if (length(args) >= 4 && nzchar(args[[4]])) args[[4]] else ""
 output_file      <- if (length(args) >= 5 && nzchar(args[[5]])) args[[5]] else ""
 model_name       <- if (length(args) >= 6 && nzchar(args[[6]])) args[[6]] else ""
+cyclocomp_file   <- if (length(args) >= 7 && nzchar(args[[7]])) args[[7]] else ""
+pkgndep_file     <- if (length(args) >= 8 && nzchar(args[[8]])) args[[8]] else ""
 
 # Fall back to environment variable, then a descriptive default
 if (!nzchar(model_name)) model_name <- Sys.getenv("REVIEW_MODEL", unset = "")
@@ -151,7 +156,14 @@ if (nzchar(bioccheck_txt)) {
 
 cyclo_results <- NULL
 
-if (requireNamespace("cyclocomp", quietly = TRUE)) {
+if (nzchar(cyclocomp_file) && file.exists(cyclocomp_file)) {
+  tryCatch({
+    df <- read.csv(cyclocomp_file, stringsAsFactors = FALSE)
+    if (nrow(df) > 0L) cyclo_results <- df
+  }, error = function(e) {
+    message("Could not read cyclocomp file: ", conditionMessage(e))
+  })
+} else if (requireNamespace("cyclocomp", quietly = TRUE)) {
   tryCatch({
     r_files <- list.files(file.path(pkg_dir, "R"),
                           pattern = "\\.R$", full.names = TRUE,
@@ -190,7 +202,16 @@ if (requireNamespace("cyclocomp", quietly = TRUE)) {
 pkgndep_result <- NULL
 pkgndep_text   <- NULL
 
-if (requireNamespace("pkgndep", quietly = TRUE)) {
+if (nzchar(pkgndep_file) && file.exists(pkgndep_file)) {
+  tryCatch({
+    lines <- readLines(pkgndep_file, warn = FALSE)
+    if (length(lines) > 0L && any(nzchar(lines))) {
+      pkgndep_text <- lines
+    }
+  }, error = function(e) {
+    message("Could not read pkgndep file: ", conditionMessage(e))
+  })
+} else if (requireNamespace("pkgndep", quietly = TRUE)) {
   tryCatch({
     pkgndep_result <- pkgndep::pkgndep(pkg_dir)
     pkgndep_text   <- utils::capture.output(print(pkgndep_result))

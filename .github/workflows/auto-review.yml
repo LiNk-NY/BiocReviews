@@ -113,6 +113,8 @@ jobs:
               core.setOutput('check_file', 'build_results/check_results.txt');
               core.setOutput('bioccheck_file', 'build_results/bioccheck_results.txt');
               core.setOutput('coverage_file', 'build_results/coverage.json');
+              core.setOutput('cyclocomp_file', 'build_results/cyclocomp_results.csv');
+              core.setOutput('pkgndep_file', 'build_results/pkgndep_results.txt');
               return;
             }
 
@@ -128,6 +130,8 @@ jobs:
               core.setOutput('check_file', '');
               core.setOutput('bioccheck_file', '');
               core.setOutput('coverage_file', '');
+              core.setOutput('cyclocomp_file', '');
+              core.setOutput('pkgndep_file', '');
               return;
             }
 
@@ -156,7 +160,7 @@ jobs:
 
       - name: Install review dependencies
         run: |
-          BiocManager::install(c("jsonlite", "cyclocomp", "pkgndep"), ask = FALSE, update = FALSE)
+          BiocManager::install("jsonlite", ask = FALSE, update = FALSE)
         shell: Rscript {0}
 
       - name: Generate automated review
@@ -167,98 +171,9 @@ jobs:
             "${{ steps.resolve.outputs.bioccheck_file }}" \
             "${{ steps.resolve.outputs.coverage_file }}" \
             "automated_review.md" \
-            "${{ env.REVIEW_MODEL }}"
-
-      - name: Generate pkgndep dependency histogram
-        id: pkgndep_hist
-        run: |
-          pkg_dir <- "${{ steps.pkg_name.outputs.name }}"
-          out_file <- "pkgndep_histogram.png"
-          tryCatch({
-            result <- pkgndep::pkgndep(pkg_dir)
-            grDevices::png(out_file, width = 900, height = 600, res = 120)
-            plot(result)
-            grDevices::dev.off()
-            cat("histogram_generated=true\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
-            message("pkgndep histogram saved to ", out_file)
-          }, error = function(e) {
-            cat("histogram_generated=false\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
-            message("pkgndep histogram failed: ", e$message)
-          })
-        shell: Rscript {0}
-
-      - name: Upload pkgndep histogram artifact
-        if: steps.pkgndep_hist.outputs.histogram_generated == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: pkgndep-histogram
-          path: pkgndep_histogram.png
-          retention-days: 30
-
-      - name: Post pkgndep histogram to issue
-        if: >
-          steps.resolve.outputs.issue != '' &&
-          steps.pkgndep_hist.outputs.histogram_generated == 'true'
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const fs = require('fs');
-            const issueNumber = Number('${{ steps.resolve.outputs.issue }}');
-            const histPath = 'pkgndep_histogram.png';
-
-            if (!fs.existsSync(histPath)) {
-              core.warning('pkgndep histogram file not found, skipping image comment.');
-              return;
-            }
-
-            let imageUrl = null;
-            try {
-              const imageBuffer = fs.readFileSync(histPath);
-              const uploadResponse = await github.request(
-                'POST /repos/{owner}/{repo}/issues/assets',
-                {
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  headers: {
-                    'content-type': 'image/png',
-                    'content-disposition': 'attachment; filename="pkgndep_histogram.png"',
-                  },
-                  data: imageBuffer,
-                }
-              );
-              imageUrl = uploadResponse.data.url;
-            } catch (uploadError) {
-              core.warning('Could not upload histogram image via API: ' + uploadError.message);
-            }
-
-            let body;
-            if (imageUrl) {
-              body = [
-                '<details>',
-                '<summary>📊 Dependency Histogram (pkgndep)</summary>',
-                '',
-                `![Dependency Histogram](${imageUrl})`,
-                '',
-                '</details>',
-              ].join('\n');
-            } else {
-              const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-              body = [
-                '<details>',
-                '<summary>📊 Dependency Histogram (pkgndep)</summary>',
-                '',
-                `The dependency histogram PNG is available as a [workflow run artifact](${runUrl}).`,
-                '',
-                '</details>',
-              ].join('\n');
-            }
-
-            await github.rest.issues.createComment({
-              issue_number: issueNumber,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body,
-            });
+            "${{ env.REVIEW_MODEL }}" \
+            "${{ steps.resolve.outputs.cyclocomp_file }}" \
+            "${{ steps.resolve.outputs.pkgndep_file }}"
 
       - name: Enhance review with LLM
         id: llm
