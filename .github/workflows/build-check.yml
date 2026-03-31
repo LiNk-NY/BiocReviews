@@ -97,6 +97,7 @@ jobs:
           : > check_results.txt
           : > bioccheck_results.txt
           : > coverage_summary.txt
+          : > pkgndep_results.txt
           echo "{}" > coverage.json
 
           echo "${{ steps.resolve.outputs.issue }}" > issue_number.txt
@@ -164,8 +165,8 @@ jobs:
       - name: Install build/check dependencies
         run: |
           options(repos = c(CRAN = Sys.getenv("CRAN")))
-          BiocManager::install(c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes"), ask = FALSE, update = FALSE)
-          remotes::install_deps("${{ steps.pkg_name.outputs.name }}", dependencies = TRUE, repos = BiocManager::repositories())
+          BiocManager::install(c("BiocCheck", "rcmdcheck", "covr", "jsonlite", "remotes", "cyclocomp", "pkgndep"), ask = FALSE, update = FALSE)
+          remotes::install_local("${{ steps.pkg_name.outputs.name }}", dependencies = TRUE, repos = BiocManager::repositories())
         shell: Rscript {0}
 
       - name: R CMD check
@@ -213,6 +214,41 @@ jobs:
           })
         shell: Rscript {0}
 
+      - name: Run cyclocomp
+        continue-on-error: true
+        run: |
+          pkg_dir <- "${{ steps.pkg_name.outputs.name }}"
+          pkg_name <- read.dcf(file.path(pkg_dir, "DESCRIPTION"), fields = "Package")[1L, "Package"]
+          tryCatch({
+            result <- cyclocomp::cyclocomp_package(pkg_name)
+            if (!is.null(result) && nrow(result) > 0L) {
+              write.csv(result, "cyclocomp_results.csv", row.names = FALSE)
+              message("cyclocomp: ", nrow(result), " functions analyzed")
+            }
+          }, error = function(e) {
+            message("cyclocomp failed: ", conditionMessage(e))
+          })
+        shell: Rscript {0}
+
+      - name: Run pkgndep
+        id: pkgndep
+        continue-on-error: true
+        run: |
+          pkg_dir <- "${{ steps.pkg_name.outputs.name }}"
+          tryCatch({
+            result <- pkgndep::pkgndep(pkg_dir)
+            writeLines(utils::capture.output(print(result)), "pkgndep_results.txt")
+            grDevices::png("pkgndep_histogram.png", width = 900, height = 600, res = 120)
+            plot(result)
+            grDevices::dev.off()
+            cat("histogram_generated=true\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
+            message("pkgndep analysis complete")
+          }, error = function(e) {
+            cat("histogram_generated=false\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
+            message("pkgndep failed: ", conditionMessage(e))
+          })
+        shell: Rscript {0}
+
       - name: Clean up intermediate vignette files
         run: |
           # Remove only untracked (newly built) HTML/PDF files from vignettes directory
@@ -248,6 +284,8 @@ jobs:
             bioccheck_results.txt
             coverage.json
             coverage_summary.txt
+            cyclocomp_results.csv
+            pkgndep_results.txt
           retention-days: 7
           if-no-files-found: warn
 
@@ -262,6 +300,14 @@ jobs:
             target_ref.txt
             llm_model.txt
           retention-days: 7
+
+      - name: Upload pkgndep histogram artifact
+        if: always() && steps.pkgndep.outputs.histogram_generated == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkgndep-histogram
+          path: pkgndep_histogram.png
+          retention-days: 30
 
       - name: Post build/check summary to issue
         if: always()
@@ -283,8 +329,36 @@ jobs:
             const check = shorten(readOrDefault('check_results.txt', 'No check log found. See run artifacts.'));
             const bioc = shorten(readOrDefault('bioccheck_results.txt', 'No BiocCheck log found. See run artifacts.'));
             const cov = fs.existsSync('coverage_summary.txt') ? fs.readFileSync('coverage_summary.txt', 'utf8') : 'No coverage found.';
+            const pkgndep = shorten(readOrDefault('pkgndep_results.txt', 'Dependency load analysis not available.'));
 
-            const body = `### Build & Check Results\n\nFull logs and artifacts: ${runUrl}\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}`;
+            let cycloSummary = 'Cyclomatic complexity results not available.';
+            if (fs.existsSync('cyclocomp_results.csv')) {
+              const csv = fs.readFileSync('cyclocomp_results.csv', 'utf8').trim();
+              const lines = csv.split('\n').slice(1).filter(l => l.trim());
+              if (lines.length > 0) {
+                const data = lines.map(l => {
+                  const m = l.match(/^"([^"]*)",(\d+)/);
+                  return m ? { name: m[1], cyclocomp: Number(m[2]) } : null;
+                }).filter(Boolean);
+                if (data.length > 0) {
+                  const vals = data.map(r => r.cyclocomp);
+                  const max = Math.max(...vals);
+                  const mean = vals.length > 0
+                    ? (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(2)
+                    : '0';
+                  const high = data.filter(r => r.cyclocomp > 10).sort((a, b) => b.cyclocomp - a.cyclocomp);
+                  cycloSummary = `Functions: ${data.length} | Mean: ${mean} | Max: ${max}`;
+                  if (high.length > 0) {
+                    const items = high.slice(0, 5).map(r => `${r.name} (${r.cyclocomp})`).join(', ');
+                    cycloSummary += `\nHigh complexity (>10): ${items}`;
+                  } else {
+                    cycloSummary += '\nNo functions with cyclomatic complexity > 10.';
+                  }
+                }
+              }
+            }
+
+            const body = `### Build & Check Results\n\nFull logs and artifacts: ${runUrl}\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}\n\n**Cyclomatic Complexity:**\n${cycloSummary}\n\n**Dependency Load (pkgndep):**\n\`\`\`\n${pkgndep}\n\`\`\``;
             await github.rest.issues.createComment({
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
@@ -292,3 +366,67 @@ jobs:
               body
             });
 
+      - name: Post pkgndep histogram to issue
+        if: >
+          always() &&
+          steps.pkgndep.outputs.histogram_generated == 'true'
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const issueNumber = Number('${{ steps.resolve.outputs.issue }}');
+            const histPath = 'pkgndep_histogram.png';
+
+            if (!fs.existsSync(histPath)) {
+              core.warning('pkgndep histogram file not found, skipping image comment.');
+              return;
+            }
+
+            let imageUrl = null;
+            try {
+              const imageBuffer = fs.readFileSync(histPath);
+              const uploadResponse = await github.request(
+                'POST /repos/{owner}/{repo}/issues/assets',
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  headers: {
+                    'content-type': 'image/png',
+                    'content-disposition': 'attachment; filename="pkgndep_histogram.png"',
+                  },
+                  data: imageBuffer,
+                }
+              );
+              imageUrl = uploadResponse.data.url;
+            } catch (uploadError) {
+              core.warning('Could not upload histogram image via API: ' + uploadError.message);
+            }
+
+            let body;
+            if (imageUrl) {
+              body = [
+                '<details>',
+                '<summary>📊 Dependency Histogram (pkgndep)</summary>',
+                '',
+                `![Dependency Histogram](${imageUrl})`,
+                '',
+                '</details>',
+              ].join('\n');
+            } else {
+              const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+              body = [
+                '<details>',
+                '<summary>📊 Dependency Histogram (pkgndep)</summary>',
+                '',
+                `The dependency histogram PNG is available as a [workflow run artifact](${runUrl}).`,
+                '',
+                '</details>',
+              ].join('\n');
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: issueNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
