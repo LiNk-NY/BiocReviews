@@ -59,6 +59,9 @@ grep_lines <- function(pattern, lines, ...) {
   grep(pattern, lines, perl = TRUE, value = TRUE, ...)
 }
 
+# Threshold above which cyclomatic complexity is flagged
+CYCLOCOMP_THRESHOLD <- 10
+
 # ---------------------------------------------------------------------------
 # Read package metadata
 # ---------------------------------------------------------------------------
@@ -140,6 +143,24 @@ if (nzchar(bioccheck_txt)) {
   bioc_summary$errors <- NA
   bioc_summary$warnings <- NA
   bioc_summary$notes <- NA
+}
+
+# ---------------------------------------------------------------------------
+# Compute cyclomatic complexity
+# ---------------------------------------------------------------------------
+
+cyclo_results <- NULL
+
+if (requireNamespace("cyclocomp", quietly = TRUE)) {
+  tryCatch({
+    if (requireNamespace(pkg_name, quietly = TRUE)) {
+      cyclo_results <- cyclocomp::cyclocomp_package(pkg_name)
+    } else {
+      cyclo_results <- cyclocomp::cyclocomp_package_dir(pkg_dir)
+    }
+  }, error = function(e) {
+    message("cyclocomp failed: ", conditionMessage(e))
+  })
 }
 
 # ---------------------------------------------------------------------------
@@ -274,6 +295,44 @@ if (!is.na(coverage_pct)) {
   }
 } else {
   sections <- c(sections, "* Test coverage results not available")
+}
+sections <- c(sections, "")
+
+# Static analysis section
+sections <- c(sections, "## Static Analysis", "")
+if (!is.null(cyclo_results) && is.data.frame(cyclo_results) && nrow(cyclo_results) > 0) {
+  med_cc  <- median(cyclo_results$cyclocomp)
+  max_cc  <- max(cyclo_results$cyclocomp)
+  mean_cc <- round(mean(cyclo_results$cyclocomp), 2)
+
+  sections <- c(sections,
+    "### Cyclomatic Complexity",
+    "",
+    sprintf("* **Median**: %g | **Mean**: %g | **Max**: %g",
+            med_cc, mean_cc, max_cc),
+    ""
+  )
+
+  high_cc <- cyclo_results[cyclo_results$cyclocomp > CYCLOCOMP_THRESHOLD, , drop = FALSE]
+  if (nrow(high_cc) > 0) {
+    high_cc <- high_cc[order(-high_cc$cyclocomp), , drop = FALSE]
+    sections <- c(sections,
+      sprintf("Functions with cyclomatic complexity > %d (%d):", CYCLOCOMP_THRESHOLD, nrow(high_cc)),
+      ""
+    )
+    top_n <- head(high_cc, 10)
+    for (i in seq_len(nrow(top_n))) {
+      sections <- c(sections,
+        sprintf("* `%s`: %d", top_n$name[i], top_n$cyclocomp[i])
+      )
+    }
+  } else {
+    sections <- c(sections,
+      sprintf("* No functions with cyclomatic complexity > %d.", CYCLOCOMP_THRESHOLD)
+    )
+  }
+} else {
+  sections <- c(sections, "* Cyclomatic complexity results not available")
 }
 sections <- c(sections, "")
 

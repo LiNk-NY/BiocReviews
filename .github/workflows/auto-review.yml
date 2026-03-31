@@ -156,7 +156,7 @@ jobs:
 
       - name: Install review dependencies
         run: |
-          BiocManager::install(c("jsonlite"), ask = FALSE, update = FALSE)
+          BiocManager::install(c("jsonlite", "cyclocomp"), ask = FALSE, update = FALSE)
         shell: Rscript {0}
 
       - name: Generate automated review
