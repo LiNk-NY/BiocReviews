@@ -156,8 +156,27 @@ if (requireNamespace("cyclocomp", quietly = TRUE)) {
     r_files <- list.files(file.path(pkg_dir, "R"),
                           pattern = "\\.R$", full.names = TRUE,
                           ignore.case = TRUE)
-    if (length(r_files) > 0) {
-      cyclo_results <- cyclocomp::cyclocomp_r_files(r_files)
+    rows <- lapply(r_files, function(f) {
+      exprs <- tryCatch(parse(f, keep.source = FALSE), error = function(e) NULL)
+      if (is.null(exprs) || length(exprs) == 0L) return(NULL)
+      sub_rows <- lapply(seq_along(exprs), function(i) {
+        e <- exprs[[i]]
+        # Only handle top-level assignments of the form: name <- function(...)
+        if (!is.call(e) || length(e) != 3L) return(NULL)
+        if (!as.character(e[[1L]])[1L] %in% c("<-", "=")) return(NULL)
+        fn_expr <- e[[3L]]
+        if (!is.call(fn_expr) || !identical(fn_expr[[1L]], as.name("function"))) return(NULL)
+        fn_name <- tryCatch(as.character(e[[2L]]), error = function(e) NA_character_)
+        if (is.na(fn_name) || !nzchar(fn_name)) return(NULL)
+        cc <- tryCatch(cyclocomp::cyclocomp(fn_expr), error = function(e) NA_integer_)
+        if (is.na(cc)) return(NULL)
+        data.frame(name = fn_name, cyclocomp = cc, stringsAsFactors = FALSE)
+      })
+      do.call(rbind, Filter(Negate(is.null), sub_rows))
+    })
+    result <- do.call(rbind, Filter(Negate(is.null), rows))
+    if (!is.null(result) && nrow(result) > 0L) {
+      cyclo_results <- result
     }
   }, error = function(e) {
     message("cyclocomp failed: ", conditionMessage(e))
