@@ -231,20 +231,14 @@ jobs:
         shell: Rscript {0}
 
       - name: Run pkgndep
-        id: pkgndep
         continue-on-error: true
         run: |
           pkg_dir <- "${{ steps.pkg_name.outputs.name }}"
           tryCatch({
             result <- pkgndep::pkgndep(pkg_dir)
             writeLines(utils::capture.output(print(result)), "pkgndep_results.txt")
-            grDevices::png("pkgndep_histogram.png", width = 900, height = 600, res = 120)
-            plot(result)
-            grDevices::dev.off()
-            cat("histogram_generated=true\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
             message("pkgndep analysis complete")
           }, error = function(e) {
-            cat("histogram_generated=false\n", file = Sys.getenv("GITHUB_OUTPUT"), append = TRUE)
             message("pkgndep failed: ", conditionMessage(e))
           })
         shell: Rscript {0}
@@ -292,15 +286,6 @@ jobs:
             target_ref.txt
             llm_model.txt
           retention-days: 7
-
-      - name: Upload pkgndep histogram artifact
-        id: upload-histogram
-        if: always() && steps.pkgndep.outputs.histogram_generated == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: pkgndep-histogram
-          path: pkgndep_histogram.png
-          retention-days: 30
 
       - name: Post build/check summary to issue
         if: always()
@@ -357,83 +342,4 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body
-            });
-
-      - name: Post pkgndep histogram to issue
-        if: >
-          always() &&
-          steps.pkgndep.outputs.histogram_generated == 'true'
-        uses: actions/github-script@v8
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          script: |
-            const fs = require('fs');
-            const issueNumber = Number('${{ steps.resolve.outputs.issue }}');
-            const histPath = 'pkgndep_histogram.png';
-
-            if (!fs.existsSync(histPath)) {
-              core.warning('pkgndep histogram file not found, skipping image comment.');
-              return;
-            }
-
-            let imageUrl = null;
-            try {
-              const imageData = fs.readFileSync(histPath);
-              const token = process.env.GITHUB_TOKEN;
-              if (!token) {
-                core.warning('GITHUB_TOKEN not available, skipping histogram upload.');
-                throw new Error('GITHUB_TOKEN is not set');
-              }
-              const uploadRes = await fetch(
-                `https://uploads.github.com/repos/${context.repo.owner}/${context.repo.repo}/issues/${issueNumber}/assets`,
-                {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'image/png',
-                    'Content-Disposition': 'attachment; filename="pkgndep_histogram.png"',
-                  },
-                  body: imageData,
-                }
-              );
-              if (uploadRes.ok) {
-                const uploadData = await uploadRes.json();
-                imageUrl = uploadData.url;
-              } else {
-                const errText = await uploadRes.text();
-                core.warning(`Could not upload histogram image: ${uploadRes.status} ${errText}`);
-              }
-            } catch (uploadError) {
-              core.warning('Could not upload histogram image: ' + uploadError.message);
-            }
-
-            let body;
-            if (imageUrl) {
-              body = [
-                '<details>',
-                '<summary>📊 Dependency Histogram (pkgndep)</summary>',
-                '',
-                `![Dependency Histogram](${imageUrl})`,
-                '',
-                '</details>',
-              ].join('\n');
-            } else {
-              const artifactUrl = '${{ steps.upload-histogram.outputs.artifact-url }}';
-              const fallbackUrl = artifactUrl || `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-              body = [
-                '<details>',
-                '<summary>📊 Dependency Histogram (pkgndep)</summary>',
-                '',
-                `The dependency histogram PNG is available as a [workflow run artifact](${fallbackUrl}).`,
-                '',
-                '</details>',
-              ].join('\n');
-            }
-
-            await github.rest.issues.createComment({
-              issue_number: issueNumber,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body,
             });
