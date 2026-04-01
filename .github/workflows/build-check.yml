@@ -144,6 +144,16 @@ jobs:
           ref: ${{ steps.resolve_ref.outputs.selected_ref }}
           path: ${{ steps.pkg_name.outputs.name }}
 
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          # Path is specific to the Bioconductor Docker container (ubuntu-24.04 + ghcr.io/bioconductor/bioconductor_docker)
+          path: /usr/local/lib/R/site-library
+          key: ${{ runner.os }}-r-${{ steps.resolve.outputs.repo }}-${{ hashFiles(format('{0}/DESCRIPTION', steps.pkg_name.outputs.name)) }}
+          restore-keys: |
+            ${{ runner.os }}-r-${{ steps.resolve.outputs.repo }}-
+            ${{ runner.os }}-r-
+
       - name: Install remotes
         run: BiocManager::install("remotes", ask = FALSE, update = FALSE)
         shell: Rscript {0}
