@@ -391,7 +391,7 @@ jobs:
                 throw new Error('GITHUB_TOKEN is not set');
               }
               const uploadRes = await fetch(
-                `https://uploads.github.com/repos/${context.repo.owner}/${context.repo.repo}/issues/assets`,
+                `https://uploads.github.com/repos/${context.repo.owner}/${context.repo.repo}/issues/${issueNumber}/assets`,
                 {
                   method: 'POST',
                   headers: {
