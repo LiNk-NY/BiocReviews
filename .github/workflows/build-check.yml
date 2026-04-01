@@ -264,15 +264,7 @@ jobs:
       - name: Run BiocCheck
         continue-on-error: true
         run: |
-          Rscript -e "BiocCheck::BiocCheck('${{ steps.pkg_name.outputs.name }}', \`quit-with-status\` = FALSE, \`no-check-bioc-help\` = TRUE)" || true
-
-          # Copy BiocCheck log file to artifact location
-          bioccheck_log=$(find . -name "*.BiocCheck" -type d | head -1)/00BiocCheck.log
-          if [ -f "$bioccheck_log" ]; then
-            cp "$bioccheck_log" bioccheck_results.txt
-          else
-            echo "BiocCheck log file not found. Check workflow logs for details." > bioccheck_results.txt
-          fi
+          Rscript -e "BiocCheck::BiocCheck('${{ steps.pkg_name.outputs.name }}', \`quit-with-status\` = FALSE, \`no-check-bioc-help\` = TRUE)" > bioccheck_results.txt 2>&1 || true
 
       - name: Upload build-check results artifact
         if: always()
