@@ -294,6 +294,7 @@ jobs:
           retention-days: 7
 
       - name: Upload pkgndep histogram artifact
+        id: upload-histogram
         if: always() && steps.pkgndep.outputs.histogram_generated == 'true'
         uses: actions/upload-artifact@v4
         with:
@@ -363,6 +364,8 @@ jobs:
           always() &&
           steps.pkgndep.outputs.histogram_generated == 'true'
         uses: actions/github-script@v8
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
             const fs = require('fs');
@@ -416,12 +419,13 @@ jobs:
                 '</details>',
               ].join('\n');
             } else {
-              const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+              const artifactUrl = '${{ steps.upload-histogram.outputs.artifact-url }}';
+              const fallbackUrl = artifactUrl || `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
               body = [
                 '<details>',
                 '<summary>📊 Dependency Histogram (pkgndep)</summary>',
                 '',
-                `The dependency histogram PNG is available as a [workflow run artifact](${runUrl}).`,
+                `The dependency histogram PNG is available as a [workflow run artifact](${fallbackUrl}).`,
                 '',
                 '</details>',
               ].join('\n');
