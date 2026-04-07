@@ -304,7 +304,8 @@ if (provider == "gemini") {
       generationConfig = list(
         temperature = 0.2,
         maxOutputTokens = max_tokens
-      )
+      ),
+      serviceTier = "flex"
     ),
     auto_unbox = TRUE
   )
