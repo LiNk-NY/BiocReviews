@@ -77,7 +77,7 @@ Provide specific, actionable feedback:
 
 **Function Design**:
 - Are functions focused on a single responsibility?
-- Is function length reasonable (typically <50 lines for most functions)?
+- Is function length and cyclomatic complexity reasonable (e.g., avoiding deeply nested conditionals)?
 - Are functions appropriately named to reflect their purpose?
 - Is the level of abstraction consistent within functions?
 
@@ -112,6 +112,7 @@ Provide specific, actionable feedback:
 - **Good**: "The package is well-organized with clear separation between data processing (`R/process.R`) and visualization (`R/plot.R`) functions."
 - **Concern**: "Several functions in `R/analysis.R` exceed 100 lines and mix multiple responsibilities, making them difficult to test and maintain."
 - **Suggestion**: "Consider extracting the validation logic repeated in `processData()` and `transformData()` into a shared `validateInput()` helper function."
+- **Suggestion**: "Function `process()` has high cyclomatic complexity. Reduce it by using early returns (guard clauses) to handle edge cases, and extracting the inner nested loops into a separate helper function."
 
 ---
 
@@ -537,7 +538,8 @@ The Software Engineering Analysis should be structured as follows:
 - **Be balanced**: Acknowledge strengths as well as areas for improvement
 - **Be realistic**: Focus on significant issues, not nitpicks
 - **Be evidence-based**: Base observations on actual code, not assumptions
-- **Be helpful**: Suggest alternatives or approaches when identifying concerns
+- **Be helpful**: Always provide concrete refactoring tips or architectural solutions when identifying concerns (e.g., explain exactly how to reduce high cyclomatic complexity, rather than just reporting the shortcoming)
+
 
 ## What Not to Include
 
