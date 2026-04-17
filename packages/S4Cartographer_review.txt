@@ -1,0 +1,28 @@
+# S4Cartographer #4175
+
+Overall, the package looks to be in good shape.
+
+## DESCRIPTION
+
+* Add more details to the `Description:` field (at least three sentences) to
+  explain what the package does and why it is useful.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* (optional) Wrap text to 80 characters for better readability of the source
+  file.
+* BiocCheck Note. Add code chunk labels to the vignette.
+
+## R
+
+* When using `utils::stack`, add `utils` to the `DESCRIPTION` file.
+
+## tests
+
+* We recommend adding tests.
+
+
