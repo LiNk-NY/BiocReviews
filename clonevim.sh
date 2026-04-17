@@ -28,5 +28,5 @@ if [ ! -e "$biocfile" ] ; then
     touch $biocfile
 fi 
 
-R_LIBS_USER=$HOME/R/bioc-${BIOC} RLOC=$HOME/src/svn/${RVER}/R/bin RCOMP=$HOME/.cache/Nvim-Rd /usr/local/bin/vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R
+R_LIBS_USER=$HOME/R/bioc-${BIOC} RLOC=$HOME/src/svn/${RVER}/inst/bin RCOMP=$HOME/.cache/Nvim-Rd /usr/local/bin/vim -O $biocfile DESCRIPTION NAMESPACE vignettes/*.Rmd R/*R
 
