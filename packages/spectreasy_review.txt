@@ -1,0 +1,117 @@
+# spectreasy #63
+
+## DESCRIPTION
+
+* Consider adding an ORCID to the `Authors@R` field.
+* The `nnls` package is listed in `Imports`, meaning it is strictly required and
+  automatically installed. However, in `calc_residuals.R` and
+  `unmixing_matrix.R`, you check for it using `requireNamespace("nnls")`.  If
+  it is required, the check is redundant and should be removed. If it is meant
+  to be optional, move `nnls` to `Suggests`. Additionally, do not instruct
+  users to use `install.packages()` (over `BiocManager::install()`) in
+  Bioconductor packages; simply state that the package is required.
+* The `plumber` package is listed in `Suggests`, but `launch_gui.R` calls
+  `plumber::plumb()` without checking if it is installed. You must add
+  `if (!requireNamespace("plumber", quietly = TRUE)) ...` before calling its
+  functions.
+* Consider adding the fnd (funder) role in Authors@R if this work was
+  supported by a grant.
+
+## NAMESPACE
+
+* Looks good.
+
+## vignette
+
+* The vignette does not really evaluate any code other than to generate the
+  sample data. Please make sure that the vignette is actually demonstrating
+  the use of the package, and that the code is actually run when building the
+  vignette.
+
+## R
+
+* Several functions are very long (e.g., `build_reference_matrix` is reported
+  to be ~700 lines). Consider breaking these down into smaller, focused helper
+  functions to improve readability and maintainability.
+
+* Note that there are quite a few functions that are over 10 in cyclomatic
+  complexity (as reported by `cyclocomp`). Consider refactoring these
+  functions to reduce complexity, which can improve readability and
+  maintainability.
+
+```r
+  > cyclocomp::cyclocomp_package_dir("spectreasy")
+                            name cyclocomp
+6            create_control_file       293
+2         build_reference_matrix       183
+24                 unmix_samples        64
+22  plot_unmixing_scatter_matrix        56
+1             autounmix_controls        44
+12           generate_scc_report        42
+25 validate_control_file_mapping        42
+3                 calc_residuals        23
+11            generate_qc_report        18
+16                    launch_gui        16
+17       plot_detector_residuals        13
+```
+
+* Reconsider the use of `<<-` in `matrix_utils.R` (line 92) and
+  `control_interface.R` (line 495). Global or parent-environment assignment
+  makes state changes difficult to track.
+* Make sure that `launch_gui` uses files only from the installed package and
+  not from the current directory by using `system.file()`
+* Check that the user has `npm` installed before trying to launch the GUI, and
+  provide a helpful error message if it is not found.
+* Avoid saving files for the user without their consent. Either prompt the
+  user or simply display the plot and let users save it themselves (in
+  `plot_functions.R`, `report_generator.R`, etc.).
+
+* AI Suggestions: In `calc_residuals.R`, the NNLS and WLS methods iterate over
+  every cell using a `for` loop (`for (i in seq_len(n_cells))`). For flow
+  cytometry data, `n_cells` can easily exceed 100,000. Running `nnls::nnls()` or
+  matrix inversion (`solve()`) inside an R for loop for 100,000+ iterations will
+  be slow and can create a performance bottleneck. For WLS, consider
+  vectorizing the operation if possible, or implementing the per-cell loop in
+  C++ using Rcpp and RcppArmadillo for fast matrix operations. For NNLS,
+  consider if a block-wise or vectorized NNLS solver can be used, or similarly
+  move the loop to C++
+* For security reasons, use `host = "127.0.0.1"` instead of `"0.0.0.0"` when
+  launching the GUI with `plumber` to restrict access to the local machine
+  only.
+* `unmix_samples()` writes FCS files to disk by default (`write_fcs = TRUE`).
+  If `output_dir` is not carefully specified, it might silently overwrite
+  existing files. Warn the user or use a safe naming convention to avoid
+  accidental data loss.
+*  The package relies heavily on base R matrices and data frames for
+   intermediate data representation rather than native Bioconductor classes.
+   While `flowFrame` is used for I/O, consider using `flowSet` or
+   `SingleCellExperiment` for managing multiple samples and their metadata in
+   memory. This would integrate better with the broader Bioconductor
+   single-cell ecosystem.
+
+## tests
+
+* The tests are good but there are some areas that could be improved:
+
+```r
+> covr::package_coverage(type = "all")
+spectreasy Coverage: 26.22%
+R/autounmix_controls.R: 0.00%
+R/build_reference_matrix.R: 0.00%
+R/control_validation.R: 0.00%
+R/launch_gui.R: 0.00%
+R/report_generator.R: 0.00%
+R/scc_check.R: 0.00%
+R/diagnostic_plots.R: 11.11%
+R/plot_functions.R: 11.45%
+R/matrix_utils.R: 15.92%
+R/calc_residuals.R: 48.28%
+R/control_interface.R: 55.50%
+R/unmixing.R: 63.79%
+R/gate_positive_cells.R: 68.75%
+R/unmixing_matrix.R: 70.59%
+R/gating_options.R: 87.64%
+R/spread_matrix.R: 96.97%
+```
+
+<sup> Review assisted-by: gemini-3.1-pro-preview </sup>
