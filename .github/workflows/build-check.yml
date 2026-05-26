@@ -212,7 +212,8 @@ jobs:
               cov_list <- covr::coverage_to_list(cov)
               jsonlite::write_json(cov_list, "coverage.json", auto_unbox = TRUE, pretty = TRUE)
               pct <- round(covr::percent_coverage(cov), 2)
-              writeLines(paste0("Total Coverage: ", pct, "%"), "coverage_summary.txt")
+              full_output <- utils::capture.output(print(cov))
+              writeLines(c(paste0("Total Coverage: ", pct, "%"), "", full_output), "coverage_summary.txt")
               message("Coverage analysis completed successfully: ", pct, "%")
             } else {
               writeLines("Coverage analysis returned NULL or invalid result.", "coverage_summary.txt")
@@ -316,7 +317,7 @@ jobs:
 
             const check = shorten(readOrDefault('check_results.txt', 'No check log found. See run artifacts.'));
             const bioc = shorten(readOrDefault('bioccheck_results.txt', 'No BiocCheck log found. See run artifacts.'));
-            const cov = fs.existsSync('coverage_summary.txt') ? fs.readFileSync('coverage_summary.txt', 'utf8') : 'No coverage found.';
+            const cov = shorten(readOrDefault('coverage_summary.txt', 'No coverage found.'));
             const pkgndep = shorten(readOrDefault('pkgndep_results.txt', 'Dependency load analysis not available.'));
 
             let cycloSummary = 'Cyclomatic complexity results not available.';
@@ -346,7 +347,7 @@ jobs:
               }
             }
 
-            const body = `### Build & Check Results\n\nFull logs and artifacts: ${runUrl}\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n${cov}\n\n**Cyclomatic Complexity:**\n${cycloSummary}\n\n**Dependency Load (pkgndep):**\n\`\`\`\n${pkgndep}\n\`\`\``;
+            const body = `### Build & Check Results\n\nFull logs and artifacts: ${runUrl}\n\n**R CMD Check:**\n\`\`\`\n${check}\n\`\`\`\n\n**BiocCheck:**\n\`\`\`\n${bioc}\n\`\`\`\n\n**Coverage:**\n\`\`\`\n${cov}\n\`\`\`\n\n**Cyclomatic Complexity:**\n${cycloSummary}\n\n**Dependency Load (pkgndep):**\n\`\`\`\n${pkgndep}\n\`\`\``;
             await github.rest.issues.createComment({
               issue_number: Number('${{ steps.resolve.outputs.issue }}'),
               owner: context.repo.owner,
