@@ -1,0 +1,61 @@
+# MultipleAlignment #64
+
+## DESCRIPTION
+
+* Add a couple of more sentences explaining the motivation for this work, and
+  how users are expected to make use of the software.
+
+## NAMESPACE
+
+* `R CMD check` gives a warning :
+
+    ```
+    * checking whether package ‘MultipleAlignment’ can be installed ... WARNING
+    Found the following significant warnings:
+      Warning: multiple methods tables found for ‘detail’
+    ```
+
+## R
+
+* Is there a need for a utlities package that avoids the use of `:::` from
+Biostrings? This would cover functions like `Biostrings:::add_colors.DNA` etc.
+* The `write.MultAlign` function has a high cyclomatic complexity (20) and is
+  81 lines long. Consider extracting some of the logic (e.g., mask formatting,
+  row interleaving) into smaller, internal helper functions to improve
+  readability and maintainability.
+* Consider resolving the NOTE about missing package anchors in the
+  documentation:
+
+    ```
+    * checking Rd cross-references ... NOTE
+    Found the following Rd file(s) with Rd \link{} targets missing package
+    anchors:
+      MultipleAlignment-class.Rd: XString, XStringSet, XStringViews,
+        NormalIRanges
+      MultipleAlignment-utils.Rd: consensusString, XStringViews
+    Please provide package anchors for all Rd \link{} targets not in the
+    package itself and the base packages.
+    ```
+* The `.read.PhylipAln` function uses a for loop to process
+  rows and modifies strings using gsub and sub iteratively. For very large
+  alignment files, this iterative string manipulation in R might become a
+  bottleneck. Consider vectorizing these string replacements over the entire
+  character vector before or after splitting, if possible.
+
+## vignettes
+
+* The vignette looks good.
+
+## tests
+
+* The coverage looks good:
+
+```r
+> covr::package_coverage(type = "all")
+MultipleAlignment Coverage: 85.60%
+R/MultipleAlignment-utils.R: 83.64%
+R/MultipleAlignment-IO.R: 84.93%
+R/MultipleAlignment-class.R: 86.78%
+```
+
+<sub> Review assisted-by gemini-3.1-pro-preview </sub>
