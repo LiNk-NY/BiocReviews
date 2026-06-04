@@ -235,3 +235,36 @@ docs/
 buildcheck.sh              Legacy local build/check helper
 clonevim.sh                Clone a package and prepare review file
 ```
+
+### Workflow Diagram
+```mermaid
+graph TD
+    subgraph "1. GitHub Issue (Trigger)"
+        A[Package Submission Issue] -->|Contains Repo URL| B{Review Trigger}
+        B -->|Label: 'AI review'| C[GitHub Actions]
+        B -->|Comment: '@biocreview'| C
+    end
+
+    subgraph "2. build-check.yml (Artifact Generation)"
+        C --> D[R CMD check]
+        C --> E[BiocCheck]
+        C --> F[Test Coverage]
+        D & E & F --> G[Upload Check Artifacts]
+        G --> H[Post Build Summary to Issue]
+    end
+
+    subgraph "3. auto-review.yml (AI Review Assistant)"
+        G --> I[Stage 1: Static Analysis]
+        I -->|generate_review.R| J[automated_review.md]
+        
+        J --> K[Stage 2: LLM Enhancement]
+        K -->|Scripts + GitHub Models + Source Code| L[automated_review_llm.md]
+    end
+    
+    subgraph "4. Delivery"
+        L --> M((Post Final Review<br>to GitHub Issue))
+    end
+    
+    classDef stage fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    class I,K stage;
+```
