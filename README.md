@@ -241,20 +241,21 @@ clonevim.sh                Clone a package and prepare review file
 graph TD
     subgraph "1. GitHub Issue (Trigger)"
         A[Package Submission Issue] -->|Contains Repo URL| B{Review Trigger}
-        B -->|Label: 'AI review'| C[GitHub Actions]
-        B -->|Comment: '@biocreview'| C
+        B -->|"Label: 'AI review'<br>or<br>Comment: '@biocreview'"| C[GitHub Actions]
     end
 
     subgraph "2. build-check.yml (Artifact Generation)"
         C --> D[R CMD check]
         C --> E[BiocCheck]
         C --> F[Test Coverage]
-        D & E & F --> G[Upload Check Artifacts]
+        D --> G[Upload Check Artifacts]
+        E --> G
+        F --> G
         G --> H[Post Build Summary to Issue]
     end
 
     subgraph "3. auto-review.yml (AI Review Assistant)"
-        G --> I[Stage 1: Static Analysis]
+        H -.-> I[Stage 1: Static Analysis]
         I -->|generate_review.R| J[automated_review.md]
         
         J --> K[Stage 2: LLM Enhancement]
