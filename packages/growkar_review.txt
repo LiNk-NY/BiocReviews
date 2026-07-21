@@ -1,0 +1,67 @@
+ # growkar #4227
+
+There seems to be tension between S3 and S4 classes for the `growkar` and
+`growkar_data` implementations. It should be either one or the other but not
+both. Given that it inherits from `SummarizedExperiment`, the S4 system would
+be the natural choice. Please provide a rationale for using S3 for the main
+representation and also consider using the `tidyomics` infrastructure for
+`SummarizedExperiment` objects to avoid re-implementing data transformations /
+displays.
+
+ ## DESCRIPTION
+
+* Looks good.
+* Consider revisiting the `ggplot2` dependency in an infrastructure package
+  and separating the graphing components from the data structure and
+  analysis ones.
+
+## NAMESPACE
+
+* The functions in the `NAMESPACE` are a mix of infrastructure and plotting.
+  Consider separating these functionalities into separate packages.
+* Note that class constructors typically start with capital letters.
+
+## vignettes
+
+* Remove the `pkgload` dependency `load_all()` from the vignette
+* Show the user how to work with the growkar class.
+
+## R
+
+* Consider using the `tidyomics` infrastructure to represent the
+  `SummarizedExperiment` objects in a tidy format rather than implementing
+  your own functions to convert the data.
+* Clarify why `suppressWarnings()` are needed in the code, consider handling
+  warnings more explicitly
+* `growkar` does not seem to be an explicit class though `growkar_data` is an
+  S3 class; consider creating an S4 extension of `SummarizedExperiment`
+* Use standard coercion methods `as(x, "SummarizedExperiment")` rather than a
+  plain function `as_summarized_experiment()`.
+
+## tests
+
+* Coverage looks good:
+
+```r
+> covr::package_coverage(type = "all")
+growkar Coverage: 89.04%
+R/growth_experiment.R: 61.02%
+R/augment_growth_fit.R: 66.67%
+R/compute_growth_rate.R: 83.88%
+R/as_tidy_growth_data.R: 83.93%
+R/plot_fitted_curve.R: 84.13%
+R/summarize_growth_metrics.R: 88.24%
+R/detect_exponential_phase.R: 88.89%
+R/extract_params.R: 90.00%
+R/plot_growth_curve.R: 90.83%
+R/fit_growth_curve.R: 91.30%
+R/plot_doubling_time.R: 94.16%
+R/validate_growth_data.R: 95.33%
+R/se_helpers.R: 95.65%
+R/as_summarized_experiment.R: 96.26%
+R/compute_doubling_time.R: 100.00%
+R/fit_growth_helpers.R: 100.00%
+R/fit_growth_plate.R: 100.00%
+R/growkar_data.R: 100.00%
+R/select_palette.R: 100.00%
+```
