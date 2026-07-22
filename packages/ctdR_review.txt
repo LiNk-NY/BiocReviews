@@ -1,0 +1,49 @@
+# ctdR #4232
+
+Overall the package provides a good starting point for analysis of
+chemical-gene interactions. It should focus on providing helper functions for
+working with the Comparative Toxicogenomics Db. It should not try to
+re-implement existing methods but rather help the user create the necessary
+data objects to integrate with existing infrastructure.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* Consider using `import` method and a CTD class e.g., from `BiocIO`
+
+## vignettes
+
+* Combining enrichment methods `enrichment_CTD` is common and available in
+  other Bioconductor packages, e.g., `EnrichmentBrowser`. Please use existing
+  infrastructure or provide rationale for implementing your own.
+* Create a helper function to retrieve data from the cache (in `make-expr`
+  chunk).
+
+## R
+
+* `import_CTD` should handle both the file path and the URL for user
+  convenience
+* Consider using `BiocFileCache` instead of `rappdirs` in `import_CTD`
+* Use `@inheritParams` for `pAdjustMethod` or provide more extensive
+  documentation for possible inputs.
+
+## tests
+
+Coverage looks good:
+
+```r
+> covr::package_coverage(type = "all")
+ctdR Coverage: 93.62%
+R/gsva.R: 70.00%
+R/camera.R: 76.67%
+R/utils-input.R: 79.31%
+R/enrichment_analysis.R: 89.84%
+R/ora.R: 95.24%
+R/gsea.R: 100.00%
+R/import_CTD.R: 100.00%
+R/plot_CTD.R: 100.00%
+```
+
