@@ -1,0 +1,187 @@
+# sbivar #45
+
+## DESCRIPTION
+
+* (Optional) Run tools like R package `desc` to clean up `Imports` and
+  `Suggests` fields for readability
+
+## NAMESPACE
+
+* Looks good.
+
+## vignettes
+
+* (optional) Keep character width to a max of 80 columns by wrapping long
+  lines.
+* Consider using more modern infrastructure such as `future` instead of
+  `BiocParallel`. See https://future.futureverse.org/
+* Examples of the main function should start by using existing Bioconductor
+  infrastructure i.e., `SpatialExperiment` / `MultiAssayExperiment` rather
+  than showing the more tedious method first. This would make it easier for
+  users to get started.
+* Have you considered using simpler inputs to `sbivar` with
+  `MultiAssayExperiment`, e.g.,
+  `sbivar(MAE, transcripts = "Stx", metabolites = "Msi")`? The `assayX` /
+  `experimentX` seem redundant.
+* The code to create, for example, `StxSElist`, `SEsingleStx` seems too
+  laborius. Are there ways to make it easier for the user?
+* `SpatialExperiment` already has native multi-sample support through the
+  `sample_id` column of `colData`. Consider defaulting `sample_id_x` to
+  `"sample_id"` and building the per-image objects with
+  `SpatialExperiment(..., sample_id = nam)` followed by `do.call(cbind, ...)`.
+  This would remove the need for the manual `Reduce(rbind)` / `rep(times =)`
+  code used to construct `SEsingleStx` and `SEsingleMet`.
+* The `MultiAssayExperiment` method only uses the MAE as a container for two
+  experiments. `colData(MAE)` and `sampleMap(MAE)` are ignored. For the
+  multi-image workflow, `colData(MAE)` is the natural place to hold the
+  per-image design (currently `designDf`), so `fitLinModels()` could take it
+  from there.
+
+## R
+
+### Bugs (reproduced with the GitHub version, 0.99.37)
+
+* `sbivar(..., method = "GAMs", Gamm = TRUE)` always fails:
+  `invalid object for slot "correlation" ... got class "corGaus"`.
+  `allClasses.R:27` defines `corSpatialOrNULL` as a union of `character` and
+  `NULL`, not `corSpatial`. Note that `setOldClass("corSpatial")` alone may not
+  be enough because `corGaus` objects have an S3 class vector
+  (`c("corGaus", "corSpatial", "corStruct")`); please add a test for
+  `Gamm = TRUE` through `sbivar()`.
+* Supplying `gpParams` always fails with
+  `'length = 2' in coercion to 'logical(1)'` (`sbivarSingle.R:95`):
+  `names(gpParams) != c("X", "Y")` is used inside `||`. The same block also has
+  misplaced parentheses: `sort(rownames(x), c("mean", ...))` passes the
+  reference vector as `decreasing`, and the `!all(... || !all(...))` grouping
+  is wrong. Consider `identical(names(gpParams), c("X", "Y"))` and
+  `setequal(rownames(x), c(...))`.
+* `sbivarSingle.R:56`: `inherits(correlation, "corGaus") || (method != "GPs")`
+  is evaluated before `match.arg(method)`. With a non-Gaussian
+  `correlation` and the default `method`, this errors with
+  `'length = 4' in coercion to 'logical(1)'`. Move `match.arg()` calls before
+  the `stopifnot()` block.
+* `MoransISingle.R:58-63`: when an `eta` gives an all-zero weight matrix, it is
+  dropped from `Ws` but not from `wParams`. This causes
+  `length of 'dimnames' [2] not equal to array extent` at line 68 (and
+  `findMaxW` would index dropped slices). The same applies to `wo = "nn"`,
+  where `idW` is not checked at all.
+* `fitGAM.R:68-72` (`fitManyGAMs`): `libSizes` is only defined for
+  non-Gaussian families, but the `switch()` on `family$link` uses it for any
+  `log` / `inverse` link. `families = list(X = gaussian(link = "log"), ...)`
+  passes the input checks but fails with `object 'libSizes' not found`.
+  Same pattern in `plotGAMs.R:94-101` (`makeOffset`).
+* `exploreWeights.R:20`: `palette("paired")` *sets* the global graphics palette
+  as a side effect, and the `palette` argument is ignored. Use
+  `grDevices::palette.colors(palette = palette)` or `hcl.colors()`.
+* `plotPairMulti()` (`plotPair.R:38`): the per-point `size` column is computed
+  but `geom_point(size = size)` uses the scalar argument, so
+  `scaleBySampleSums = TRUE` has no effect. Map it with `aes(size = size)`.
+* `plotSpotSums()` (`plotSpotSums.R:26-33`): the labels "Transcriptomics" /
+  "Metabolomics" are hard-coded, but `factor(..., levels = viewNames)` uses the
+  argument. Any other `viewNames` turns all facets into `NA`.
+* `fitLinModels.R:62`: the error message refers to `estimateSEsMoransI = TRUE`,
+  but there is no such argument; the multi-image argument is `findVariances`.
+  The slot is `estimateSEsMoransI`, the list element is `returnSEsMoransI`, and
+  `fitLinModels()` copies `"estimateSEsMoransI"`, which never exists in the
+  list. Please use one name throughout.
+
+### Bioconductor requirements
+
+* `fitLinModels.R:187`: `lmerTest:::as_lmerModLT()` uses an unexported
+  function. `:::` is not allowed. Ask the `lmerTest` maintainers to export it,
+  or use exported functionality (e.g., `lmerTest::as_lmerModLmerTest()`).
+* `allGenerics.R:50-51`: `setGeneric("sbivar")` is called twice with different
+  signatures; the second silently replaces the first. Remove one.
+* The multi-image path returns a plain `list` (`methods-sbivar.R:34`,
+  `sbivarMulti.R`), while the single-image path returns an S4
+  `sbivarResults` object. Users get different types from the same generic, and
+  `fitLinModels()` relies on `$` access to the list. Consider returning an S4
+  class (e.g., `sbivarMultiEstimates`) with a validity method, so that
+  `fitLinModels()` can dispatch on it.
+* None of the S4 classes have a `show()` method; printing a result dumps all
+  slots including the full result `data.frame`. Please add `show()` methods
+  and accessors (e.g., `results()`, `method()`), and avoid direct `@` access
+  in user-facing code and the vignette.
+* No validity methods are defined for the classes. E.g., `method` and `normX`
+  should be length 1 and one of the allowed values.
+* `buildWeightMat.R:22`: use `requireNamespace("RANN", quietly = TRUE)`, and
+  check it once at the top of `sbivarSingle()` / `sbivarMulti()` when
+  `wo = "nn"` rather than per weight matrix.
+
+### Input handling and data integrity
+
+* `normMat()` (`helpers.R:116`) silently drops observations with zero row sums
+  and calls `make.names()` on feature names (`helpers.R:125`). Feature names
+  such as `HLA-A` are returned as `HLA.A`, which no longer match
+  `rownames(spe)`. Please emit a message when rows are dropped, and consider
+  keeping the original feature names (e.g., by using `check.names = FALSE` /
+  backticks in formulas) or at least documenting the renaming.
+* `makePval()` (`helpers.R:16`) maps `NA` z-values to p = 1, and `CCT()`
+  (`CCT.R:13`) returns 1 when any input is `NA`. Failed fits are therefore
+  reported as non-significant rather than missing. Returning `NA` is safer and
+  lets `p.adjust()` handle them correctly.
+* `CCT()` warns "There are p-values that are exactly 1!" on each call; it is
+  called once per feature pair in `apply()`, so large analyses can produce
+  thousands of identical warnings.
+* `ModTtestSingle.R:16`: `expand.grid()` returns factors, so
+  `X[, featGrid[i, "featX"]]` indexes by factor *codes*, not by name. It
+  works only because the columns happen to be in level order. Use
+  `stringsAsFactors = FALSE`.
+* `sbivarMulti.R:41`: the "joint coordinate sets" message is not guarded by
+  `verbose`.
+* Error and warning messages contain embedded newlines followed by source
+  indentation (e.g., `sbivarSingle.R`, `checkInput.R`, `fitLinModels.R`).
+  These print with stray whitespace. Use `paste0()` or `strwrap()`.
+* `MultiAssayExperiment` method: the error message pastes `experiments[!id]`
+  as a vector into `stop()`; use `names(experiments[!id])`.
+
+### Code style and maintainability
+
+* Several unused assignments: `foo <- checkInputSingle(...)`,
+  `foo <- checkInputMulti(...)`, `baa <- ...`, `foo <- lapply(...)` used only
+  for side effects (use `invisible()` / `for`). `tr()` (`helpers.R:64`) is not
+  used anywhere (and `apply(x, c(1, 2), tr)` would apply over elements rather
+  than over the third dimension).
+* Assignments inside function calls (e.g., `x[id <- (... ) > 0, ]`,
+  `checkCoords = ccs <- (...)`, `Ws[, , idW <- ...]`) make the code hard to
+  read. Please assign on separate lines.
+* `plotPairMulti()` and `plotPairSingleVectors()` call `theme_set()`, which
+  changes the user's global ggplot2 theme. Add the theme to the plot
+  (`+ theme`) instead.
+* `plotGAMs()` takes `scaleFun` as a character string and looks it up in the
+  package namespace with `get()`. Accept a function instead.
+* `writeSbivarToXlsx()`: `grepl("\\.xlsx", file)` should be anchored
+  (`"\\.xlsx$"`), and `wb$worksheets` accesses `openxlsx` internals; use
+  `length(openxlsx::sheets(wb))`. Also consider making `openxlsx` a Suggests
+  dependency since it is only needed for this one function.
+* `sbivarSingle()` has more than 25 arguments, many of which only apply to
+  one method. Consider grouping method-specific settings into control lists
+  (e.g., `moranControl()`, `gamControl()`, `gpControl()`) to simplify the
+  interface and documentation.
+* Many lines exceed 80 characters (some > 150). Please reformat (e.g., with
+  `styler` or `air`).
+
+### Scalability
+
+* `MoransISingle()` materialises a dense `n x m x numWs` weight array, and
+  `GPsSingle()` calls `solve()` on dense `n x n` matrices per feature. For
+  typical Visium / MSI image sizes (thousands of spots) this can require many
+  GB of memory. Please document the expected limits in the vignette, or
+  consider sparse weights for `wo = "nn"` (they are built sparse and then
+  converted with `as.matrix()` in `buildWeightMat.R`).
+
+### Tests
+
+* Tests do not cover several failing paths above (`Gamm = TRUE`, `gpParams`,
+  dropped `etas`, non-identity links with the Gaussian family,
+  `scaleBySampleSums`, custom `viewNames`). Please add tests for these.
+* `expect_is()` and `context()` are deprecated in `testthat` 3rd edition;
+  use `expect_s3_class()` / `expect_s4_class()`.
+
+
+
+
+---
+
+_This review was prepared with the assistance of Claude Opus 5.5
+(Anthropic, model ID `claude-opus-5-5`)._
