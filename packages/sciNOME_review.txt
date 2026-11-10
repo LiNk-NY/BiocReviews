@@ -1,0 +1,100 @@
+# sciNOME #59
+
+* It seems that quite a bit of the functionality provided in the package is
+  redundant to methods already available in Bioconductor. Please indicate what
+  makes the package different from existing functionality.
+* The package does not use most established Bioconductor infrastructure. Its
+  only Bioconductor imports are `GenomicRanges`, `IRanges`, and `S4Vectors`.
+  The analysis code is built on base R, CRAN, and generic packages instead:
+  * Data containers: the RNA object is an S3 list (`class(object) <- "RNA"`),
+    not `SingleCellExperiment` or `SummarizedExperiment`. Bioconductor
+    single-cell and multi-omics tools cannot consume these objects directly.
+  * Dimensionality reduction: PCA uses `irlba::prcomp_irlba()` and `prcomp()`
+    rather than `BiocSingular`, which supports the same operations on
+    Bioconductor containers.
+  * Differential expression: `RunDEA_RNA()` uses `stats::wilcox.test()` per
+    gene. Established single-cell methods such as `scran`, `scater`, `edgeR`,
+    `limma`, and `DESeq2` are not used. Please justify the choice of test or
+    use one of these methods.
+  * Methylation: the CpG/GpC QC, aggregation, and differential analysis
+    (`met_acc.R`) reimplement per-region summaries and `fisher.test()`
+    directly. Bioconductor methylation infrastructure (`bsseq`, `minfi`,
+    `methylKit`, `DSS`) is not used. Please explain why these are not
+    suitable.
+  * Clustering and visualization: Leiden clustering, t-SNE, UMAP, and
+    correlation plots are implemented with generic packages, without any
+    Bioconductor container or class. Please check whether `scater` or
+    `scuttle` provide the same functions for Bioconductor objects.
+  Where a function is not available in Bioconductor, please say so in the
+  documentation. Where one is, please use it or explain why not.
+* Rename the default branch to either `devel` or `main`. See
+  https://blog.bioconductor.org/posts/2023-03-01-transition-to-devel/ for
+  details.
+* Remove `.Renviron` and `.Rhistory` from the repository and add them to
+  `.Rbuildignore`. Both are tracked in git and `.Renviron` contains
+  machine-specific Windows paths (`E:/_SpaceSubject/Rtemp`). The `.Rproj` file
+  is ignored by `.Rbuildignore` but is still tracked.
+* The README installs from GitHub with `devtools`. Add an installation section
+  that uses `BiocManager::install("sciNOME")`.
+* `NEWS.md` only documents 0.99.0, but the package is at version 0.99.4. Please
+  update it for the current version.
+
+## DESCRIPTION
+
+* Looks good.
+
+## NAMESPACE
+
+* There is a lot of ggplot2 functionality imported. Consider using `Depends`
+  and/or separating the functionality into another package.
+* Function names are inconsistent. `Run_Diffanalysis` and `RunDEA_RNA` use
+  different verb and suffix conventions, and `Extract_epiData` mixes an
+  underscore with camelCase. Please pick one convention for the package.
+
+## vignettes
+
+* There is a lot of code in the vignettes dedicated to creating mock datasets.
+* Consider making the mock data creation chunks optional by hiding them with:
+```HTML
+<details><summary> Click to expand </summary></details>
+```
+  Or provide small example datasets in your package under `inst/extdata`.
+  `inst/extdata` already contains `RNA_counts.txt`, `metadata.csv`,
+  `target_promoters.bed`, `cpg_cov/`, and `gpc_cov/`, but no vignette or test
+  uses them. Please use these files in the vignettes instead of simulating
+  data.
+* Consider using MultiAssayExperiment for integrating RNA, CpG, and GpC data
+  (disclaimer: I am the maintainer of MultiAssayExperiment)
+* Avoid repeating functionality already present in Bioconductor, e.g.,
+  PlotVolcano_*, PlotOmics*, etc.
+
+## R
+
+* Consider shortening or even removing the package startup message. Most users
+  should be aware of the `bug.report()` and `packageDescription()$URL`
+  functions (in `load.R`).
+* The `RNA` class is an S3 list (`class(object) <- "RNA"` in `rna.R`) that
+  wraps a sparse matrix and a metadata table. This largely duplicates
+  `SingleCellExperiment` or `SummarizedExperiment`. Consider adopting one of
+  these so that existing Bioconductor tools work on the objects directly.
+* The roxygen examples call `set.seed()` and `print(class(rna_obj))`. Examples
+  should show the intended usage and should not print diagnostic output.
+* `load.R` has a Chinese-language comment. Please translate it to English.
+
+## tests
+
+* Five exported functions have no test reference: `AddMetaData_RNA`,
+  `CreateRNAObject`, `PlotLandscape_Epi`, `PlotOmicsScatter`, and
+  `PlotPseudo_RNA`. `CreateRNAObject` is the entry point for the RNA workflow,
+  so it should be tested first.
+* The tests build their own small random matrices and data frames inline
+  (`runif`, `rnbinom`) and do not use `inst/extdata`. Some tests only check
+  `is.data.frame()`. Please add assertions on values, such as column names,
+  dimensions, and value ranges.
+
+---
+
+<sup>
+Note: This review was prepared with assistance from Claude Anthropic (model:
+Claude Haiku 5.5).
+</sup>
